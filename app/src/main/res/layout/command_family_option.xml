@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+    android:layout_marginStart="4dp"
+              android:layout_marginEnd="8dp">
+    <ImageView
+        android:id="@+id/iv_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="center_horizontal"/>
+    <TextView
+        style="@style/TextAppearance.AppCompat.Caption"
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"/>
+
+</LinearLayout> -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="?attr/selectableItemBackground">
+<ImageView
+    android:id="@+id/iv_icon"
+    android:layout_width="@dimen/command_selector_fam_icon_size"
+    android:layout_height="@dimen/command_selector_fam_icon_size"
+    android:layout_gravity="center_horizontal"
+    android:layout_marginStart="@dimen/command_selector_fam_horiz_margin"
+    android:layout_marginEnd="@dimen/command_selector_fam_horiz_margin"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="2dp"/>
+<TextView
+    style="@style/TextAppearance.AppCompat.Body1"
+    android:id="@+id/tv_title"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:layout_marginStart="@dimen/command_selector_fam_horiz_margin"
+    android:layout_marginEnd="@dimen/command_selector_fam_horiz_margin"
+    android:layout_marginTop="2dp"
+    android:layout_marginBottom="4dp"
+    android:gravity="center"/>
+
+</LinearLayout>

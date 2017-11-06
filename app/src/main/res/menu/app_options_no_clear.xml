@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/navigation_toggle_url_launch"
+        android:icon="@drawable/ic_link_white_24px"
+        android:title="@string/enable_url_launching"
+        app:showAsAction="ifRoom"
+        />
+    <item
+        android:id="@+id/navigation_toggle_heartbeat"
+        android:icon="@drawable/ic_heartbeat_border_white_24dp"
+        android:title="@string/enable_heartbeat"
+        app:showAsAction="ifRoom"
+        />
+    <item
+        android:id="@+id/navigation_toggle_daynight"
+        android:icon="@drawable/ic_day_night_enabled_white_24px"
+        android:title="@string/enable_daynight_mode"
+        app:showAsAction="ifRoom"
+        />
+</menu>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <!-- Command -->
+    <string name="unknown_command">Unsupported Command</string>
+    <!-- System Commands -->
+    <string name="get_battery_level">Report battery level</string>
+    <string name="get_firmware_version">Report firmware version</string>
+    <string name="get_hardware_version">Report hardware version</string>
+    <string name="ping_command">Ping</string>
+    <string name="stop_command">Stop</string>
+    <!-- Basic NFC Commands -->
+    <string name="get_basic_nfc_lib_version">Report Basic NFC command library version</string>
+    <string name="scan_ndef_seconds">Scan for an NDEF-formatted tag for %1$d seconds</string>
+    <string name="scan_ndef_indefinite">Scan for an NDEF-formatted tag indefinitely</string>
+    <string name="stream_ndef_seconds">Stream NDEF-formatted tags for %1$d seconds</string>
+    <string name="stream_ndef_indefinite">Stream NDEF-formatted tags indefinitely</string>
+    <string name="scan_tag_seconds">Scan for a tag for %1$d seconds</string>
+    <string name="scan_tag_indefinitely">Scan for a tag indefinitely</string>
+    <string name="stream_tag_seconds">Stream tags for %1$d seconds</string>
+    <string name="stream_tag_indefinitely">Stream tags indefinitely</string>
+    <string name="write_ndef_txt_seconds">For %1$d seconds, attempt to write the following text to a tag: \n%2$s</string>
+    <string name="write_ndef_txt_indefinite">Indefinitely attempt to write the following text to a tag: \n%1$s</string>
+    <string name="write_ndef_uri_seconds">For %1$d seconds, attempt to write the following URI to a tag: \n%2$s</string>
+    <string name="write_ndef_uri_indefinite">Indefinitely attempt to write the following URI to a tag: \n%1$s</string>
+    <string name="lock_tags_seconds">For %1$d seconds, attempt to lock the next tag encountered</string>
+    <string name="lock_tags_indefinite">Indefinitely attempt to lock the next tag encountered</string>
+    <!-- Classic Commands -->
+    <string name="detect_classic_seconds">Scan for MIFARE Classic for %1$d seconds</string>
+    <string name="detect_classic_indefinite">Scan for MIFARE Classic indefinitely</string>
+    <string name="get_classic_version">Report MIFARE Classic library version</string>
+    <string name="read_classic_seconds">For the next %5$d seconds, attempt to read from block %1$02X to block %2$02X authenticating with key %3$s using key %4$s</string>
+    <string name="read_classic_indefinite">Indefinitely attempt to read from block %1$02X to block %2$02X authenticating with key %3$s using key %4$s</string>
+    <!-- Type 4 Commands -->
+    <string name="detect_type4_seconds">Scan for Type 4A tags for %1$d seconds</string>
+    <string name="detect_type4_indefinite">Scan for Type 4A tags indefinitely</string>
+    <string name="detect_type4b_seconds">Scan for Type 4B tags for %1$d seconds</string>
+    <string name="detect_type4b_indefinite">Scan for Type 4B tags indefinitely</string>
+    <string name="detect_type4b_afi_seconds">Scan for Type 4B tags with AFI %2$s for %1$d seconds</string>
+    <string name="detect_type4b_afi_indefinite">Scan for Type 4B tags with AFI %1$s indefinitely</string>
+    <string name="get_type4_version">Report Type 4 library version</string>
+    <string name="send_apdu">Send the following APDU: %1$s</string>
+
+    <!-- Responses -->
+    <string name="unknown_response">Unsupported Response</string>
+    <string name="standard_error_response">%5$s error\nError Code: %1$02X\nInternal:%2$02X%3$02X\nMessage:\"%4$s\"</string>
+    <string name="standard_error_response_with_description">%5$s error\nError: %6$s\nError Code: %1$02X\nInternal:%2$02X%3$02X\nMessage:\"%4$s\"</string>
+    <!-- System Responses -->
+    <string name="crc_error">CRC check failed</string>
+    <string name="firmware_version_response">Firmware v%1$d.%2$d</string>
+    <string name="hardware_version_response">Hardware v%1$d.%2$d</string>
+    <string name="standard_version_response">%3$s v%1$d.%2$d</string>
+    <string name="get_batt_response">Battery level: %1$d%%</string>
+    <string name="improper_message_format_response">Improper message format</string>
+    <string name="lcs_mismatch_response">LCS check failed</string>
+    <string name="length_check_failed">Length check failed</string>
+    <string name="ping_response">Ping</string>
+    <!-- Basic NFC Responses -->
+    <string name="basic_nfc_error_response">Basic NFC command error %1$02X:\nInternal:%2$02X%3$02X\nMessage:\"%4$s\"</string>
+    <string name="basic_nfc_library_version_response">Basic NFC library v%1$d.%2$d</string>
+    <string name="ndef_found_response_single_record">NDEF message found on Tag ID: %1$s\nTag type: %2$s\n\n%3$s</string>
+    <string name="ndef_found_response_multi_record">Multi-record NDEF message found on Tag ID: %1$s\nTag type: %2$s\n\nFirst Record:\n%3$s</string>
+    <string name="scan_timeout_response">Timeout reached</string>
+    <string name="tag_found_response">Tag found \nUID: %1$s\nType: %2$s</string>
+    <string name="tag_written_response">Data written to tag with UID %1$s</string>
+    <string name="tag_locked_response">Tag with UID %1$s was locked</string>
+    <string name="ndef_record_generic_display_format">TNF: %1$s\n Type: %2$s\n Payload: %3$s\n </string>
+    <string name="ndef_record_uri_display_format">Uri: %1$s</string>
+    <string name="ndef_record_text_display_format">Text: %1$s</string>
+    <string name="ndef_no_record">No records</string>
+    <!-- Classic Responses -->
+    <string name="mifareclassic_1k_detected">Detected MIFARE Classic 1K\nUID: %1$s</string>
+    <string name="mifareclassic_4k_detected">Detected MIFARE Classic 4K\nUID: %1$s</string>
+    <string name="mifareclassic_unkcap_detected">Detected unknown capacity MIFARE Classic\nUID: %1$s</string>
+    <string name="mifareclassic_timeout">MIFARE Classic scan timed out</string>
+    <string name="mifareclassic_read_success">Succcessfully read MIFARE Classic\nUID: %1$s\nStart: %2$02X\nEnd: %3$02X\nData: %4$s</string>
+
+    <!-- Type 4 Responses -->
+    <string name="apdu_transceive_successful">Successfully transceived APDU\nCard responded with:\n%1$s</string>
+    <string name="type4_polling_error_successful">Type 4 polling error</string>
+    <string name="type4_detected_with_ats">Type 4 tag detected!\nUID: %1$s\nATS: %2$s</string>
+    <string name="type4_detected_no_ats">Type 4 tag detected!\nUID: %1$s\nATS: none</string>
+    <string name="type4b_detected_no_attrib">Type 4B tag detected!\ATQB: %1$s\nATTRIB: none</string>
+    <string name="type4b_detected_w_attrib">Type 4B tag detected!\nATQB: %1$s\nATTRIB: %2$s</string>
+    <string name="type4b_detected_nothing">Type 4B tag detected!</string>
+    <string name="type4_timeout">Type 4 timeout</string>
+
+    <!-- Error Descriptions -->
+    <string name="err_invalid_parameter">invalid parameter</string>
+    <string name="err_too_few_parameters">too few parameters</string>
+    <string name="err_too_many_parameters">too many parameters</string>
+    <string name="err_polling_error">polling error</string>
+    <string name="err_tag_read_error">tag read error</string>
+    <string name="err_invalid_block_order">invalid block order</string>
+    <string name="err_authentication_error">authentication error</string>
+    <string name="err_invalid_block_number">invalid block number</string>
+    <string name="err_invalid_key_number">invalid key number</string>
+    <string name="err_transceive_error">transceive error</string>
+    <string name="err_no_tag_present">no tag present</string>
+    <string name="err_nfc_chip_error">nfc chip error</string>
+    <string name="err_unsupported_command_family">unsupported command family</string>
+    <string name="err_ndef_too_large">NDEF message too large</string>
+    <string name="err_ndef_creation_error">NDEF creation error</string>
+    <string name="err_ndef_writing_error">NDEF writing error</string>
+    <string name="err_locking_error">NDEF locking error</string>
+
+    <!-- Command family names -->
+    <string name="family_basicnfc">Basic NFC</string>
+    <string name="family_system">System</string>
+    <string name="family_classic">MIFARE Classic</string>
+    <string name="family_type4">Type 4</string>
+    <string name="family_unknown">Unknown family</string>
+    <string name="resp_hardware">Hardware</string>
+    <string name="resp_firmware">Firmware</string>
+
+</resources>

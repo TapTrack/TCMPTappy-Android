@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2016. Papyrus Electronics, Inc
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ you may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+    <string name="syscommand_ping_title">Ping</string>
+    <string name="syscommand_ping_description">Pings the Tappy requesting a ping in response</string>
+    <string name="syscommand_get_hardware_title">Hardware Version</string>
+    <string name="syscommand_get_hardware_description">Request the hardware version of the Tappy</string>
+    <string name="syscommand_get_battery_title">Battery Level</string>
+    <string name="syscommand_get_battery_description">Request the battery level of the Tappy</string>
+    <string name="syscommand_get_libraryv_title">Firmware Version</string>
+    <string name="syscommand_get_libraryv_description">Request the version of the firmware</string>
+
+    <string name="nfccommand_get_libraryv_title">BasicNFC Lib Version</string>
+    <string name="nfccommand_get_libraryv_description">Request the version of the basic NFC library</string>
+    <string name="nfccommand_scan_ndef_title">Scan NDEF</string>
+    <string name="nfccommand_scan_ndef_description">Command the Tappy to scan for an NDEF-formatted tags</string>
+    <string name="nfccommand_stream_ndef_title">Stream NDEF</string>
+    <string name="nfccommand_stream_ndef_description">Command the Tappy to stream NDEF-formatted tags</string>
+    <string name="nfccommand_scan_tag_title">Scan Tag</string>
+    <string name="nfccommand_scan_tag_description">Command the Tappy to scan for NFC tags</string>
+    <string name="nfccommand_stream_tag_title">Stream Tag</string>
+    <string name="nfccommand_stream_tag_description">Command the Tappy to stream NFC tags</string>
+    <string name="nfccommand_stop_title">Stop</string>
+    <string name="nfccommand_stop_description">Command the Tappy to stop doing whatever it is doing</string>
+    <string name="nfccommand_write_text_title">Write Text</string>
+    <string name="nfccommand_write_text_description">Command the Tappy to write text to tags</string>
+    <string name="nfccommand_write_uri_title">Write Url</string>
+    <string name="nfccommand_write_uri_description">Command the Tappy to write a link to tags</string>
+    <string name="nfccommand_lock_tag_title">Lock Tag</string>
+    <string name="nfccommand_lock_tag_description">Command the Tappy to lock a tag</string>
+
+    <string name="classiccommand_detect_title">Detect Classic</string>
+    <string name="classiccommand_detect_description">Scan for a MIFARE Classic</string>
+    <string name="classiccommand_get_version_title">Classic Lib Version</string>
+    <string name="classiccommand_get_version_description">Request the version of the MIFARE Classic library</string>
+    <string name="classiccommand_read_classic_title">Read Classic</string>
+    <string name="classiccommand_read_classic_description">Read data from a MIFARE Classic. For this example, the Tappy will always attempt to authenticate with key A using the default key</string>
+
+    <string name="type4command_detect_title">Detect Type 4</string>
+    <string name="type4command_detect_description">Scan for a Type 4 tag using either Type A or Type B modulation. If you are unsure what type of modulation your tags use, Type A is the most common.</string>
+    <string name="type4command_get_version_title">Library Version</string>
+    <string name="type4command_get_version_description">Request the version of the Type 4 library</string>
+    <string name="type4command_transceive_apdu_title">Transceive APDU</string>
+    <string name="type4command_transceive_apdu_description">Transceive Type 4 APDU</string>
+
+</resources>

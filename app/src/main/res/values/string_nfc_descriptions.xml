@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <string name="ultralight_title">MIFARE Ultralight</string>
+    <string name="ntag203_title">MIFARE NTAG203</string>
+    <string name="ultralight_c_title">MIFARE Ultralight C</string>
+    <string name="std_1k_title">MIFARE Standard 1K</string>
+    <string name="std_4k_title">MIFARE Standard 4K</string>
+    <string name="desfire_ev1_2k_title">MIFARE DESFire EV1 2K</string>
+    <string name="unk_type2_title">Unknown Type 2</string>
+    <string name="plus_2k_title">MIFARE Plus 2K</string>
+    <string name="plus_4k_title">MIFARE Plus 4K</string>
+    <string name="mini_title">MIFARE Mini</string>
+    <string name="other_type4_title">Other Type 4</string>
+    <string name="desfire_ev1_4k_title">MIFARE DESFire EV1 4K</string>
+    <string name="desfire_ev1_8k">MIFARE DESFire EV1 8K</string>
+    <string name="desfire_title">MIFARE DESFire</string>
+    <string name="topaz_512_title">TOPAZ 512</string>
+    <string name="ntag_210_title">MIFARE NTAG210</string>
+    <string name="ntag_212_title">MIFARE NTAG212</string>
+    <string name="ntag_213_title">MIFARE NTAG213</string>
+    <string name="ntag_215_title">MIFARE NTAG215</string>
+    <string name="ntag_216_title">MIFARE NTAG216</string>
+    <string name="no_tag_title">No Tag</string>
+    <string name="unk_type_title">Unknown Type</string>
+
+    <string name="tnf_abs_uri">ABSOLUTE URI</string>
+    <string name="tnf_empty">EMPTY</string>
+    <string name="tnf_external">EXTERNAL</string>
+    <string name="tnf_mime_media">MIME MEDIA</string>
+    <string name="tnf_unchanged">UNCHANGED</string>
+    <string name="tnf_well_known">WELL KNOWN</string>
+    <string name="tnf_unknown">UNKNOWN</string>
+    <string name="rtd_uri">URI</string>
+    <string name="rtd_alt_carrier">ALTERNATIVE CARRIER</string>
+    <string name="rtd_handover_carrier">HANDOVER CARRIER</string>
+    <string name="rtd_handover_request">HANDOVER REQUEST</string>
+    <string name="rtd_handover_select">HANDOVER SELECT</string>
+    <string name="rtd_smart_poster">SMART POSTER</string>
+    <string name="rtd_text">TEXT</string>
+</resources>

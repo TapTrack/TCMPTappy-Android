@@ -1,0 +1,111 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+//    ext.kotlin_version = '1.1.2-5'
+    ext.kotlin_version = '1.1.51'
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.0.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "io.realm:realm-gradle-plugin:3.3.1"
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+    }
+}
+
+
+allprojects {
+    repositories {
+        jcenter()
+        maven { url "https://jitpack.io" }
+        maven {
+            url 'https://github.com/uPhyca/stetho-realm/raw/master/maven-repo'
+        }
+        maven {
+            url "https://maven.google.com"
+        }
+    }
+}
+
+subprojects {
+    tasks.withType(Javadoc).all {
+        failOnError = false
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+ext.globalCfg = [
+        minSdkVersion: 19,
+        compileSdkVersion: 26,
+        buildToolsVersion: "26.0.2",
+        publishedVersion: "2.0.0-beta1",
+        publishedGroupId : 'com.taptrack.tcmptappy2',
+]
+
+ext.bintrayCfg = [
+        mavenInstallScript: rootProject.file('mavenInstaller.gradle'),
+        bintrayScript: rootProject.file('bintrayUpload.gradle'),
+
+        bintrayRepo : 'maven',
+
+        publishedArtifacts : [
+                tcmp: [
+                        bintrayName : 'tcmp',
+                        libraryName : 'TCMP Message Protocol',
+                        artifact : 'tcmp',
+                        libraryDescription : 'Base definitions for the Tappy Command Messaging Protocol'
+                ],
+                tcmpconverter: [
+                        bintrayName : 'tcmpconverter',
+                        libraryName : 'TCMP Converter',
+                        artifact : 'tcmpconverter',
+                        libraryDescription : 'Utility class for enabling Tappy SDK v1/v2 based message interoperability'
+                ],
+                tappyusb : [
+                        bintrayName : 'tappyusb',
+                        libraryName : 'TappyUSB',
+                        artifact : 'tappyusb',
+                        libraryDescription : 'Library for working with TappyUSB devices',
+                ],
+                tappyble : [
+                        bintrayName : 'tappyble',
+                        libraryName : 'TappyBLE',
+                        artifact : 'tappyble',
+                        libraryDescription : 'Library for working with TappyBLE devices',
+                ],
+                tappy: [
+                        bintrayName : 'tappy',
+                        libraryName : 'TCMP Tappy',
+                        artifact : 'tappy',
+                        libraryDescription : 'Base classes for working with TCMP Tappy devices',
+                ],
+        ],
+
+
+        siteUrl : 'https://github.com/TapTrack/TCMPTappy-Android',
+        gitUrl : 'https://github.com/TapTrack/TCMPTappy-Android.git',
+
+        developerId : "TapTrack",
+        developerName : "TapTrack",
+        developerEmail : "info@taptrack.com",
+
+        licenseName : 'The Apache Software License, Version 2.0',
+        licenseUrl : "http://www.apache.org/licenses/LICENSE-2.0.txt",
+        allLicenses : ["Apache-2.0"],
+]
+
+ext.libraries = [
+        androidSupportAnnotations: "com.android.support:support-annotations:26.1.0",
+        tcmpLegacy: "com.taptrack.tcmptappy:message-common:0.9.3",
+
+        tappy: project(':tappy'),
+        tappyble: project(':tappyble'),
+        tappyusb: project(':tappyusb'),
+        tcmp: project(':tcmp'),
+        tcmpconverter: project(':tcmpconverter'),
+]

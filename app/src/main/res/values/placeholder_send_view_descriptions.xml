@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="desc_get_battery_level">Report battery level</string>
+    <string name="desc_ping_command">Ping</string>
+    <string name="desc_stop_command">Stop</string>
+    <string name="desc_scan_ndef_5_seconds">Scan NDEF for 5 seconds</string>
+    <string name="desc_scan_ndef_indefinite">Scan NDEF indefinitely</string>
+    <string name="desc_stream_ndef_5_seconds">Stream NDEF for 5 seconds</string>
+    <string name="desc_stream_ndef_indefinite">Stream NDEF indefinitely</string>
+    <string name="desc_scan_tag_5_seconds">Scan tags for 5 seconds</string>
+    <string name="desc_scan_tag_indefinitely">Scan tags indefinitely</string>
+    <string name="desc_stream_tag_5_seconds">Stream tags for 5 seconds</string>
+    <string name="desc_stream_tag_indefinitely">Stream tags indefinitely</string>
+</resources>

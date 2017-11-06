@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_manage_devices"
+        android:icon="@drawable/ic_device_hub_black_24dp"
+        android:title="@string/title_manage_devices"/>
+
+    <item
+        android:id="@+id/navigation_comm_history"
+        android:icon="@drawable/ic_message_black_24dp"
+        android:title="@string/title_comm_history"/>
+
+    <item
+        android:id="@+id/navigation_send_message"
+        android:icon="@drawable/ic_send_black_24dp"
+        android:title="@string/title_send_message"/>
+
+</menu>

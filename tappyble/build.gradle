@@ -1,0 +1,48 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion globalCfg.compileSdkVersion
+    buildToolsVersion globalCfg.buildToolsVersion
+
+    defaultConfig {
+        minSdkVersion globalCfg.minSdkVersion
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+}
+
+dependencies {
+    compile libraries.tappy
+    compile "com.taptrack.tcmptappy:blescannercompat:0.9.3"
+}
+
+archivesBaseName = bintrayCfg.publishedArtifacts.tappyble.artifact
+group = globalCfg.publishedGroupId
+version = globalCfg.publishedVersion
+
+ext {
+    bintrayRepo = bintrayCfg.bintrayRepo
+    publishedGroupId = group
+    siteUrl = bintrayCfg.siteUrl
+    gitUrl = bintrayCfg.gitUrl
+
+    developerId = bintrayCfg.developerId
+    developerName = bintrayCfg.developerName
+    developerEmail = bintrayCfg.developerEmail
+
+    licenseName = bintrayCfg.licenseName
+    licenseUrl = bintrayCfg.licenseUrl
+    allLicenses = bintrayCfg.allLicenses
+
+    bintrayName = bintrayCfg.publishedArtifacts.tappyble.bintrayName
+    libraryName = bintrayCfg.publishedArtifacts.tappyble.libraryName
+    artifact = bintrayCfg.publishedArtifacts.tappyble.artifact
+    libraryDescription = bintrayCfg.publishedArtifacts.tappyble.libraryDescription
+    libraryVersion = version
+}
+
+apply from: bintrayCfg.mavenInstallScript
+apply from: bintrayCfg.bintrayScript

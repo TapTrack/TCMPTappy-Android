@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#143E75</color>
+    <color name="colorPrimaryDark">#0B3A63</color>
+    <color name="colorAccent">#874E04</color>
+    <color name="colorUnselected">#A0A0A0</color>
+    <color name="colorCommandHeadings">#C0C0C0</color>
+
+    <color name="incomingMessageText">#C0C0C0</color>
+    <color name="incomingMessageBackground">#505050</color>
+    <color name="outgoingMessageText">#C0C0C0</color>
+    <color name="outgoingMessageBackground">@color/colorPrimaryDark</color>
+
+    <color name="bottomNavUnselectedColor">@color/foundTappyColor</color>
+    <color name="bottomNavSelectedColor">@color/colorAccent</color>
+
+    <color name="foundTappyColor">#898989</color>
+    <color name="removeTappyColor">#898989</color>
+    <color name="translucentBlack">#30000000</color>
+
+    <color name="connected_tappy_color">#2186CF</color>
+    <color name="error_tappy_color">#850000</color>
+    <color name="disconnected_tappy_color">@color/foundTappyColor</color>
+</resources>

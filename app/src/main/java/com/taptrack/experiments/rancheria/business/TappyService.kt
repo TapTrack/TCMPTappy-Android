@@ -84,11 +84,11 @@ class TappyService: Service() {
     private val broadcastReceiver = object: BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if(ACTION_DISCONNECT_ALL_TAPPIES == intent?.action) {
-                connectionsRwLock.readLock().lock()
+                connectionsRwLock.writeLock().lock()
                 for (tappy in allConnections.values) {
                     tappy.close()
                 }
-                connectionsRwLock.readLock().unlock()
+                connectionsRwLock.writeLock().unlock()
             } else if (ACTION_SEND_MESSAGE == intent?.action) {
                 if(intent.hasExtra(EXTRA_TCMP_MESSAGE)) {
                     val content = intent.getByteArrayExtra(EXTRA_TCMP_MESSAGE)

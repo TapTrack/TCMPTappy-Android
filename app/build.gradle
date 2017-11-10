@@ -24,8 +24,8 @@ android {
         applicationId "com.taptrack.bletappyexample"
         minSdkVersion globalCfg.minSdkVersion
         targetSdkVersion 26
-        versionCode 17
-        versionName "4.0.0"
+        versionCode 19
+        versionName "4.0.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -36,7 +36,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             applicationIdSuffix ".debug"
         }

@@ -240,9 +240,9 @@ class SearchManagementDelegate constructor(val ctx: Context, val resultsListener
     }
 
     companion object {
-        val RESTART_SCAN_INTERVAL_MS = 9000L
-        val MAX_TIME_KEEP_IN_LIST_MS = 5000L
-        val AUTO_RESET_LONG_INTERVAL = 1000L
+        val RESTART_SCAN_INTERVAL_MS = 10000L
+        val MAX_TIME_KEEP_IN_LIST_MS = 10000L
+        val AUTO_RESET_LONG_INTERVAL = 100L
         val AUTO_RESET_SHORT_INTERVAL = 50L
         val TRIM_OLD_BLE_INTERVAL_MS = 1000L
     }

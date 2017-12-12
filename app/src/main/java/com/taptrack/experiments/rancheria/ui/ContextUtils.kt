@@ -26,7 +26,7 @@ inline fun Context.inflateChildren(@LayoutRes layoutRes: Int, parent: ViewGroup,
 }
 
 
-inline fun Context.getDrawableCompat(@DrawableRes drawableRes: Int): Drawable = ContextCompat.getDrawable(this,drawableRes)
+inline fun Context.getDrawableCompat(@DrawableRes drawableRes: Int): Drawable? = ContextCompat.getDrawable(this,drawableRes)
 
 @ColorInt
 inline fun Context.getColorCompat(@ColorRes colorRes: Int): Int = ContextCompat.getColor(this,colorRes)
@@ -35,7 +35,7 @@ inline fun Context.getColorResTintedDrawable(drawable: Drawable, @ColorRes color
     return this.getColorIntTintedDrawable(drawable, ContextCompat.getColor(this, color))
 }
 
-inline fun Context.getColorResTintedDrawable(@DrawableRes drawable: Int, @ColorRes color: Int): Drawable {
+inline fun Context.getColorResTintedDrawable(@DrawableRes drawable: Int, @ColorRes color: Int): Drawable? {
     return this.getColorIntTintedDrawable(drawable, ContextCompat.getColor(this, color))
 }
 
@@ -46,8 +46,10 @@ inline fun Context.getColorIntTintedDrawable(drawable: Drawable, @ColorInt color
     return wrapDrawable
 }
 
-inline fun Context.getColorIntTintedDrawable(@DrawableRes drawable: Int, @ColorInt color: Int): Drawable {
-    val wrapDrawable = DrawableCompat.wrap(ContextCompat.getDrawable(this, drawable))
+inline fun Context.getColorIntTintedDrawable(@DrawableRes drawable: Int, @ColorInt color: Int): Drawable? {
+    val rawDrawable = ContextCompat.getDrawable(this,drawable) ?: return null
+
+    val wrapDrawable = DrawableCompat.wrap(rawDrawable)
     wrapDrawable.mutate()
     DrawableCompat.setTint(wrapDrawable, color)
     return wrapDrawable

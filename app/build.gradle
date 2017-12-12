@@ -23,9 +23,9 @@ android {
     defaultConfig {
         applicationId "com.taptrack.bletappyexample"
         minSdkVersion globalCfg.minSdkVersion
-        targetSdkVersion 26
-        versionCode 19
-        versionName "4.0.2"
+        targetSdkVersion 27
+        versionCode 20
+        versionName "4.1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -43,8 +43,8 @@ android {
     }
 }
 
-ext.anko_version = "0.10.2"
-ext.support_lib_version = "26.1.0"
+ext.anko_version = "0.10.3"
+ext.support_lib_version = "27.0.2"
 ext.constraint_layout_version = "1.1.0-beta3"
 
 dependencies {
@@ -81,17 +81,17 @@ dependencies {
     //    compile 'com.jakewharton:butterknife:8.6.0'
     //    kapt 'com.jakewharton:butterknife-compiler:8.6.0'
     compile 'com.f2prateek.rx.preferences2:rx-preferences:2.0.0-RC2'
-    compile 'com.jakewharton.timber:timber:4.5.1'
+    compile 'com.jakewharton.timber:timber:4.6.0'
     compile 'com.facebook.stetho:stetho:1.5.0'
     compile 'com.uphyca:stetho_realm:2.0.0'
     compile 'com.karumi:dexter:4.1.0'
-    compile 'com.taptrack.tcmptappy:commandfamily-system:0.8.0'
+    compile 'com.taptrack.tcmptappy:commandfamily-system:0.9.0'
     compile 'com.taptrack.tcmptappy:commandfamily-basicnfc:0.10.0'
     compile 'com.taptrack.tcmptappy:commandfamily-type4:0.3.0'
     compile 'com.taptrack.tcmptappy:commandfamily-mifareclassic:0.4.0'
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    compile 'io.reactivex.rxjava2:rxjava:2.1.4'
-    compile 'io.reactivex.rxjava2:rxkotlin:2.1.0'
+    compile 'io.reactivex.rxjava2:rxjava:2.1.7'
+    compile 'io.reactivex.rxjava2:rxkotlin:2.2.0'
     compile 'com.jakewharton.rxrelay2:rxrelay:2.0.0'
     compile 'io.realm:android-adapters:2.0.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'

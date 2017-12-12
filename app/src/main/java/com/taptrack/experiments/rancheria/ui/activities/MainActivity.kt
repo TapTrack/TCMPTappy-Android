@@ -476,7 +476,7 @@ class MainActivity : android.support.v7.app.AppCompatActivity(), ChooseTappiesVi
 }
 
 class SendMessagesFragment: Fragment() {
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val ctx = container!!.context
         val v = CommandSelectorView(ctx)
         v.layoutParams = ViewGroup.LayoutParams(matchParent, matchParent)
@@ -486,7 +486,7 @@ class SendMessagesFragment: Fragment() {
 }
 
 class ChooseDevicesFragment: Fragment() {
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val v = ChooseTappiesView(container!!.context)
         v.layoutParams = ViewGroup.LayoutParams(matchParent, matchParent)
         return v
@@ -494,7 +494,7 @@ class ChooseDevicesFragment: Fragment() {
 }
 
 class CommHistoryFragment: Fragment() {
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val ctx = container!!.context
         val v2 = FrameLayout(ctx)
         v2.layoutParams = ViewGroup.LayoutParams(matchParent, matchParent)

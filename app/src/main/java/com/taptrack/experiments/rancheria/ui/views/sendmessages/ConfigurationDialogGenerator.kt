@@ -577,19 +577,22 @@ class ConfigureCommandDialogFragment : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         // Use the Builder class for convenient dialog construction
-        val builder = AlertDialog.Builder(this.activity)
+        // TODO: find an alternative to this
+        val act = this.activity!!
+        val ctx = this.context!!
+        val builder = AlertDialog.Builder(act)
         val commandId = arguments?.getInt(KEY_COMMAND_ID) ?: -1
-        val dataSource = CommandDataSource(this.context)
+        val dataSource = CommandDataSource(ctx)
         val command = dataSource.retrieveCommand(commandId)
 
         if (command != null) {
-            val dialog = DialogGenerator.configureCommandAlertDialog(this.activity, command)
+            val dialog = DialogGenerator.configureCommandAlertDialog(act, command)
             if (dialog != null) {
                 return dialog
             }
         }
         // this should be impossible
-        return AlertDialog.Builder(this.activity,R.style.AppTheme_Dialog)
+        return AlertDialog.Builder(act,R.style.AppTheme_Dialog)
                 .setTitle(R.string.error)
                 .setCancelable(true)
                 .setPositiveButton(android.R.string.ok, object : DialogInterface.OnClickListener {

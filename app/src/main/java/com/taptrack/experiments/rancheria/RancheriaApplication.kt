@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.support.v7.app.AppCompatDelegate
 import com.f2prateek.rx.preferences2.RxSharedPreferences
+import com.taptrack.experiments.rancheria.business.TappyNotificationManager
 import io.reactivex.Observable
 import io.realm.Realm
 import io.realm.RealmConfiguration
@@ -16,6 +17,8 @@ class RancheriaApplication: Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        TappyNotificationManager.createNotificationChannelIfOreo(this)
 
         prefs = getSharedPreferences(PREFS_GLOBAL,Context.MODE_PRIVATE)
         rxPrefs = RxSharedPreferences.create(prefs)

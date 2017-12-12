@@ -45,7 +45,13 @@
         <service
             android:name=".business.TappyService"
             android:exported="false"/>
-
+        <receiver
+            android:name=".business.TappyNotificationLocaleUpdateReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.LOCALE_CHANGED"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

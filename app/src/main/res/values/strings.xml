@@ -53,4 +53,7 @@
     <string name="error_must_be_hex">Must be a valid hex string</string>
     <string name="error_must_be_hex_byte">Must be a valid hex byte</string>
     <string name="error">Error</string>
+
+    <string name="tappy_channel_name">Active Tappies</string>
+    <string name="tappy_channel_description">Displays the currently connected Tappies</string>
 </resources>

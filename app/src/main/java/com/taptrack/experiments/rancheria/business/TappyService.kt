@@ -1,6 +1,5 @@
 package com.taptrack.experiments.rancheria.business
 
-import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
 import android.content.BroadcastReceiver
@@ -12,7 +11,6 @@ import android.net.Uri
 import android.nfc.NdefMessage
 import android.nfc.NdefRecord
 import android.os.*
-import android.support.v7.app.NotificationCompat
 import android.util.Log
 import com.taptrack.experiments.rancheria.R
 import com.taptrack.experiments.rancheria.getRancheriaApplication
@@ -67,7 +65,7 @@ class TappyService: Service() {
     private val usbTappies = mutableMapOf<Int, TappyTrio.TappyUsbTrio>()
     private val bleTappies = mutableMapOf<String, TappyTrio.TappyBleTrio>()
 
-    val connectionsRwLock = ReentrantReadWriteLock()
+    private val connectionsRwLock = ReentrantReadWriteLock()
 
     private var realm: Realm? = null
 
@@ -85,10 +83,15 @@ class TappyService: Service() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if(ACTION_DISCONNECT_ALL_TAPPIES == intent?.action) {
                 connectionsRwLock.writeLock().lock()
-                for (tappy in allConnections.values) {
-                    tappy.close()
+                val connections = allConnections.values
+                var tappyList = emptyList<Tappy>()
+                for (tappy in connections) {
+                    tappyList = tappyList.plus(tappy)
                 }
                 connectionsRwLock.writeLock().unlock()
+                for (tappy in tappyList) {
+                    tappy.close()
+                }
             } else if (ACTION_SEND_MESSAGE == intent?.action) {
                 if(intent.hasExtra(EXTRA_TCMP_MESSAGE)) {
                     val content = intent.getByteArrayExtra(EXTRA_TCMP_MESSAGE)
@@ -134,11 +137,12 @@ class TappyService: Service() {
 
     private fun sendTcmp(message: TCMPMessage) {
         try {
-            connectionsRwLock.readLock().lock()
+            connectionsRwLock.writeLock().lock()
+                    //TODO: change back to writeLock()
             allConnections.values
                     .filter { it.latestStatus == Tappy.STATUS_READY }
                     .forEach { it.sendMessage(message) }
-            connectionsRwLock.readLock().unlock()
+            connectionsRwLock.writeLock().unlock()
 
             mtHandler.post {
                 realm?.executeTransactionAsync({
@@ -173,11 +177,12 @@ class TappyService: Service() {
         ).toFlowable(BackpressureStrategy.LATEST)
         .subscribe {
             val hasReadyTappies: Boolean
-            if (connectionsRwLock.readLock().tryLock()) {
+            val lock = connectionsRwLock.readLock()
+            if (lock.tryLock()) {
                 hasReadyTappies = allConnections.values
                         .filter { it.latestStatus == Tappy.STATUS_READY }
                         .isNotEmpty()
-                connectionsRwLock.readLock().unlock()
+                lock.unlock()
             } else {
                 hasReadyTappies = true
             }
@@ -203,9 +208,10 @@ class TappyService: Service() {
     }
 
     private fun connectTappyBle(definition: TappyBleDeviceDefinition) {
-        connectionsRwLock.writeLock().lock()
 
+        connectionsRwLock.writeLock().lock()
         if(bleTappies.containsKey(definition.address)){
+            connectionsRwLock.writeLock().unlock()
             return
         }
 
@@ -256,7 +262,8 @@ class TappyService: Service() {
     private fun updateForegroundState() {
         var activeDeviceCount = 0
 
-        connectionsRwLock.readLock().lock()
+        val lock = connectionsRwLock.readLock()
+        lock.lock()
 
         if (allConnections.isNotEmpty()) {
             wakeLock?.acquire()
@@ -277,15 +284,15 @@ class TappyService: Service() {
             val openActivityIntent = Intent(this, MainActivity::class.java)
             val openActivityPendingIntent = PendingIntent.getActivity(this,0,openActivityIntent,0)
 
-            val notification = NotificationCompat.Builder(this)
+            val notification = TappyNotificationManager.createNotificationBuilder(this)
                     .setContentTitle(notificationTitle)
                     .setContentText(notificationContent)
                     .setSmallIcon(R.drawable.ic_tappy_connected_notification)
                     .setTicker(notificationContent)
                     .setContentIntent(openActivityPendingIntent)
-                    .setPriority(Notification.PRIORITY_HIGH)
                     .addAction(R.drawable.ic_remove_all, getString(R.string.remove_all_tappies), disconnectTappiesPendingIntent)
                     .build()
+
             startForeground(NOTIFICATION_ID, notification)
 
             // this makes the service actually started so it isn't killed
@@ -297,7 +304,7 @@ class TappyService: Service() {
             wakeLock?.release()
         }
 
-        connectionsRwLock.readLock().unlock()
+        lock.unlock()
     }
 
     fun launchUrlIfNecessary(message: TCMPMessage) {
@@ -389,6 +396,7 @@ class TappyService: Service() {
         connectionsRwLock.writeLock().lock()
 
         if(usbTappies.containsKey(device.deviceId)){
+            connectionsRwLock.writeLock().unlock()
             return
         }
 

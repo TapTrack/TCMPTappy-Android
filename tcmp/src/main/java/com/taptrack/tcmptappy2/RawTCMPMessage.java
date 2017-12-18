@@ -17,12 +17,15 @@
 package com.taptrack.tcmptappy2;
 
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Size;
+
 public class RawTCMPMessage extends AbstractTCMPMessage {
     protected byte[] payload;
     protected byte[] commandFamily;
     protected byte commandCode;
 
-    public RawTCMPMessage(byte[] message) throws TCMPMessageParseException {
+    public RawTCMPMessage(@NonNull byte[] message) throws TCMPMessageParseException {
         try {
             if(TCMPUtils.validate(message)) {
                 commandFamily = new byte[]{message[3], message[4]};
@@ -38,10 +41,11 @@ public class RawTCMPMessage extends AbstractTCMPMessage {
     }
 
     @Override
-    public void parsePayload(byte[] payload) throws MalformedPayloadException {
+    public void parsePayload(@NonNull byte[] payload) throws MalformedPayloadException {
         this.payload = payload;
     }
 
+    @NonNull
     @Override
     public byte[] getPayload() {
         return payload;
@@ -52,6 +56,8 @@ public class RawTCMPMessage extends AbstractTCMPMessage {
         return commandCode;
     }
 
+    @NonNull
+    @Size(2)
     @Override
     public byte[] getCommandFamily() {
         return commandFamily;

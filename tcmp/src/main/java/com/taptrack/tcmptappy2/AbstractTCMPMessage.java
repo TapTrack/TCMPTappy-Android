@@ -16,11 +16,13 @@
 
 package com.taptrack.tcmptappy2;
 
+import android.support.annotation.NonNull;
+
 import java.io.IOException;
 
 public abstract class AbstractTCMPMessage implements TCMPMessage {
 
-
+    @NonNull
     @Override
     public byte[] toByteArray() {
         byte[] data = getPayload();

@@ -17,19 +17,14 @@ import com.taptrack.experiments.rancheria.getRancheriaApplication
 import com.taptrack.experiments.rancheria.model.RealmTcmpCommunique
 import com.taptrack.experiments.rancheria.ui.activities.MainActivity
 import com.taptrack.tcmptappy.tcmp.MalformedPayloadException
-import com.taptrack.tcmptappy.tcmp.commandfamilies.basicnfc.BasicNfcCommandLibrary
-import com.taptrack.tcmptappy.tcmp.commandfamilies.basicnfc.responses.NdefFoundResponse
-import com.taptrack.tcmptappy.tcmp.commandfamilies.systemfamily.commands.PingCommand
-import com.taptrack.tcmptappy.tcmp.common.CommandFamilyMessageResolver
 import com.taptrack.tcmptappy.tcmp.common.FamilyCodeNotSupportedException
 import com.taptrack.tcmptappy.tcmp.common.ResponseCodeNotSupportedException
-import com.taptrack.tcmptappy2.RawTCMPMessage
-import com.taptrack.tcmptappy2.TCMPMessage
-import com.taptrack.tcmptappy2.TCMPMessageParseException
-import com.taptrack.tcmptappy2.Tappy
+import com.taptrack.tcmptappy2.*
 import com.taptrack.tcmptappy2.ble.TappyBle
 import com.taptrack.tcmptappy2.ble.TappyBleDeviceDefinition
-import com.taptrack.tcmptappy2.tcmpconverter.TcmpConverter
+import com.taptrack.tcmptappy2.commandfamilies.basicnfc.BasicNfcCommandResolver
+import com.taptrack.tcmptappy2.commandfamilies.basicnfc.responses.NdefFoundResponse
+import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.PingCommand
 import com.taptrack.tcmptappy2.usb.TappyUsb
 import io.reactivex.BackpressureStrategy
 import io.reactivex.disposables.Disposable
@@ -150,7 +145,7 @@ class TappyService: Service() {
                     recordObj.deviceName = "ME"
                     recordObj.messageTime = System.currentTimeMillis()
                     recordObj.deviceId = "ME"
-                    recordObj.isCommand = true
+                    recordObj.command = true
                     recordObj.message = message.toByteArray()
                 })
             }
@@ -187,7 +182,7 @@ class TappyService: Service() {
                 hasReadyTappies = true
             }
             if (it && hasReadyTappies) {
-                sendTcmp(TcmpConverter.toVersionTwo(PingCommand()))
+                sendTcmp((PingCommand()))
             }
         }
 
@@ -237,7 +232,7 @@ class TappyService: Service() {
                     recordObj.deviceName = "TappyBLE: "+definition.name
                     recordObj.messageTime = System.currentTimeMillis()
                     recordObj.deviceId = tappy.deviceDescription
-                    recordObj.isCommand = false
+                    recordObj.command = false
                     recordObj.message = response.toByteArray()
                 })
                 launchUrlIfNecessary(it)
@@ -310,7 +305,7 @@ class TappyService: Service() {
     fun launchUrlIfNecessary(message: TCMPMessage) {
         if(shouldAutolaunch) {
             try {
-                val response = messageResolver.parseResponse(TcmpConverter.fromVersionTwo(message))
+                val response = messageResolver.resolveResponse((message))
                 if (response is NdefFoundResponse) {
                     ndefFound(response.message)
                 }
@@ -428,7 +423,7 @@ class TappyService: Service() {
                     recordObj.deviceName = "TappyUSB"
                     recordObj.messageTime = System.currentTimeMillis()
                     recordObj.deviceId = tappy.deviceDescription
-                    recordObj.isCommand = false
+                    recordObj.command = false
                     recordObj.message = response.toByteArray()
                 })
                 launchUrlIfNecessary(it)
@@ -485,11 +480,9 @@ class TappyService: Service() {
         val ACTION_SEND_MESSAGE = TappyService::class.java.name+".ACTION_SEND_TCMP"
         private val EXTRA_TCMP_MESSAGE = TappyService::class.java.name+".EXTRA_TCMP_MESSAGE"
 
-        private val messageResolver: CommandFamilyMessageResolver = CommandFamilyMessageResolver()
-
-        init {
-            messageResolver.registerCommandLibrary(BasicNfcCommandLibrary())
-        }
+        private val messageResolver: MessageResolverMux = MessageResolverMux(
+                BasicNfcCommandResolver()
+        )
 
         fun broadcastSendTcmp(message: TCMPMessage, ctx: Context) {
             val intent = Intent(ACTION_SEND_MESSAGE)

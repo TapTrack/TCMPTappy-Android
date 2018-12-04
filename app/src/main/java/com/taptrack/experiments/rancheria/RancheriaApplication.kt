@@ -3,6 +3,7 @@ package com.taptrack.experiments.rancheria
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import android.support.multidex.MultiDexApplication
 import android.support.v7.app.AppCompatDelegate
 import com.f2prateek.rx.preferences2.RxSharedPreferences
 import com.taptrack.experiments.rancheria.business.TappyNotificationManager
@@ -11,7 +12,7 @@ import io.realm.Realm
 import io.realm.RealmConfiguration
 import timber.log.Timber
 
-class RancheriaApplication: Application() {
+class RancheriaApplication: MultiDexApplication() {
     lateinit private var prefs: SharedPreferences
     lateinit private var rxPrefs: RxSharedPreferences
 
@@ -29,7 +30,7 @@ class RancheriaApplication: Application() {
 
         Realm.init(this)
         val config = RealmConfiguration.Builder()
-                .schemaVersion(2)
+                .schemaVersion(3)
                 .deleteRealmIfMigrationNeeded()
                 .build()
         Realm.setDefaultConfiguration(config)

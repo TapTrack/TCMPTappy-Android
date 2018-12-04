@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion globalCfg.compileSdkVersion
-    buildToolsVersion globalCfg.buildToolsVersion
+    buildToolsVersion '28.0.3'
 
     defaultConfig {
         minSdkVersion globalCfg.minSdkVersion
@@ -15,8 +15,8 @@ android {
 }
 
 dependencies {
-    compile libraries.tcmp
-    compile libraries.androidSupportAnnotations
+    api libraries.tcmp
+    api libraries.androidSupportAnnotations
 }
 
 

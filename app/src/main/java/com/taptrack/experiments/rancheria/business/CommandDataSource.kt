@@ -2,20 +2,20 @@ package com.taptrack.experiments.rancheria.business
 
 import android.content.Context
 import com.taptrack.experiments.rancheria.R
-import com.taptrack.tcmptappy.tcmp.TCMPMessage
-import com.taptrack.tcmptappy.tcmp.commandfamilies.basicnfc.BasicNfcCommandLibrary
-import com.taptrack.tcmptappy.tcmp.commandfamilies.basicnfc.commands.*
-import com.taptrack.tcmptappy.tcmp.commandfamilies.mifareclassic.MifareClassicCommandLibrary
-import com.taptrack.tcmptappy.tcmp.commandfamilies.mifareclassic.commands.DetectMifareClassicCommand
-import com.taptrack.tcmptappy.tcmp.commandfamilies.mifareclassic.commands.GetMifareClassicLibraryVersionCommand
-import com.taptrack.tcmptappy.tcmp.commandfamilies.mifareclassic.commands.ReadMifareClassicCommand
-import com.taptrack.tcmptappy.tcmp.commandfamilies.systemfamily.SystemCommandLibrary
-import com.taptrack.tcmptappy.tcmp.commandfamilies.systemfamily.commands.GetBatteryLevelCommand
-import com.taptrack.tcmptappy.tcmp.commandfamilies.systemfamily.commands.GetFirmwareVersionCommand
-import com.taptrack.tcmptappy.tcmp.commandfamilies.systemfamily.commands.GetHardwareVersionCommand
-import com.taptrack.tcmptappy.tcmp.commandfamilies.systemfamily.commands.PingCommand
-import com.taptrack.tcmptappy.tcmp.commandfamilies.type4.Type4CommandLibrary
-import com.taptrack.tcmptappy.tcmp.commandfamilies.type4.commands.*
+import com.taptrack.tcmptappy2.TCMPMessage
+import com.taptrack.tcmptappy2.commandfamilies.basicnfc.BasicNfcCommandResolver
+import com.taptrack.tcmptappy2.commandfamilies.basicnfc.commands.*
+import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.MifareClassicCommandResolver
+import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.commands.DetectMifareClassicCommand
+import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.commands.GetMifareClassicLibraryVersionCommand
+import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.commands.ReadMifareClassicCommand
+import com.taptrack.tcmptappy2.commandfamilies.systemfamily.SystemCommandResolver
+import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.GetBatteryLevelCommand
+import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.GetFirmwareVersionCommand
+import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.GetHardwareVersionCommand
+import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.PingCommand
+import com.taptrack.tcmptappy2.commandfamilies.type4.Type4CommandResolver
+import com.taptrack.tcmptappy2.commandfamilies.type4.commands.*
 import kotlin.reflect.full.createInstance
 
 data class CommandFamilyOption(
@@ -64,13 +64,13 @@ class CommandDataSource(val context: Context) {
     // TODO: improve this procedure
     fun retrieveCommandOptionForMessage(msg: TCMPMessage): CommandOption? {
         var toSearch: List<CommandOption>
-        if (msg.commandFamily contentEquals SystemCommandLibrary.FAMILY_ID) {
+        if (msg.commandFamily contentEquals SystemCommandResolver.FAMILY_ID) {
             toSearch = sortedSystemCommands
-        } else if (msg.commandFamily contentEquals BasicNfcCommandLibrary.FAMILY_ID) {
+        } else if (msg.commandFamily contentEquals BasicNfcCommandResolver.FAMILY_ID) {
             toSearch = sortedBasicNfcCommands
-        } else if (msg.commandFamily contentEquals MifareClassicCommandLibrary.FAMILY_ID) {
+        } else if (msg.commandFamily contentEquals MifareClassicCommandResolver.FAMILY_ID) {
             toSearch = sortedClassicCommands
-        } else if (msg.commandFamily contentEquals Type4CommandLibrary.FAMILY_ID) {
+        } else if (msg.commandFamily contentEquals Type4CommandResolver.FAMILY_ID) {
             toSearch = sortedType4Commands
         } else {
             toSearch = sortedAllCommands
@@ -192,7 +192,7 @@ class CommandDataSource(val context: Context) {
                         CommandOption(COM_OPT_READ_CLASS, FAM_OPTION_ID_CLASSIC, R.drawable.ic_read_classic_48dp, R.string.classiccommand_read_classic_title, R.string.classiccommand_read_classic_description, ReadMifareClassicCommand::class.java)),
 
                 Pair(COM_OPT_T4_DETECT,
-                        CommandOption(COM_OPT_T4_DETECT, FAM_OPTION_ID_T4, R.drawable.ic_nfc_black_48dp, R.string.type4command_detect_title, R.string.type4command_detect_description, listOf(DetectType4Command::class.java,DetectType4BCommand::class.java,DetectType4BSpecificAfiCommand::class.java))),
+                        CommandOption(COM_OPT_T4_DETECT, FAM_OPTION_ID_T4, R.drawable.ic_nfc_black_48dp, R.string.type4command_detect_title, R.string.type4command_detect_description, listOf(DetectType4Command::class.java, DetectType4BCommand::class.java, DetectType4BSpecificAfiCommand::class.java))),
                 Pair(COM_OPT_T4_LIBV,
                         CommandOption(COM_OPT_T4_LIBV, FAM_OPTION_ID_T4, R.drawable.ic_library_version_48dp, R.string.type4command_get_version_title, R.string.type4command_get_version_description, GetType4LibraryVersionCommand::class.java)),
                 Pair(COM_OPT_T4_TRANS,

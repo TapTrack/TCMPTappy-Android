@@ -18,19 +18,14 @@ import com.taptrack.experiments.rancheria.model.RealmTcmpCommunique
 import com.taptrack.experiments.rancheria.ui.views.getHostActivity
 import com.taptrack.experiments.rancheria.ui.views.sendmessages.ConfigureCommandDialogFragment
 import com.taptrack.experiments.rancheria.ui.views.sendmessages.DialogGenerator
-import com.taptrack.tcmptappy.tcmp.MalformedPayloadException
-import com.taptrack.tcmptappy.tcmp.RawTCMPMessage
-import com.taptrack.tcmptappy.tcmp.TCMPMessage
-import com.taptrack.tcmptappy.tcmp.TCMPMessageParseException
-import com.taptrack.tcmptappy.tcmp.commandfamilies.basicnfc.BasicNfcCommandLibrary
-import com.taptrack.tcmptappy.tcmp.commandfamilies.mifareclassic.MifareClassicCommandLibrary
-import com.taptrack.tcmptappy.tcmp.commandfamilies.systemfamily.SystemCommandLibrary
-import com.taptrack.tcmptappy.tcmp.commandfamilies.type4.Type4CommandLibrary
 import com.taptrack.tcmptappy.tcmp.common.CommandCodeNotSupportedException
-import com.taptrack.tcmptappy.tcmp.common.CommandFamilyMessageResolver
 import com.taptrack.tcmptappy.tcmp.common.FamilyCodeNotSupportedException
 import com.taptrack.tcmptappy.tcmp.common.ResponseCodeNotSupportedException
-import com.taptrack.tcmptappy2.tcmpconverter.TcmpConverter
+import com.taptrack.tcmptappy2.*
+import com.taptrack.tcmptappy2.commandfamilies.basicnfc.BasicNfcCommandResolver
+import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.MifareClassicCommandResolver
+import com.taptrack.tcmptappy2.commandfamilies.systemfamily.SystemCommandResolver
+import com.taptrack.tcmptappy2.commandfamilies.type4.Type4CommandResolver
 import io.realm.OrderedRealmCollection
 import io.realm.Realm
 import io.realm.RealmRecyclerViewAdapter
@@ -77,7 +72,7 @@ class ViewMessagesView : RecyclerView {
 //            }
 
             // There are some issues with properly tracking updates, so doing this sadly
-            this@ViewMessagesView.adapter.notifyDataSetChanged()
+            this@ViewMessagesView.adapter?.notifyDataSetChanged()
         }
     }
 
@@ -108,10 +103,10 @@ class ViewMessagesView : RecyclerView {
         realm = Realm.getDefaultInstance()
         adapter = MessageAdapter(
                 this,
-                realm?.where(RealmTcmpCommunique::class.java)?.findAllSorted("messageTime", Sort.DESCENDING),
+                realm?.where(RealmTcmpCommunique::class.java)?.findAll()?.sort("messageTime", Sort.DESCENDING),
                 true
         )
-        adapter.registerAdapterDataObserver(newItemScroller)
+        adapter?.registerAdapterDataObserver(newItemScroller)
         scrollToPosition(0)
     }
 
@@ -120,7 +115,7 @@ class ViewMessagesView : RecyclerView {
         realm?.close()
         realm = null
 
-        adapter.unregisterAdapterDataObserver(newItemScroller)
+        adapter?.unregisterAdapterDataObserver(newItemScroller)
         adapter = null
     }
 }
@@ -137,7 +132,7 @@ private class MessageAdapter(private val hostView: RecyclerView, data: OrderedRe
 
     override fun getItemViewType(position: Int): Int {
         val item = getItem(position) as? RealmTcmpCommunique
-        if (item?.isCommand ?: false) {
+        if (item?.command ?: false) {
             return TYPE_COMMAND
         } else {
             return TYPE_RESPONSE
@@ -154,7 +149,7 @@ private class MessageAdapter(private val hostView: RecyclerView, data: OrderedRe
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): VH =
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH =
         when(viewType) {
             TYPE_RESPONSE -> ResponseVH.inflate(parent!!)
             TYPE_COMMAND -> CommandVH.inflate(commandDataSource, parent!!)
@@ -164,7 +159,7 @@ private class MessageAdapter(private val hostView: RecyclerView, data: OrderedRe
         }
 
 
-    override fun onBindViewHolder(holder: VH?, position: Int) {
+    override fun onBindViewHolder(holder: VH, position: Int) {
         val item = getItem(position) ?: return
 
         when(holder) {
@@ -195,16 +190,16 @@ private class MessageAdapter(private val hostView: RecyclerView, data: OrderedRe
     abstract class VH constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         companion object {
-            val resolver: CommandFamilyMessageResolver = CommandFamilyMessageResolver()
+            val resolver: MessageResolverMux = MessageResolverMux(
+                    SystemCommandResolver(),
+                    BasicNfcCommandResolver(),
+                    Type4CommandResolver(),
+                    MifareClassicCommandResolver()
+            )
 
             val formatter: DateFormat
 
             init {
-                resolver.registerCommandLibrary(SystemCommandLibrary())
-                resolver.registerCommandLibrary(BasicNfcCommandLibrary())
-                resolver.registerCommandLibrary(Type4CommandLibrary())
-                resolver.registerCommandLibrary(MifareClassicCommandLibrary())
-
                 formatter = DateFormat.getDateTimeInstance(DateFormat.MEDIUM,DateFormat.MEDIUM)
             }
 
@@ -224,8 +219,9 @@ private class MessageAdapter(private val hostView: RecyclerView, data: OrderedRe
         init {
             rootView.setOnClickListener {
                 rootView.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
-                if(currentCommand != null) {
-                    TappyService.broadcastSendTcmp(TcmpConverter.toVersionTwo(currentCommand),ctx)
+                val localCurrent = currentCommand
+                if(localCurrent != null) {
+                    TappyService.broadcastSendTcmp((localCurrent),ctx)
                 }
             }
 
@@ -261,8 +257,12 @@ private class MessageAdapter(private val hostView: RecyclerView, data: OrderedRe
                     val rawMessage = RawTCMPMessage(communique.message)
                     currentCommand = rawMessage
                     currentMessage = communique.message
-                    val resolvedMessage = VH.resolver.parseCommand(rawMessage)
-                    messageView.text = TcmpMessageDescriptor.getCommandDescription(resolvedMessage,ctx)
+                    val resolvedMessage = VH.resolver.resolveCommand(rawMessage)
+                    if (resolvedMessage != null) {
+                        messageView.text = TcmpMessageDescriptor.getCommandDescription(resolvedMessage,ctx)
+                    } else {
+                        messageView.setText(R.string.invalid_command)
+                    }
                 } catch (e : TCMPMessageParseException) {
                     Timber.e(e)
                     messageView.setText(R.string.invalid_command)
@@ -306,8 +306,12 @@ private class MessageAdapter(private val hostView: RecyclerView, data: OrderedRe
             currentCommunique = communique
             try {
                 val rawMessage = RawTCMPMessage(communique.message)
-                val resolvedMessage = VH.resolver.parseResponse(rawMessage)
-                messageView.text = TcmpMessageDescriptor.getResponseDescription(resolvedMessage,ctx)
+                val resolvedMessage = VH.resolver.resolveResponse(rawMessage)
+                if (resolvedMessage != null) {
+                    messageView.text = TcmpMessageDescriptor.getResponseDescription(resolvedMessage,ctx)
+                } else {
+                    messageView.setText(R.string.invalid_command)
+                }
             } catch (e : TCMPMessageParseException) {
                 Timber.e(e)
                 messageView.setText(R.string.invalid_command)

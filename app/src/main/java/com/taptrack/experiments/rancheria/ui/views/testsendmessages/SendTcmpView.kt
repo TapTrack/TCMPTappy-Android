@@ -13,12 +13,11 @@ import android.widget.TextView
 import com.taptrack.experiments.rancheria.R
 import com.taptrack.experiments.rancheria.business.TappyService
 import com.taptrack.experiments.rancheria.ui.inflateChildren
-import com.taptrack.tcmptappy.tcmp.TCMPMessage
-import com.taptrack.tcmptappy.tcmp.commandfamilies.basicnfc.PollingModes
-import com.taptrack.tcmptappy.tcmp.commandfamilies.basicnfc.commands.*
-import com.taptrack.tcmptappy.tcmp.commandfamilies.systemfamily.commands.GetBatteryLevelCommand
-import com.taptrack.tcmptappy.tcmp.commandfamilies.systemfamily.commands.PingCommand
-import com.taptrack.tcmptappy2.tcmpconverter.TcmpConverter
+import com.taptrack.tcmptappy2.TCMPMessage
+import com.taptrack.tcmptappy2.commandfamilies.basicnfc.PollingModes
+import com.taptrack.tcmptappy2.commandfamilies.basicnfc.commands.*
+import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.GetBatteryLevelCommand
+import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.PingCommand
 import org.jetbrains.anko.find
 import org.jetbrains.anko.textResource
 import java.util.*
@@ -55,16 +54,16 @@ class SendTcmpView : RecyclerView {
 
     companion object {
         private val COMMAND_OPTIONS: List<CommandOption> = listOf(
-            CommandOption(R.string.desc_get_battery_level,GetBatteryLevelCommand()),
-            CommandOption(R.string.desc_ping_command,PingCommand()),
-            CommandOption(R.string.desc_stop_command,StopCommand()),
-            CommandOption(R.string.desc_scan_ndef_5_seconds,ScanNdefCommand(5,PollingModes.MODE_GENERAL)),
+            CommandOption(R.string.desc_get_battery_level, GetBatteryLevelCommand()),
+            CommandOption(R.string.desc_ping_command, PingCommand()),
+            CommandOption(R.string.desc_stop_command, StopCommand()),
+            CommandOption(R.string.desc_scan_ndef_5_seconds, ScanNdefCommand(5,PollingModes.MODE_GENERAL)),
             CommandOption(R.string.desc_scan_ndef_indefinite,ScanNdefCommand(0,PollingModes.MODE_GENERAL)),
-            CommandOption(R.string.desc_stream_ndef_5_seconds,StreamNdefCommand(5,PollingModes.MODE_GENERAL)),
+            CommandOption(R.string.desc_stream_ndef_5_seconds, StreamNdefCommand(5,PollingModes.MODE_GENERAL)),
             CommandOption(R.string.desc_stream_ndef_indefinite,StreamNdefCommand(0,PollingModes.MODE_GENERAL)),
-            CommandOption(R.string.desc_scan_tag_5_seconds,ScanTagCommand(5,PollingModes.MODE_GENERAL)),
+            CommandOption(R.string.desc_scan_tag_5_seconds, ScanTagCommand(5,PollingModes.MODE_GENERAL)),
             CommandOption(R.string.desc_scan_tag_indefinitely,ScanTagCommand(0,PollingModes.MODE_GENERAL)),
-            CommandOption(R.string.desc_stream_tag_5_seconds,StreamTagsCommand(5,PollingModes.MODE_GENERAL)),
+            CommandOption(R.string.desc_stream_tag_5_seconds, StreamTagsCommand(5,PollingModes.MODE_GENERAL)),
             CommandOption(R.string.desc_stream_tag_indefinitely,StreamTagsCommand(0,PollingModes.MODE_GENERAL))
         )
         
@@ -120,8 +119,9 @@ private class VH(private val rootView: View) : RecyclerView.ViewHolder(rootView)
 
     init {
         itemView.setOnClickListener {
-            if(currentTcmp != null) {
-                TappyService.broadcastSendTcmp(TcmpConverter.toVersionTwo(currentTcmp),context)
+            val localCurrent = currentTcmp
+            if(localCurrent != null) {
+                TappyService.broadcastSendTcmp((localCurrent),context)
             }
         }
     }

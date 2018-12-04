@@ -15,8 +15,8 @@ android {
 }
 
 dependencies {
-    compile libraries.tappy
-    compile 'com.github.felHR85:UsbSerial:4.5'
+    api libraries.tappy
+    api 'com.github.felHR85:UsbSerial:4.5'
 }
 
 archivesBaseName = bintrayCfg.publishedArtifacts.tappyusb.artifact

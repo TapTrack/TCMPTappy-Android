@@ -15,8 +15,8 @@ android {
 }
 
 dependencies {
-    compile libraries.tcmp
-    compile libraries.tcmpLegacy
+    api libraries.tcmp
+    api libraries.tcmpLegacy
 }
 
 

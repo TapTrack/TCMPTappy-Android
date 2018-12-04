@@ -15,7 +15,7 @@ android {
 }
 
 dependencies {
-    compile libraries.androidSupportAnnotations
+    api libraries.androidSupportAnnotations
 }
 
 archivesBaseName = bintrayCfg.publishedArtifacts.tcmp.artifact

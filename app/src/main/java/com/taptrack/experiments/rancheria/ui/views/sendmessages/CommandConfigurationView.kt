@@ -7,7 +7,7 @@ import android.util.AttributeSet
 import com.taptrack.experiments.rancheria.R
 import com.taptrack.experiments.rancheria.business.CommandOption
 import com.taptrack.experiments.rancheria.ui.inflateChildren
-import com.taptrack.tcmptappy.tcmp.TCMPMessage
+import com.taptrack.tcmptappy2.TCMPMessage
 import kotlin.reflect.full.createInstance
 
 class PlaceholderConfigurationView : ConstraintLayout {

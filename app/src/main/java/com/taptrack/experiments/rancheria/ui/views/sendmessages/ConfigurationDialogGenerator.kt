@@ -24,17 +24,16 @@ import com.taptrack.experiments.rancheria.business.TappyService
 import com.taptrack.experiments.rancheria.ui.hexStringToByteArray
 import com.taptrack.experiments.rancheria.ui.isTextValidHex
 import com.taptrack.tcmptappy.tappy.constants.NdefUriCodes
-import com.taptrack.tcmptappy.tcmp.TCMPMessage
-import com.taptrack.tcmptappy.tcmp.commandfamilies.basicnfc.PollingModes
-import com.taptrack.tcmptappy.tcmp.commandfamilies.basicnfc.commands.*
-import com.taptrack.tcmptappy.tcmp.commandfamilies.mifareclassic.KeySetting
-import com.taptrack.tcmptappy.tcmp.commandfamilies.mifareclassic.commands.DetectMifareClassicCommand
-import com.taptrack.tcmptappy.tcmp.commandfamilies.mifareclassic.commands.ReadMifareClassicCommand
-import com.taptrack.tcmptappy.tcmp.commandfamilies.type4.commands.DetectType4BCommand
-import com.taptrack.tcmptappy.tcmp.commandfamilies.type4.commands.DetectType4BSpecificAfiCommand
-import com.taptrack.tcmptappy.tcmp.commandfamilies.type4.commands.DetectType4Command
-import com.taptrack.tcmptappy.tcmp.commandfamilies.type4.commands.TransceiveApduCommand
-import com.taptrack.tcmptappy2.tcmpconverter.TcmpConverter
+import com.taptrack.tcmptappy2.TCMPMessage
+import com.taptrack.tcmptappy2.commandfamilies.basicnfc.PollingModes
+import com.taptrack.tcmptappy2.commandfamilies.basicnfc.commands.*
+import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.KeySetting
+import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.commands.DetectMifareClassicCommand
+import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.commands.ReadMifareClassicCommand
+import com.taptrack.tcmptappy2.commandfamilies.type4.commands.DetectType4BCommand
+import com.taptrack.tcmptappy2.commandfamilies.type4.commands.DetectType4BSpecificAfiCommand
+import com.taptrack.tcmptappy2.commandfamilies.type4.commands.DetectType4Command
+import com.taptrack.tcmptappy2.commandfamilies.type4.commands.TransceiveApduCommand
 import org.jetbrains.anko.*
 import kotlin.reflect.full.createInstance
 
@@ -139,10 +138,10 @@ object DialogGenerator {
 
                     if (stream) {
                         val message = StreamNdefCommand(timeoutAdjusted.toByte(), PollingModes.MODE_GENERAL)
-                        TappyService.broadcastSendTcmp(TcmpConverter.toVersionTwo(message),ctx)
+                        TappyService.broadcastSendTcmp(message,ctx)
                     } else {
                         val message = ScanNdefCommand(timeoutAdjusted.toByte(), PollingModes.MODE_GENERAL)
-                        TappyService.broadcastSendTcmp(TcmpConverter.toVersionTwo(message),ctx)
+                        TappyService.broadcastSendTcmp(message,ctx)
                     }
 
                 } catch (ignored: Exception) {
@@ -173,10 +172,10 @@ object DialogGenerator {
 
                     if (stream) {
                         val message = StreamTagsCommand(timeoutAdjusted.toByte(), PollingModes.MODE_GENERAL)
-                        TappyService.broadcastSendTcmp(TcmpConverter.toVersionTwo(message),ctx)
+                        TappyService.broadcastSendTcmp((message),ctx)
                     } else {
                         val message = ScanTagCommand(timeoutAdjusted.toByte(), PollingModes.MODE_GENERAL)
-                        TappyService.broadcastSendTcmp(TcmpConverter.toVersionTwo(message),ctx)
+                        TappyService.broadcastSendTcmp((message),ctx)
                     }
 
                 } catch (ignored: Exception) {
@@ -246,18 +245,18 @@ object DialogGenerator {
 
                         if (afi == "") {
                             val message = DetectType4BCommand(timeoutAdjusted.toByte())
-                            TappyService.broadcastSendTcmp(TcmpConverter.toVersionTwo(message),ctx)
+                            TappyService.broadcastSendTcmp((message),ctx)
                         } else if (afi.isTextValidHex()) {
                             val ba = afi.hexStringToByteArray()
                             val message = DetectType4BSpecificAfiCommand(timeoutAdjusted.toByte(),ba[0])
-                            TappyService.broadcastSendTcmp(TcmpConverter.toVersionTwo(message),ctx)
+                            TappyService.broadcastSendTcmp((message),ctx)
                             return true
                         } else {
                             return false
                         }
                     } else {
                         val message = DetectType4Command(timeoutAdjusted.toByte())
-                        TappyService.broadcastSendTcmp(TcmpConverter.toVersionTwo(message),ctx)
+                        TappyService.broadcastSendTcmp((message),ctx)
                     }
 
                 } catch (ignored: Exception) {
@@ -359,7 +358,7 @@ object DialogGenerator {
                                         uri.toByteArray())
                             }
 
-                            TappyService.broadcastSendTcmp(TcmpConverter.toVersionTwo(uriMessage),ctx)
+                            TappyService.broadcastSendTcmp((uriMessage),ctx)
 
                         } catch (ignored: Exception) {
                             // cant instantiate
@@ -387,7 +386,7 @@ object DialogGenerator {
                             val timeoutAdjusted = if (timeout < 0 ) 0 else if (timeout == 11) 0 else timeout
 
                             val message = WriteNdefTextRecordCommand(timeoutAdjusted.toByte(), false, msg.toByteArray())
-                            TappyService.broadcastSendTcmp(TcmpConverter.toVersionTwo(message),ctx)
+                            TappyService.broadcastSendTcmp((message),ctx)
 
                         } catch (ignored: Exception) {
                             // cant instantiate
@@ -453,7 +452,7 @@ object DialogGenerator {
                                     KeySetting.KEY_A,
                                     kotlin.ByteArray(6)
                             )
-                            TappyService.broadcastSendTcmp(TcmpConverter.toVersionTwo(message),ctx)
+                            TappyService.broadcastSendTcmp((message),ctx)
                         } catch (ignored: Exception) {
                             // cant instantiate
                         }
@@ -501,7 +500,7 @@ object DialogGenerator {
 
                             if (msg.isTextValidHex()) {
                                 val message = TransceiveApduCommand(msg.hexStringToByteArray())
-                                TappyService.broadcastSendTcmp(TcmpConverter.toVersionTwo(message),ctx)
+                                TappyService.broadcastSendTcmp((message),ctx)
                                 return true
                             } else {
                                 return false
@@ -536,7 +535,7 @@ object DialogGenerator {
                             } else {
                                 tcmpMessage = DetectMifareClassicCommand(timeoutAdjusted.toByte())
                             }
-                            TappyService.broadcastSendTcmp(TcmpConverter.toVersionTwo(tcmpMessage),ctx)
+                            TappyService.broadcastSendTcmp((tcmpMessage),ctx)
 
                         } catch (ignored: Exception) {
                             // cant instantiate
@@ -558,7 +557,7 @@ object DialogGenerator {
                         try {
                             val message = command?.kotlin?.createInstance()
                             if (message != null) {
-                                TappyService.broadcastSendTcmp(TcmpConverter.toVersionTwo(message),ctx)
+                                TappyService.broadcastSendTcmp((message),ctx)
                             }
                         } catch (ignored: Exception) {
                             // cant instantiate

@@ -9,15 +9,15 @@ can act as a USB Host.
 ## Common Gradle Dependencies
 ```groovy
 // TappyBLE readers
-compile 'com.taptrack.tcmptappy2:tappyble:2.0.0-beta3'
+implementation 'com.taptrack.tcmptappy2:tappyble:2.0.0-beta3'
 // TappyUSB readers
-compile 'com.taptrack.tcmptappy2:tappyusb:2.0.0-beta3'
+implementation 'com.taptrack.tcmptappy2:tappyusb:2.0.0-beta3'
 
 
 // For working with raw TCMP messages
-compile 'com.taptrack.tcmptappy2:tcmp:2.0.0-beta3'
+implementation 'com.taptrack.tcmptappy2:tcmp:2.0.0-beta3'
 // For converting between TCMP messages based on the previous SDK
-compile 'com.taptrack.tcmptappy2:tcmpconverter:2.0.0-beta3'
+implementation 'com.taptrack.tcmptappy2:tcmpconverter:2.0.0-beta3'
 ```
 
 # Usage
@@ -215,11 +215,11 @@ and Responses.
     // level for battery-operated Tappies or setting configuration options
     // as well as responses that the Tappy returns if it receives
     // invalid TCMP commands
-    compile "com.taptrack.tcmptappy2:commandfamily-system:$LATEST_VERSION"
+    implementation "com.taptrack.tcmptappy2:commandfamily-system:$LATEST_VERSION"
 
     // The BasicNFC family includes operations like scanning for and writing
     // to NFC tags
-    compile "com.taptrack.tcmptappy2:commandfamily-basicnfc:$LATEST_VERSION"
+    implementation "com.taptrack.tcmptappy2:commandfamily-basicnfc:$LATEST_VERSION"
 ```
 
 ### Resolving Responses

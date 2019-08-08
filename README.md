@@ -9,16 +9,29 @@ can act as a USB Host.
 ## Common Gradle Dependencies
 ```groovy
 // TappyBLE readers
-implementation 'com.taptrack.tcmptappy2:tappyble:2.0.0-beta3'
+implementation 'com.taptrack.tcmptappy2:tappyble:2.0.0'
 // TappyUSB readers
-implementation 'com.taptrack.tcmptappy2:tappyusb:2.0.0-beta3'
+implementation 'com.taptrack.tcmptappy2:tappyusb:2.0.0'
 
 
 // For working with raw TCMP messages
-implementation 'com.taptrack.tcmptappy2:tcmp:2.0.0-beta3'
+implementation 'com.taptrack.tcmptappy2:tcmp:2.0.0'
 // For converting between TCMP messages based on the previous SDK
-implementation 'com.taptrack.tcmptappy2:tcmpconverter:2.0.0-beta3'
+implementation 'com.taptrack.tcmptappy2:tcmpconverter:2.0.0'
 ```
+
+Note: You will also need to add the Jitpack Maven repository to your 
+project's Gradle file:
+
+```groovy
+allprojects {
+    repositories {
+        jcenter()
+        maven { url "https://jitpack.io" }
+    }
+}
+``` 
+
 
 # Usage
 The Tappy operates on an asynchronous communication model. In order to tell

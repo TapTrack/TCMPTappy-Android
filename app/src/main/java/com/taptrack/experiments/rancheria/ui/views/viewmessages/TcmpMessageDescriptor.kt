@@ -11,6 +11,7 @@ import com.taptrack.tcmptappy2.StandardErrorResponse
 import com.taptrack.tcmptappy2.StandardLibraryVersionResponse
 import com.taptrack.tcmptappy2.TCMPMessage
 import com.taptrack.tcmptappy2.commandfamilies.basicnfc.AbstractBasicNfcMessage
+import com.taptrack.tcmptappy2.commandfamilies.basicnfc.AutoPollingConstants
 import com.taptrack.tcmptappy2.commandfamilies.basicnfc.commands.*
 import com.taptrack.tcmptappy2.commandfamilies.basicnfc.responses.*
 import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.AbstractMifareClassicMessage
@@ -28,7 +29,6 @@ import com.taptrack.tcmptappy2.commandfamilies.systemfamily.responses.*
 import com.taptrack.tcmptappy2.commandfamilies.type4.AbstractType4Message
 import com.taptrack.tcmptappy2.commandfamilies.type4.commands.*
 import com.taptrack.tcmptappy2.commandfamilies.type4.responses.*
-import com.taptrack.tcmptappy2.tcmp.commandfamilies.type4.responses.Type4LibraryVersionResponse
 import java.nio.charset.Charset
 import java.util.*
 import kotlin.experimental.and
@@ -102,6 +102,28 @@ object TcmpMessageDescriptor {
                 val form = ctx.getString(R.string.write_ndef_uri_indefinite)
                 return String.format(form, uri)
             }
+        } else if (command is AutoPollCommand) {
+            return String.format(
+                    ctx.getString(R.string.autopoll_for_tags),
+                    when(command.scanModeIndicator) {
+                        AutoPollingConstants.ScanModes.TYPE_1 -> ctx.getString(R.string.autopoll_tag_t1)
+                        AutoPollingConstants.ScanModes.TYPE_2 -> ctx.getString(R.string.autopoll_tag_t2)
+                        AutoPollingConstants.ScanModes.FELICIA -> ctx.getString(R.string.autopoll_tag_t3)
+                        AutoPollingConstants.ScanModes.TYPE_4A -> ctx.getString(R.string.autopoll_tag_t4a)
+                        AutoPollingConstants.ScanModes.TYPE_4B -> ctx.getString(R.string.autopoll_tag_t4b)
+                        AutoPollingConstants.ScanModes.ALL -> ctx.getString(R.string.autopoll_tag_all)
+                        else -> ""
+                    },
+                    when(command.heartBeatPeriod) {
+                        0x00.toByte() -> ctx.getString(R.string.autopoll_for_tags_hb_disabled)
+                        else -> String.format("%ds",command.heartBeatPeriod.toUnsigned())
+                    },
+                    if(command.isBuzzerDisabled) {
+                        ctx.getString(R.string.autopoll_for_tags_buzzer_disabled)
+                    } else {
+                        ctx.getString(R.string.autopoll_for_tags_buzzer_enabled)
+                    }
+            )
         } else if (command is StopCommand) {
             return ctx.getString(R.string.stop_command)
         } else if (command is LockTagCommand) {
@@ -299,6 +321,32 @@ object TcmpMessageDescriptor {
             return String.format(
                     ctx.getString(R.string.tag_locked_response),
                     (response.tagCode).toHex())
+        } else if (response is AutoPollTagEnteredResponse) {
+            return String.format(
+                    ctx.getString(R.string.tag_entered_response),
+                    when(response.detectedTagType) {
+                        AutoPollingConstants.ResponseTagTypes.TYPE_1 ->ctx.getString(R.string.autopoll_tag_t1)
+                        AutoPollingConstants.ResponseTagTypes.TYPE_2 ->ctx.getString(R.string.autopoll_tag_t2)
+                        AutoPollingConstants.ResponseTagTypes.FELICIA ->ctx.getString(R.string.autopoll_tag_t3)
+                        AutoPollingConstants.ResponseTagTypes.TYPE_4A ->ctx.getString(R.string.autopoll_tag_t4a)
+                        AutoPollingConstants.ResponseTagTypes.TYPE_4B ->ctx.getString(R.string.autopoll_tag_t4b)
+                        else -> ""
+                    },
+                    response.tagMetadata.toHex()
+            )
+        } else if (response is AutoPollTagExitedResponse) {
+            return String.format(
+                    ctx.getString(R.string.tag_exited_response),
+                    when(response.detectedTagType) {
+                        AutoPollingConstants.ResponseTagTypes.TYPE_1 ->ctx.getString(R.string.autopoll_tag_t1)
+                        AutoPollingConstants.ResponseTagTypes.TYPE_2 ->ctx.getString(R.string.autopoll_tag_t2)
+                        AutoPollingConstants.ResponseTagTypes.FELICIA ->ctx.getString(R.string.autopoll_tag_t3)
+                        AutoPollingConstants.ResponseTagTypes.TYPE_4A ->ctx.getString(R.string.autopoll_tag_t4a)
+                        AutoPollingConstants.ResponseTagTypes.TYPE_4B ->ctx.getString(R.string.autopoll_tag_t4b)
+                        else -> ""
+                    },
+                    response.tagMetadata.toHex()
+            )
         } else if (response is BasicNfcErrorResponse) {
             val resp = response
             val errorRes: Int

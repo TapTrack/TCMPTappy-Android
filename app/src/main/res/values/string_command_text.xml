@@ -25,6 +25,10 @@
     <string name="write_ndef_uri_indefinite">Indefinitely attempt to write the following URI to a tag: \n%1$s</string>
     <string name="lock_tags_seconds">For %1$d seconds, attempt to lock the next tag encountered</string>
     <string name="lock_tags_indefinite">Indefinitely attempt to lock the next tag encountered</string>
+    <string name="autopoll_for_tags">Autopoll for tags\nMode: %1$s\nHeartbeat: %2$s\nBuzzer: %3$s</string>
+    <string name="autopoll_for_tags_hb_disabled">Disabled</string>
+    <string name="autopoll_for_tags_buzzer_disabled">Disabled</string>
+    <string name="autopoll_for_tags_buzzer_enabled">Enabled</string>
     <!-- Classic Commands -->
     <string name="detect_classic_seconds">Scan for MIFARE Classic for %1$d seconds</string>
     <string name="detect_classic_indefinite">Scan for MIFARE Classic indefinitely</string>
@@ -68,6 +72,16 @@
     <string name="ndef_record_uri_display_format">Uri: %1$s</string>
     <string name="ndef_record_text_display_format">Text: %1$s</string>
     <string name="ndef_no_record">No records</string>
+    <string name="tag_entered_response">Tag entered:\nType: %1$s\nMetadata: %2$s</string>
+    <string name="tag_exited_response">Tag exited:\nType: %1$s\nMetadata: %2$s</string>
+    <string name="autopoll_tag_t1">Type 1</string>
+    <string name="autopoll_tag_t2">Type 2</string>
+    <string name="autopoll_tag_t3">Felicia</string>
+    <string name="autopoll_tag_t4a">Type 4A</string>
+    <string name="autopoll_tag_t4b">Type 4B</string>
+    <string name="autopoll_tag_unrecognized">Unrecognized</string>
+    <string name="autopoll_tag_all">All</string>
+
     <!-- Classic Responses -->
     <string name="mifareclassic_1k_detected">Detected MIFARE Classic 1K\nUID: %1$s</string>
     <string name="mifareclassic_4k_detected">Detected MIFARE Classic 4K\nUID: %1$s</string>

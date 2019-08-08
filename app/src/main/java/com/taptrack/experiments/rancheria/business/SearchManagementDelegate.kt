@@ -14,6 +14,7 @@ import com.taptrack.tcmptappy2.ble.TappyBleFoundListener
 import com.taptrack.tcmptappy2.ble.TappyBleScanner
 import com.taptrack.tcmptappy2.usb.TappyUsb
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 
 
 private data class SearchManagementState(val isResumed: Boolean, val scanningDesired: Boolean, val hasCoarseLocation: Boolean) {
@@ -241,9 +242,9 @@ class SearchManagementDelegate constructor(val ctx: Context, val resultsListener
 
     companion object {
         val RESTART_SCAN_INTERVAL_MS = 10000L
-        val MAX_TIME_KEEP_IN_LIST_MS = 10000L
+        val MAX_TIME_KEEP_IN_LIST_MS = TimeUnit.MINUTES.toMillis(10)
         val AUTO_RESET_LONG_INTERVAL = 100L
         val AUTO_RESET_SHORT_INTERVAL = 50L
-        val TRIM_OLD_BLE_INTERVAL_MS = 1000L
+        val TRIM_OLD_BLE_INTERVAL_MS = TimeUnit.MINUTES.toMillis(3)
     }
 }

@@ -235,6 +235,10 @@ and Responses.
     implementation "com.taptrack.tcmptappy2:commandfamily-basicnfc:$LATEST_VERSION"
 ```
 
+Note: The command families are versioned independently from each other
+as well as the core SDK, please visit their specific repositories for 
+version numbers.
+
 ### Resolving Responses
 The SDK does not automatically resolve received responses into specific
 TCMP responses, instead it simply verifies the that the packet is not

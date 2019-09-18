@@ -8,7 +8,7 @@ can act as a USB Host.
 
 ## Common Gradle Dependencies
 ```groovy
-# Universal Dependencies
+// Universal Dependencies
 implementation 'com.taptrack.tcmptappy2:tcmp:2.0.0'
 implementation 'com.taptrack.tcmptappy2:tappy:2.0.0'
 

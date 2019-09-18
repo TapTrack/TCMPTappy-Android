@@ -8,14 +8,19 @@ can act as a USB Host.
 
 ## Common Gradle Dependencies
 ```groovy
+# Universal Dependencies
+implementation 'com.taptrack.tcmptappy2:tcmp:2.0.0'
+implementation 'com.taptrack.tcmptappy2:tappy:2.0.0'
+
 // TappyBLE readers
 implementation 'com.taptrack.tcmptappy2:tappyble:2.0.0'
+implementation 'com.taptrack.tcmptappy:blescannercompat:0.9.3'
+
 // TappyUSB readers
 implementation 'com.taptrack.tcmptappy2:tappyusb:2.0.0'
-
+implementation 'com.github.felHR85:UsbSerial:4.5'
 
 // For working with raw TCMP messages
-implementation 'com.taptrack.tcmptappy2:tcmp:2.0.0'
 // For converting between TCMP messages based on the previous SDK
 implementation 'com.taptrack.tcmptappy2:tcmpconverter:2.0.0'
 ```

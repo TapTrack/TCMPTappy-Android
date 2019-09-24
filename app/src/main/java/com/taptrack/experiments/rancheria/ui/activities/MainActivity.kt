@@ -1,6 +1,7 @@
 package com.taptrack.experiments.rancheria.ui.activities
 
 import android.Manifest
+import android.bluetooth.BluetoothAdapter
 import android.content.*
 import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbManager
@@ -128,6 +129,19 @@ class MainActivity : android.support.v7.app.AppCompatActivity(), ChooseTappiesVi
     }
 
     private val chooseTappiesViewModel = object: ChooseTappiesViewModel {
+        override fun setBluetoothStataus(bluetoothOn: Boolean) {
+
+            var newState: ChooseTappiesViewState? = null
+            synchronized(stateMutationLock) {
+                newState = state.copy(bluetoothOn = bluetoothOn)
+                state = newState ?: state
+            }
+
+            if (newState != null) {
+                stateRelay.accept(newState)
+            }
+        }
+
         private var state: ChooseTappiesViewState = ChooseTappiesViewState.initialState()
         private val stateMutationLock: Any = Object()
         private var stateRelay: BehaviorRelay<ChooseTappiesViewState> = BehaviorRelay.createDefault(state)
@@ -199,6 +213,32 @@ class MainActivity : android.support.v7.app.AppCompatActivity(), ChooseTappiesVi
         }
     }
 
+    private val bluetoothReciever= object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val action = intent?.action
+
+            if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
+                val state = intent?.getIntExtra(BluetoothAdapter.EXTRA_STATE,
+                        BluetoothAdapter.ERROR)
+                when (state) {
+                    BluetoothAdapter.STATE_OFF ->{
+                        chooseTappiesViewModel.setBluetoothStataus(false)
+                    }
+                    BluetoothAdapter.STATE_TURNING_OFF ->{
+                        chooseTappiesViewModel.setBluetoothStataus(false)
+                    }
+                    BluetoothAdapter.STATE_ON ->{
+                        chooseTappiesViewModel.setBluetoothStataus(true)
+                    }
+                    BluetoothAdapter.STATE_TURNING_ON ->{
+                        chooseTappiesViewModel.setBluetoothStataus(false)
+                    }
+
+                }
+            }
+        }
+    }
+
     private var viewpager: ViewPager? = null
     private var mainBottomNavigation: BottomNavigationView? = null
 
@@ -236,6 +276,7 @@ class MainActivity : android.support.v7.app.AppCompatActivity(), ChooseTappiesVi
         } else {
             searchManager.coarseLocationRequestResult(true)
         }
+
 
         viewpager = find<ViewPager>(R.id.vp_main_pager)
         val adapter = object: FragmentPagerAdapter(supportFragmentManager) {
@@ -441,11 +482,22 @@ class MainActivity : android.support.v7.app.AppCompatActivity(), ChooseTappiesVi
 
     override fun onResume() {
         super.onResume()
+
+        val filter = IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED)
+        registerReceiver(bluetoothReciever, filter)
+        val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+        if (bluetoothAdapter != null) {
+            chooseTappiesViewModel.setBluetoothStataus(bluetoothAdapter.isEnabled)
+        } else {
+            chooseTappiesViewModel.setBluetoothStataus(false)
+        }
         searchManager.resume()
     }
 
     override fun onPause() {
         super.onPause()
+
+        unregisterReceiver(bluetoothReciever)
         searchManager.pause()
     }
 

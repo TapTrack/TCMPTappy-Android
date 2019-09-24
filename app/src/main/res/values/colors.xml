@@ -4,6 +4,10 @@
     <color name="colorPrimaryDark">#2186CF</color>
     <color name="colorAccent">#E58F1E</color>
     <color name="colorUnselected">#8A000000</color>
+    <color name="colorErrorDarkContrast">#FFF</color>
+    <color name="colorErrorDark">#A00000</color>
+    <color name="colorDarkBlue">#010175</color>
+    <color name="colorDarkBlueContrast">#FFF</color>
     <color name="colorCommandHeadings">#8A000000</color>
 
     <color name="incomingMessageText">#FFFFFF</color>

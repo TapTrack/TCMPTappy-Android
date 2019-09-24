@@ -3,9 +3,11 @@ package com.taptrack.experiments.rancheria.ui.views.findtappies
 import android.content.Context
 import android.hardware.usb.UsbDevice
 import android.support.annotation.UiThread
+import android.support.v4.content.ContextCompat
 import android.support.v4.widget.NestedScrollView
 import android.util.AttributeSet
 import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
 import android.view.ViewManager
 import android.widget.LinearLayout
@@ -33,6 +35,7 @@ class ChooseTappiesView : NestedScrollView {
     private lateinit var loadingIndicator: ProgressBar
     private lateinit var activeHeadingView: TextView
     private lateinit var searchHeadingView: TextView
+    private lateinit var bluetoothOffView: TextView
 
     private var state: ChooseTappiesViewState = ChooseTappiesViewState.Companion.initialState()
     private var disposable: Disposable? = null
@@ -51,39 +54,63 @@ class ChooseTappiesView : NestedScrollView {
     }
 
     private fun init(context: Context) {
-
         val llLayoutParams = ViewGroup.MarginLayoutParams(matchParent, matchParent)
         linearLayout {
             orientation = LinearLayout.VERTICAL
 
+            bluetoothOffView = themedTextView {
+                text = context.getString(R.string.bluetooth_not_on_message)
+                backgroundColor = ContextCompat.getColor(context,R.color.colorDarkBlue)
+                padding = dip(16)
+                visibility = View.GONE
+                layoutParams = LayoutParams(matchParent, wrapContent)
+            }.lparams(matchParent, wrapContent) {
+            }
+            bluetoothOffView.setTextAppearanceCompat(R.style.TextAppearance_AppCompat_Medium)
+            bluetoothOffView.setTextColor(ContextCompat.getColor(context,R.color.colorDarkBlueContrast))
+
             activeHeadingView = themedTextView {
                 text = context.getString(R.string.active_devices_heading,0)
-                layoutParams = LayoutParams(matchParent, wrapContent)
+            }.lparams(matchParent, wrapContent) {
+                topMargin = dip(16)
+                leftMargin = dip(16)
+                rightMargin = dip(16)
             }
             activeHeadingView.setTextAppearanceCompat(R.style.TextAppearance_AppCompat_Medium)
 
             tappyControlView = tappyControlView {
 
-            }.lparams(matchParent, wrapContent)
+            }.lparams(matchParent, wrapContent){
+                leftMargin = dip(16)
+                rightMargin = dip(16)
+            }
 
             searchHeadingView = themedTextView() {
                 textResource = R.string.select_tappy_text
-            }.lparams(matchParent, wrapContent)
+            }.lparams(matchParent, wrapContent) {
+                leftMargin = dip(16)
+                rightMargin = dip(16)
+            }
+//            }.lparams(matchParent, wrapContent)
 
             searchHeadingView.setTextAppearanceCompat(R.style.TextAppearance_AppCompat_Medium)
 
             tappySearchView = tappySearchView {
 
-            }.lparams(matchParent, wrapContent)
+            }.lparams(matchParent, wrapContent) {
+                leftMargin = dip(16)
+                rightMargin = dip(16)
+            }
 
             loadingIndicator = progressBar {
                 isIndeterminate = true
             }.lparams(width = wrapContent, height = wrapContent) {
                 topMargin = dip(16)
+                leftMargin = dip(16)
+                rightMargin = dip(16)
                 gravity = Gravity.CENTER_HORIZONTAL
             }
 
-            padding = dip(16)
             layoutParams = llLayoutParams
         }
 
@@ -113,6 +140,12 @@ class ChooseTappiesView : NestedScrollView {
                 .plus(state.foundBleDevices.map { ChoosableTappyBle(it.address,it.name,it.address,it) })
         tappyControlView.setViewState(TappyControlViewState(state.activeDevices))
         activeHeadingView.text = context.getString(R.string.active_devices_heading,state.activeDevices.size)
+
+        bluetoothOffView.visibility = if(state.bluetoothOn) {
+            View.GONE
+        } else {
+            View.VISIBLE
+        }
     }
 
     @UiThread

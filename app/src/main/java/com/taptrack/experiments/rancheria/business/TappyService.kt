@@ -16,6 +16,7 @@ import com.taptrack.experiments.rancheria.R
 import com.taptrack.experiments.rancheria.getRancheriaApplication
 import com.taptrack.experiments.rancheria.model.RealmTcmpCommunique
 import com.taptrack.experiments.rancheria.ui.activities.MainActivity
+import com.taptrack.experiments.rancheria.ui.toHex
 import com.taptrack.tcmptappy.tcmp.MalformedPayloadException
 import com.taptrack.tcmptappy.tcmp.common.FamilyCodeNotSupportedException
 import com.taptrack.tcmptappy.tcmp.common.ResponseCodeNotSupportedException
@@ -485,6 +486,7 @@ class TappyService: Service() {
         )
 
         fun broadcastSendTcmp(message: TCMPMessage, ctx: Context) {
+            Timber.d("Sending command with payload: %s",message.payload.toHex())
             val intent = Intent(ACTION_SEND_MESSAGE)
             intent.putExtra(EXTRA_TCMP_MESSAGE,message.toByteArray())
             ctx.sendBroadcast(intent)

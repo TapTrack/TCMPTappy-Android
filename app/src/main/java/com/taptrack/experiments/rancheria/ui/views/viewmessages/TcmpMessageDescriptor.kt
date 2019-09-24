@@ -21,10 +21,7 @@ import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.commands.GetMifareC
 import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.commands.ReadMifareClassicCommand
 import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.responses.*
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.AbstractSystemMessage
-import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.GetBatteryLevelCommand
-import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.GetFirmwareVersionCommand
-import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.GetHardwareVersionCommand
-import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.PingCommand
+import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.*
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.responses.*
 import com.taptrack.tcmptappy2.commandfamilies.type4.AbstractType4Message
 import com.taptrack.tcmptappy2.commandfamilies.type4.commands.*
@@ -51,7 +48,7 @@ object TcmpMessageDescriptor {
     }
 
     fun getCommandDescriptionBasicNfc(command: TCMPMessage,
-                                                ctx: Context): String {
+                                      ctx: Context): String {
         if (command is GetBasicNfcLibraryVersionCommand) {
             return ctx.getString(R.string.get_basic_nfc_lib_version)
         } else if (command is ScanNdefCommand) {
@@ -105,7 +102,7 @@ object TcmpMessageDescriptor {
         } else if (command is AutoPollCommand) {
             return String.format(
                     ctx.getString(R.string.autopoll_for_tags),
-                    when(command.scanModeIndicator) {
+                    when (command.scanModeIndicator) {
                         AutoPollingConstants.ScanModes.TYPE_1 -> ctx.getString(R.string.autopoll_tag_t1)
                         AutoPollingConstants.ScanModes.TYPE_2 -> ctx.getString(R.string.autopoll_tag_t2)
                         AutoPollingConstants.ScanModes.FELICIA -> ctx.getString(R.string.autopoll_tag_t3)
@@ -114,11 +111,11 @@ object TcmpMessageDescriptor {
                         AutoPollingConstants.ScanModes.ALL -> ctx.getString(R.string.autopoll_tag_all)
                         else -> ""
                     },
-                    when(command.heartBeatPeriod) {
+                    when (command.heartBeatPeriod) {
                         0x00.toByte() -> ctx.getString(R.string.autopoll_for_tags_hb_disabled)
-                        else -> String.format("%ds",command.heartBeatPeriod.toUnsigned())
+                        else -> String.format("%ds", command.heartBeatPeriod.toUnsigned())
                     },
-                    if(command.isBuzzerDisabled) {
+                    if (command.isBuzzerDisabled) {
                         ctx.getString(R.string.autopoll_for_tags_buzzer_disabled)
                     } else {
                         ctx.getString(R.string.autopoll_for_tags_buzzer_enabled)
@@ -140,11 +137,55 @@ object TcmpMessageDescriptor {
     }
 
     fun getCommandDescriptionSystem(command: TCMPMessage,
-                                              ctx: Context): String {
+                                    ctx: Context): String {
         if (command is GetBatteryLevelCommand) {
             return ctx.getString(R.string.get_battery_level)
         } else if (command is GetFirmwareVersionCommand) {
             return ctx.getString(R.string.get_firmware_version)
+        } else if (command is ConfigureOnboardScanCooldownCommand) {
+            return when (command.cooldownSetting) {
+                ConfigureOnboardScanCooldownCommand.CooldownSettings.DISABLE_COOLDOWN -> {
+                    ctx.getString(R.string.disable_scan_cooldown)
+                }
+                ConfigureOnboardScanCooldownCommand.CooldownSettings.ENABLE_COOLDOWN -> {
+                    ctx.getString(R.string.enable_scan_cooldown_with_tag_memory,command.bufferSize)
+                }
+                ConfigureOnboardScanCooldownCommand.CooldownSettings.NO_CHANGE-> {
+                    ctx.getString(R.string.do_not_change_scan_cooldown)
+                }
+                else -> {
+                    ctx.getString(R.string.unknown_command)
+                }
+            }
+        } else if (command is ActivateGreenLEDCommand) {
+            return ctx.getString(R.string.activate_green_led)
+        } else if (command is DeactivateGreenLEDCommand) {
+            return ctx.getString(R.string.deactivate_green_led)
+        } else if (command is ActivateBlueLEDCommand) {
+            return ctx.getString(R.string.activate_blue_led)
+        } else if (command is DeactivateBlueLEDCommand) {
+            return ctx.getString(R.string.deactivate_blue_led)
+        } else if (command is ActivateRedLEDCommand) {
+            return ctx.getString(R.string.activate_red_led)
+        } else if (command is DeactivateRedLEDCommand) {
+            return ctx.getString(R.string.deactivate_red_led)
+        } else if (command is ActivateBuzzerCommand) {
+            return ctx.getString(R.string.activate_buzzer)
+        } else if (command is DeactivateBuzzerCommand) {
+            return ctx.getString(R.string.deactivate_buzzer)
+        } else if (command is SetConfigItemCommand) {
+            if (command.multibyteValue.isEmpty()) {
+                return ctx.getString(
+                        R.string.set_config_item_no_value,
+                        byteArrayOf(command.parameter).toHex()
+                )
+            } else {
+                return ctx.getString(
+                        R.string.set_config_item_with_value,
+                        byteArrayOf(command.parameter).toHex(),
+                        command.multibyteValue.toHex()
+                )
+            }
         } else if (command is GetHardwareVersionCommand) {
             return ctx.getString(R.string.get_hardware_version)
         } else if (command is PingCommand) {
@@ -155,7 +196,7 @@ object TcmpMessageDescriptor {
     }
 
     fun getCommandDescriptionClassic(command: TCMPMessage,
-                                               ctx: Context): String {
+                                     ctx: Context): String {
         if (command is DetectMifareClassicCommand) {
             val cmd = command
             if (cmd.timeout.toInt() == 0x00) {
@@ -187,7 +228,7 @@ object TcmpMessageDescriptor {
     }
 
     fun getCommandDescriptionType4(command: TCMPMessage,
-                                             ctx: Context): String {
+                                   ctx: Context): String {
         if (command is DetectType4Command) {
             val cmd = command
             if (cmd.timeout.toInt() == 0x00) {
@@ -276,7 +317,35 @@ object TcmpMessageDescriptor {
 
         } else if (response is PingResponse) {
             return ctx.getString(R.string.ping_response)
-
+        } else if (response is GreenLEDActivatedResponse) {
+            return ctx.getString(R.string.activate_green_led)
+        } else if (response is GreenLEDDeactivatedResponse) {
+            return ctx.getString(R.string.deactivate_green_led)
+        } else if (response is BlueLEDActivatedResponse) {
+            return ctx.getString(R.string.blue_led_activated_response)
+        } else if (response is BlueLEDDeactivatedResponse) {
+            return ctx.getString(R.string.blue_led_deactivated_response)
+        } else if (response is RedLEDActivatedResponse) {
+            return ctx.getString(R.string.red_led_activated_response)
+        } else if (response is RedLEDDeactivatedResponse) {
+            return ctx.getString(R.string.red_led_deactivated_response)
+        } else if (response is BuzzerActivatedResponse) {
+            return ctx.getString(R.string.buzzer_activated_response)
+        } else if (response is BuzzerDeactivatedResponse) {
+            return ctx.getString(R.string.buzzer_deactivated_response)
+        } else if (response is ConfigureOnboardScanCooldownResponse) {
+            return if (response.isCooldownEnabled) {
+                ctx.getString(
+                        R.string.enabled_scan_cooldown_with_tag_memory_response,
+                        response.bufferSize
+                )
+            } else {
+                ctx.getString(
+                        R.string.disabled_scan_cooldown_response
+                )
+            }
+        } else if (response is ConfigItemResponse) {
+            return ctx.getString(R.string.config_item_response)
         } else if (response is SystemErrorResponse) {
             val resp = response
             val errorRes: Int
@@ -324,12 +393,12 @@ object TcmpMessageDescriptor {
         } else if (response is AutoPollTagEnteredResponse) {
             return String.format(
                     ctx.getString(R.string.tag_entered_response),
-                    when(response.detectedTagType) {
-                        AutoPollingConstants.ResponseTagTypes.TYPE_1 ->ctx.getString(R.string.autopoll_tag_t1)
-                        AutoPollingConstants.ResponseTagTypes.TYPE_2 ->ctx.getString(R.string.autopoll_tag_t2)
-                        AutoPollingConstants.ResponseTagTypes.FELICIA ->ctx.getString(R.string.autopoll_tag_t3)
-                        AutoPollingConstants.ResponseTagTypes.TYPE_4A ->ctx.getString(R.string.autopoll_tag_t4a)
-                        AutoPollingConstants.ResponseTagTypes.TYPE_4B ->ctx.getString(R.string.autopoll_tag_t4b)
+                    when (response.detectedTagType) {
+                        AutoPollingConstants.ResponseTagTypes.TYPE_1 -> ctx.getString(R.string.autopoll_tag_t1)
+                        AutoPollingConstants.ResponseTagTypes.TYPE_2 -> ctx.getString(R.string.autopoll_tag_t2)
+                        AutoPollingConstants.ResponseTagTypes.FELICIA -> ctx.getString(R.string.autopoll_tag_t3)
+                        AutoPollingConstants.ResponseTagTypes.TYPE_4A -> ctx.getString(R.string.autopoll_tag_t4a)
+                        AutoPollingConstants.ResponseTagTypes.TYPE_4B -> ctx.getString(R.string.autopoll_tag_t4b)
                         else -> ""
                     },
                     response.tagMetadata.toHex()
@@ -337,12 +406,12 @@ object TcmpMessageDescriptor {
         } else if (response is AutoPollTagExitedResponse) {
             return String.format(
                     ctx.getString(R.string.tag_exited_response),
-                    when(response.detectedTagType) {
-                        AutoPollingConstants.ResponseTagTypes.TYPE_1 ->ctx.getString(R.string.autopoll_tag_t1)
-                        AutoPollingConstants.ResponseTagTypes.TYPE_2 ->ctx.getString(R.string.autopoll_tag_t2)
-                        AutoPollingConstants.ResponseTagTypes.FELICIA ->ctx.getString(R.string.autopoll_tag_t3)
-                        AutoPollingConstants.ResponseTagTypes.TYPE_4A ->ctx.getString(R.string.autopoll_tag_t4a)
-                        AutoPollingConstants.ResponseTagTypes.TYPE_4B ->ctx.getString(R.string.autopoll_tag_t4b)
+                    when (response.detectedTagType) {
+                        AutoPollingConstants.ResponseTagTypes.TYPE_1 -> ctx.getString(R.string.autopoll_tag_t1)
+                        AutoPollingConstants.ResponseTagTypes.TYPE_2 -> ctx.getString(R.string.autopoll_tag_t2)
+                        AutoPollingConstants.ResponseTagTypes.FELICIA -> ctx.getString(R.string.autopoll_tag_t3)
+                        AutoPollingConstants.ResponseTagTypes.TYPE_4A -> ctx.getString(R.string.autopoll_tag_t4a)
+                        AutoPollingConstants.ResponseTagTypes.TYPE_4B -> ctx.getString(R.string.autopoll_tag_t4b)
                         else -> ""
                     },
                     response.tagMetadata.toHex()

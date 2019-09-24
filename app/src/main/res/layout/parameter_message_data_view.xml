@@ -41,106 +41,121 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />-->
     <ImageView
-        android:id="@+id/iv_timeout_icon"
+        android:id="@+id/iv_parameter_icon"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:alpha="0.54"
-        app:srcCompat="@drawable/ic_duration_black_24dp"
+        app:srcCompat="@drawable/ic_config_parameter_black_24dp"
         app:layout_constraintTop_toBottomOf="@+id/tv_command_description"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/tv_timeout_label"
         />
+<!--        app:layout_constraintEnd_toStartOf="@+id/tv_parameter_label"-->
+
     <TextView
         style="@style/TextAppearance.AppCompat.Caption"
-        android:id="@+id/tv_timeout_label"
-        android:layout_width="0dp"
+        android:id="@+id/tv_parameter_label"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:layout_marginStart="8dp"
         app:layout_constraintTop_toBottomOf="@+id/tv_command_description"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/iv_timeout_icon"
-        android:text="@string/parameter_label_timeout"
+
+        app:layout_constraintStart_toEndOf="@+id/iv_parameter_icon"
+        android:text="@string/parameter_label_config_param_id"
         />
-    <android.support.v7.widget.AppCompatSeekBar
-        android:id="@+id/sb_timeout_selection"
-        android:layout_height="wrap_content"
-        android:layout_width="0dp"
-        android:layout_marginTop="8dp"
-        android:max="10"
-        app:layout_constraintTop_toBottomOf="@+id/tv_timeout_label"
-        app:layout_constraintEnd_toStartOf="@+id/tv_timeout_value"
-        app:layout_constraintStart_toEndOf="@+id/iv_timeout_icon"
-        />
-    <TextView
-        style="@style/TextAppearance.AppCompat.Body1"
-        android:id="@+id/tv_timeout_value"
-        android:layout_width="24sp"
-        android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:gravity="center"
-        app:layout_constraintTop_toTopOf="@+id/sb_timeout_selection"
-        app:layout_constraintBottom_toBottomOf="@+id/sb_timeout_selection"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/sb_timeout_selection"
-        android:text="@string/parameter_value_infinite"
-        tools:layout_editor_absoluteX="180dp"
-        />
-    <android.support.constraint.Barrier
-        android:id="@+id/barrier_timeout"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:barrierDirection="bottom"
-        app:constraint_referenced_ids="sb_timeout_selection,iv_timeout_icon,tv_timeout_value"
-        />
-    <ImageView
-        android:id="@+id/iv_message_icon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:alpha="0.54"
-        app:srcCompat="@drawable/ic_message_black_24dp"
-        app:layout_constraintTop_toBottomOf="@+id/barrier_timeout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/tv_message_label"
-        />
-    <TextView
-        style="@style/TextAppearance.AppCompat.Caption"
-        android:id="@+id/tv_message_label"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/barrier_timeout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/iv_message_icon"
-        android:text="@string/parameter_label_message"
-        />
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
     <android.support.design.widget.TextInputLayout
-        android:id="@+id/til_message_container"
+        android:id="@+id/til_parameter_container"
         android:layout_height="wrap_content"
         android:layout_width="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/tv_message_label"
-        app:layout_constraintStart_toEndOf="@+id/iv_message_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_parameter_label"
+        app:layout_constraintStart_toEndOf="@+id/iv_parameter_icon"
+        app:hintEnabled="false">
+        <EditText
+            android:digits="0123456789ABCDEF"
+            android:maxLength="2"
+            android:id="@+id/et_parameter"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"/>
+    </android.support.design.widget.TextInputLayout>
+
+<!--    android:layout_marginStart="8dp"-->
+<!--    android:layout_marginEnd="8dp"-->
+<!--    <android.support.design.widget.TextInputLayout-->
+<!--        android:id="@+id/til_parameter_container"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_width="0dp"-->
+<!--        app:layout_constraintTop_toTopOf="@+id/til_parameter_container"-->
+<!--        app:layout_constraintStart_toStartOf="@+id/til_parameter_container"-->
+<!--        app:layout_constraintEnd_toEndOf="@+id/til_parameter_container"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/til_parameter_container"-->
+<!--        app:hintEnabled="false">-->
+<!--        <EditText-->
+<!--            android:id="@+id/et_parameter"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_width="match_parent"-->
+<!--            tools:text="A8"/>-->
+<!--    </android.support.design.widget.TextInputLayout>-->
+    <android.support.constraint.Barrier
+        android:id="@+id/barrier_parameter"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="til_parameter_container,tv_parameter_label,iv_parameter_icon"
+        />
+    <ImageView
+        android:id="@+id/iv_value_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:alpha="0.54"
+        app:srcCompat="@drawable/ic_config_item_value_black_24dp"
+        app:layout_constraintTop_toBottomOf="@+id/barrier_parameter"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/tv_value_label"
+        />
+    <TextView
+        style="@style/TextAppearance.AppCompat.Caption"
+        android:id="@+id/tv_value_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/barrier_parameter"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/iv_value_icon"
+        android:text="@string/parameter_label_config_param_value"
+        />
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/til_value_container"
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_value_label"
+        app:layout_constraintStart_toEndOf="@+id/iv_value_icon"
         app:layout_constraintEnd_toEndOf="parent"
         app:hintEnabled="false">
         <EditText
-            android:id="@+id/et_message"
+            android:id="@+id/et_value"
+            android:digits="0123456789ABCDEF"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             tools:text="A85D13C0FF"/>
     </android.support.design.widget.TextInputLayout>
     <android.support.constraint.Barrier
-        android:id="@+id/barrier_message"
+        android:id="@+id/barrier_value"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:barrierDirection="bottom"
-        app:constraint_referenced_ids="iv_message_icon,til_message_container"
+        app:constraint_referenced_ids="iv_value_icon,til_value_container"
         />
 <!--
         app:layout_constraintBottom_toTopOf="@+id/tv_continuous_label"

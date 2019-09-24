@@ -24,6 +24,27 @@
     <string name="syscommand_get_battery_description">Request the battery level of the Tappy</string>
     <string name="syscommand_get_libraryv_title">Firmware Version</string>
     <string name="syscommand_get_libraryv_description">Request the version of the firmware</string>
+    <string name="syscommand_activate_red_led_title">Activate Red LED</string>
+    <string name="syscommand_activate_red_led_description">Activate the red indicator LED</string>
+    <string name="syscommand_activate_blue_led_title">Activate Blue LED</string>
+    <string name="syscommand_activate_blue_led_description">Activate the blue indicator LED</string>
+    <string name="syscommand_activate_green_led_title">Activate Green LED</string>
+    <string name="syscommand_activate_green_led_description">Activate the green indicator LED</string>
+    <string name="syscommand_activate_buzzer_title">Activate buzzer</string>
+    <string name="syscommand_activate_buzzer_description">Activate the buzzer</string>
+    <string name="syscommand_deactivate_red_led_title">Deactivate Red LED</string>
+    <string name="syscommand_deactivate_red_led_description">Deactivate the red indicator LED</string>
+    <string name="syscommand_deactivate_blue_led_title">Deactivate Blue LED</string>
+    <string name="syscommand_deactivate_blue_led_description">Deactivate the blue indicator LED</string>
+    <string name="syscommand_deactivate_green_led_title">Deactivate Green LED</string>
+    <string name="syscommand_deactivate_green_led_description">Deactivate the green indicator LED</string>
+    <string name="syscommand_deactivate_buzzer_title">Deactivate buzzer</string>
+    <string name="syscommand_deactivate_buzzer_description">Deactivate the buzzer</string>
+    <string name="syscommand_configure_scan_cooldown_title">Configure scan cooldown</string>
+    <string name="syscommand_configure_scan_cooldown_description">Set the tappy to ignore it when the same tag is tapped repeatedly</string>
+
+    <string name="syscommand_set_configuration_item_title">Set Configuration Item</string>
+    <string name="syscommand_set_configuration_item_description">Sets a configuration item value on the Tappy</string>
 
     <string name="nfccommand_get_libraryv_title">BasicNFC Lib Version</string>
     <string name="nfccommand_get_libraryv_description">Request the version of the basic NFC library</string>

@@ -10,10 +10,7 @@ import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.commands.DetectMifa
 import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.commands.GetMifareClassicLibraryVersionCommand
 import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.commands.ReadMifareClassicCommand
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.SystemCommandResolver
-import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.GetBatteryLevelCommand
-import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.GetFirmwareVersionCommand
-import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.GetHardwareVersionCommand
-import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.PingCommand
+import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.*
 import com.taptrack.tcmptappy2.commandfamilies.type4.Type4CommandResolver
 import com.taptrack.tcmptappy2.commandfamilies.type4.commands.*
 import kotlin.reflect.full.createInstance
@@ -156,6 +153,16 @@ class CommandDataSource(val context: Context) {
         private val COM_OPT_T4_DETECT = 14
         private val COM_OPT_T4_LIBV = 15
         private val COM_OPT_T4_TRANS = 16
+        private val COM_OPT_SET_CONFIGURATION_PARAM = 17
+        private val COM_OPT_ACTIVATE_RED_LED = 18
+        private val COM_OPT_DEACTIVATE_RED_LED = 19
+        private val COM_OPT_ACTIVATE_GREEN_LED = 20
+        private val COM_OPT_DEACTIVATE_GREEN_LED = 21
+        private val COM_OPT_ACTIVATE_BLUE_LED = 22
+        private val COM_OPT_DEACTIVATE_BLUE_LED = 23
+        private val COM_OPT_ACTIVATE_BUZZER = 24
+        private val COM_OPT_DEACTIVATE_BUZZER = 25
+        private val COM_OPT_CONFIGURE_COOLDOWN = 26
 
         private val ALL_COMMAND_OPTIONS_MAP: Map<Int, CommandOption> = mapOf(
                 Pair(COM_OPT_GET_BATT,
@@ -166,6 +173,118 @@ class CommandDataSource(val context: Context) {
                         CommandOption(COM_OPT_PING, FAM_OPTION_ID_SYS, R.drawable.ic_library_version_48dp, R.string.syscommand_get_libraryv_title, R.string.syscommand_get_libraryv_description, GetFirmwareVersionCommand::class.java)),
                 Pair(COM_OPT_SYSTEM_LIBV,
                         CommandOption(COM_OPT_SYSTEM_LIBV, FAM_OPTION_ID_SYS, R.drawable.ic_ping_black_48dp, R.string.syscommand_ping_title, R.string.syscommand_ping_description, PingCommand::class.java)),
+                Pair(COM_OPT_SET_CONFIGURATION_PARAM,
+                        CommandOption(
+                                COM_OPT_SET_CONFIGURATION_PARAM,
+                                FAM_OPTION_ID_SYS,
+                                R.drawable.ic_set_config_item_48dp,
+                                R.string.syscommand_set_configuration_item_title,
+                                R.string.syscommand_set_configuration_item_description,
+                                SetConfigItemCommand::class.java
+                        )
+                ),
+
+                Pair(COM_OPT_ACTIVATE_BLUE_LED,
+                        CommandOption(
+                                COM_OPT_ACTIVATE_BLUE_LED,
+                                FAM_OPTION_ID_SYS, 
+                                R.drawable.ic_led_on_48dp,
+                                R.string.syscommand_activate_blue_led_title,
+                                R.string.syscommand_activate_blue_led_description, 
+                                ActivateBlueLEDCommand::class.java
+                        )
+                ),
+
+                Pair(COM_OPT_ACTIVATE_RED_LED,
+                        CommandOption(
+                                COM_OPT_ACTIVATE_RED_LED,
+                                FAM_OPTION_ID_SYS,
+                                R.drawable.ic_led_on_48dp,
+                                R.string.syscommand_activate_red_led_title,
+                                R.string.syscommand_activate_red_led_description,
+                                ActivateRedLEDCommand::class.java
+                        )
+                ),
+
+                Pair(COM_OPT_ACTIVATE_GREEN_LED,
+                        CommandOption(
+                                COM_OPT_ACTIVATE_GREEN_LED,
+                                FAM_OPTION_ID_SYS,
+                                R.drawable.ic_led_on_48dp,
+                                R.string.syscommand_activate_green_led_title,
+                                R.string.syscommand_activate_green_led_description,
+                                ActivateGreenLEDCommand::class.java
+                        )
+                ),
+
+
+
+                Pair(COM_OPT_ACTIVATE_BUZZER,
+                        CommandOption(
+                                COM_OPT_ACTIVATE_BUZZER,
+                                FAM_OPTION_ID_SYS,
+                                R.drawable.ic_buzzer_on_48dp,
+                                R.string.syscommand_activate_buzzer_title,
+                                R.string.syscommand_activate_buzzer_description,
+                                ActivateBuzzerCommand::class.java
+                        )
+                ),
+
+
+                Pair(COM_OPT_DEACTIVATE_BUZZER,
+                        CommandOption(
+                                COM_OPT_DEACTIVATE_BUZZER,
+                                FAM_OPTION_ID_SYS,
+                                R.drawable.ic_buzzer_off_48dp,
+                                R.string.syscommand_deactivate_buzzer_title,
+                                R.string.syscommand_deactivate_buzzer_description,
+                                DeactivateBuzzerCommand::class.java
+                        )
+                ),
+
+                Pair(COM_OPT_DEACTIVATE_BLUE_LED,
+                        CommandOption(
+                                COM_OPT_DEACTIVATE_BLUE_LED,
+                                FAM_OPTION_ID_SYS,
+                                R.drawable.ic_led_off_48dp,
+                                R.string.syscommand_deactivate_blue_led_title,
+                                R.string.syscommand_deactivate_blue_led_description,
+                                DeactivateBlueLEDCommand::class.java
+                        )
+                ),
+
+                Pair(COM_OPT_DEACTIVATE_RED_LED,
+                        CommandOption(
+                                COM_OPT_DEACTIVATE_RED_LED,
+                                FAM_OPTION_ID_SYS,
+                                R.drawable.ic_led_off_48dp,
+                                R.string.syscommand_deactivate_red_led_title,
+                                R.string.syscommand_deactivate_red_led_description,
+                                DeactivateRedLEDCommand::class.java
+                        )
+                ),
+
+                Pair(COM_OPT_DEACTIVATE_GREEN_LED,
+                        CommandOption(
+                                COM_OPT_DEACTIVATE_GREEN_LED,
+                                FAM_OPTION_ID_SYS,
+                                R.drawable.ic_led_off_48dp,
+                                R.string.syscommand_deactivate_green_led_title,
+                                R.string.syscommand_deactivate_green_led_description,
+                                DeactivateGreenLEDCommand::class.java
+                        )
+                ),
+
+                Pair(COM_OPT_CONFIGURE_COOLDOWN,
+                        CommandOption(
+                                COM_OPT_CONFIGURE_COOLDOWN,
+                                FAM_OPTION_ID_SYS,
+                                R.drawable.ic_enable_cooldown_black_48dp,
+                                R.string.syscommand_configure_scan_cooldown_title,
+                                R.string.syscommand_configure_scan_cooldown_description,
+                                ConfigureOnboardScanCooldownCommand::class.java
+                        )
+                ),
 
                 Pair(COM_OPT_BASICNFC_LIBV,
                         CommandOption(COM_OPT_BASICNFC_LIBV, FAM_OPTION_ID_BASIC, R.drawable.ic_library_version_48dp, R.string.nfccommand_get_libraryv_title, R.string.nfccommand_get_libraryv_description, GetBasicNfcLibraryVersionCommand::class.java)),

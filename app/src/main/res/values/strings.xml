@@ -41,12 +41,16 @@
     <string name="command_family_heading">Command Families</string>
     <string name="commands">Commands</string>
     <string name="parameter_label_timeout">Duration</string>
+    <string name="parameter_label_card_memory">Card Cache Size</string>
+    <string name="parameter_label_card_cooldown_enabled">Enable Cooldown</string>
     <string name="parameter_value_seconds">%1$ds</string>
     <string name="parameter_value_infinite">Inf</string>
     <string name="parameter_label_continuous_reporting">Continuous Reporting</string>
     <string name="parameter_label_message">Message</string>
     <string name="parameter_label_range">Sector Range</string>
     <string name="parameter_label_url">URL</string>
+    <string name="parameter_label_config_param_id">Parameter Identifier (hex)</string>
+    <string name="parameter_label_config_param_value">Value (hex)</string>
     <string name="parameter_label_apdu">APDU (Hexadecimal)</string>
     <string name="parameter_label_afi">Specific AFI (optional)</string>
     <string name="parameter_label_typeb">Use Type B Modulation</string>

@@ -51,10 +51,14 @@
     <string name="parameter_label_url">URL</string>
     <string name="parameter_label_config_param_id">Parameter Identifier (hex)</string>
     <string name="parameter_label_config_param_value">Value (hex)</string>
+
+    <string name="parameter_label_ble_pin">PIN</string>
+
     <string name="parameter_label_apdu">APDU (Hexadecimal)</string>
     <string name="parameter_label_afi">Specific AFI (optional)</string>
     <string name="parameter_label_typeb">Use Type B Modulation</string>
     <string name="error_must_be_hex">Must be a valid hex string</string>
+    <string name="error_pin_must_be_six_numeric">PIN must be 6 numeric characters</string>
     <string name="error_must_be_hex_byte">Must be a valid hex byte</string>
     <string name="error">Error</string>
 

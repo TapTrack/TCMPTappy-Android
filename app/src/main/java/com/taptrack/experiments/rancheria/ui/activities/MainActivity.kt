@@ -116,11 +116,11 @@ class MainActivity : android.support.v7.app.AppCompatActivity(), ChooseTappiesVi
                 viewpager?.currentItem = 0
                 return@OnNavigationItemSelectedListener true
             }
-            R.id.navigation_comm_history -> {
+            R.id.navigation_send_message -> {
                 viewpager?.currentItem = 1
                 return@OnNavigationItemSelectedListener true
             }
-            R.id.navigation_send_message -> {
+            R.id.navigation_comm_history -> {
                 viewpager?.currentItem = 2
                 return@OnNavigationItemSelectedListener true
             }
@@ -284,9 +284,9 @@ class MainActivity : android.support.v7.app.AppCompatActivity(), ChooseTappiesVi
                 if (position == 0) {
                     return ChooseDevicesFragment()
                 } else if (position == 1) {
-                    return CommHistoryFragment()
-                } else if (position == 2) {
                     return SendMessagesFragment()
+                } else if (position == 2) {
+                    return CommHistoryFragment()
                 } else {
                     throw IllegalArgumentException("Exceeded count")
                 }
@@ -331,12 +331,11 @@ class MainActivity : android.support.v7.app.AppCompatActivity(), ChooseTappiesVi
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         menu?.clear()
-        if(viewpager?.currentItem == 1) {
+        if(viewpager?.currentItem == 2) {
             menuInflater.inflate(R.menu.app_options, menu)
         } else {
             menuInflater.inflate(R.menu.app_options_no_clear, menu)
         }
-
 
         val autolaunchItem = menu?.findItem(R.id.navigation_toggle_url_launch)
         if(isAutolaunchingEnabled) {

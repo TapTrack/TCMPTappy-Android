@@ -6,6 +6,7 @@ import android.support.annotation.StringRes
 import com.taptrack.experiments.rancheria.R
 import com.taptrack.experiments.rancheria.ui.toHex
 import com.taptrack.experiments.rancheria.ui.toUnsigned
+import com.taptrack.experiments.rancheria.ui.views.sendmessages.SetBLEPinCommand
 import com.taptrack.tcmptappy.tappy.constants.TagTypes
 import com.taptrack.tcmptappy2.StandardErrorResponse
 import com.taptrack.tcmptappy2.StandardLibraryVersionResponse
@@ -26,6 +27,7 @@ import com.taptrack.tcmptappy2.commandfamilies.systemfamily.responses.*
 import com.taptrack.tcmptappy2.commandfamilies.type4.AbstractType4Message
 import com.taptrack.tcmptappy2.commandfamilies.type4.commands.*
 import com.taptrack.tcmptappy2.commandfamilies.type4.responses.*
+import timber.log.Timber
 import java.nio.charset.Charset
 import java.util.*
 import kotlin.experimental.and
@@ -174,17 +176,33 @@ object TcmpMessageDescriptor {
         } else if (command is DeactivateBuzzerCommand) {
             return ctx.getString(R.string.deactivate_buzzer)
         } else if (command is SetConfigItemCommand) {
-            if (command.multibyteValue.isEmpty()) {
-                return ctx.getString(
-                        R.string.set_config_item_no_value,
-                        byteArrayOf(command.parameter).toHex()
-                )
-            } else {
-                return ctx.getString(
-                        R.string.set_config_item_with_value,
-                        byteArrayOf(command.parameter).toHex(),
-                        command.multibyteValue.toHex()
-                )
+            return when (command.parameter) {
+                SetConfigItemCommand.ParameterBytes.ENABLE_BLUETOOTH_PIN_PARING -> {
+                    Timber.d("pin to set %s",command.multibyteValue.toHex())
+                    val cmd = SetBLEPinCommand()
+                    return try {
+                        cmd.parsePayload(command.payload)
+                        ctx.getString(R.string.enable_ble_pin_pairing,cmd.getPin())
+                    } catch (e : Exception) {
+                        Timber.e(e)
+                        ctx.getString(R.string.enable_ble_pin_pairing_invalid_pin)
+                    }
+                }
+                SetConfigItemCommand.ParameterBytes.DISABLE_BLUETOOTH_PIN_PAIRING -> {
+                    ctx.getString(R.string.disable_ble_pin_pairing)
+                }
+                else -> if (command.multibyteValue.isEmpty()) {
+                    ctx.getString(
+                            R.string.set_config_item_no_value,
+                            byteArrayOf(command.parameter).toHex()
+                    )
+                } else {
+                    ctx.getString(
+                            R.string.set_config_item_with_value,
+                            byteArrayOf(command.parameter).toHex(),
+                            command.multibyteValue.toHex()
+                    )
+                }
             }
         } else if (command is GetHardwareVersionCommand) {
             return ctx.getString(R.string.get_hardware_version)

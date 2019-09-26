@@ -43,6 +43,11 @@
     <string name="syscommand_configure_scan_cooldown_title">Configure scan cooldown</string>
     <string name="syscommand_configure_scan_cooldown_description">Set the tappy to ignore it when the same tag is tapped repeatedly</string>
 
+    <string name="syscommand_enable_ble_pin_title">Enable BLE PIN</string>
+    <string name="syscommand_enable_ble_pin_description">Enable BLE PIN pairing with specified PIN</string>
+
+    <string name="syscommand_disable_ble_pin_title">Disable BLE PIN</string>
+    <string name="syscommand_disable_ble_pin_description">Disable BLE PIN pairing</string>
     <string name="syscommand_set_configuration_item_title">Set Configuration Item</string>
     <string name="syscommand_set_configuration_item_description">Sets a configuration item value on the Tappy</string>
 

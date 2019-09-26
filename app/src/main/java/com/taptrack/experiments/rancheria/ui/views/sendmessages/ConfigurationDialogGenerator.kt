@@ -303,6 +303,78 @@ object DialogGenerator {
         }
 
         when (command) {
+            SetBLEPinCommand::class.java -> {
+                val cl = wrapInConstraintLayout(ctx, R.layout.message_command_data_view)
+
+                cl.findOptional<TextView>(R.id.tv_message_label)?.textResource = R.string.parameter_label_ble_pin
+                cl.findOptional<ImageView>(R.id.iv_message_icon)?.imageResource = R.drawable.ic_lock_black_24dp
+
+
+                cl.findOptional<TextView>(R.id.tv_command_title)?.textResource = option.titleRes
+                cl.findOptional<TextView>(R.id.tv_command_description)?.textResource = option.descriptionRes
+
+
+                val messageTil = cl.find<TextInputLayout>(R.id.til_message_container)
+                val messageEt = cl.find<EditText>(R.id.et_message)
+                messageEt.inputType = InputType.TYPE_CLASS_NUMBER
+                messageEt.filters = messageEt.filters.plus(
+                        arrayOf(InputFilter.LengthFilter(6)))
+
+                messageEt.addTextChangedListener(object : TextWatcher {
+                    override fun afterTextChanged(s: Editable?) {
+                        if (s != null) {
+                            val str = s.toString()
+                            val modified = ("[^0-9]").toRegex().replace(str,"")
+                            if(str != modified) {
+                                messageEt.setText(modified)
+                            } else {
+                                if (str.isNotEmpty() && str.length != 6) {
+                                    messageTil.error = ctx.getString(R.string.error_pin_must_be_six_numeric)
+                                } else {
+                                    messageTil.error = null
+                                }
+                            }
+                        }
+                    }
+
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                    }
+
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    }
+                })
+
+//                applyTimeoutListener(ctx,cl)
+
+                val listener = object : ConfirmListener {
+                    override fun didConfirm(v: View): Boolean {
+                        try {
+
+
+                            val rawValue = cl.find<EditText>(R.id.et_message).text.toString()
+
+                            val cleaned = ("[^0-9]").toRegex().replace(rawValue,"")
+                            if (cleaned != rawValue) {
+                                return false
+                            }
+
+                            if (cleaned.length != 6) {
+                                return false
+                            }
+
+                            val cmd = SetBLEPinCommand(cleaned)
+                            TappyService.broadcastSendTcmp(cmd,ctx)
+
+                        } catch (ignored: Exception) {
+                            // cant instantiate
+                        }
+                        return true
+                    }
+                }
+
+                return Pair(cl, listener)
+
+            }
             ConfigureOnboardScanCooldownCommand::class.java -> {
                 val cl = wrapInConstraintLayout(ctx, R.layout.configure_scan_cooldown_view)
 
@@ -344,7 +416,7 @@ object DialogGenerator {
                                     },
                                     cardCache
                             )
-                            TappyService.broadcastSendTcmp((message),ctx)
+                            TappyService.broadcastSendTcmp((message as TCMPMessage),ctx)
                             return true
                         } catch (ignored: Exception) {
                             // cant instantiate

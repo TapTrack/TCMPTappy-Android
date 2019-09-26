@@ -2,6 +2,8 @@ package com.taptrack.experiments.rancheria.business
 
 import android.content.Context
 import com.taptrack.experiments.rancheria.R
+import com.taptrack.experiments.rancheria.ui.views.sendmessages.DisableBlePinCommand
+import com.taptrack.experiments.rancheria.ui.views.sendmessages.SetBLEPinCommand
 import com.taptrack.tcmptappy2.TCMPMessage
 import com.taptrack.tcmptappy2.commandfamilies.basicnfc.BasicNfcCommandResolver
 import com.taptrack.tcmptappy2.commandfamilies.basicnfc.commands.*
@@ -163,6 +165,8 @@ class CommandDataSource(val context: Context) {
         private val COM_OPT_ACTIVATE_BUZZER = 24
         private val COM_OPT_DEACTIVATE_BUZZER = 25
         private val COM_OPT_CONFIGURE_COOLDOWN = 26
+        private val COM_OPT_ENABLE_BLE_PIN_PAIRING = 27
+        private val COM_OPT_DISABLE_BLE_PIN_PAIRING = 28
 
         private val ALL_COMMAND_OPTIONS_MAP: Map<Int, CommandOption> = mapOf(
                 Pair(COM_OPT_GET_BATT,
@@ -283,6 +287,28 @@ class CommandDataSource(val context: Context) {
                                 R.string.syscommand_configure_scan_cooldown_title,
                                 R.string.syscommand_configure_scan_cooldown_description,
                                 ConfigureOnboardScanCooldownCommand::class.java
+                        )
+                ),
+
+                Pair(COM_OPT_ENABLE_BLE_PIN_PAIRING,
+                        CommandOption(
+                                COM_OPT_ENABLE_BLE_PIN_PAIRING,
+                                FAM_OPTION_ID_SYS,
+                                R.drawable.ic_enable_ble_pin_pairing_black_48dp,
+                                R.string.syscommand_enable_ble_pin_title,
+                                R.string.syscommand_enable_ble_pin_description,
+                                SetBLEPinCommand::class.java
+                        )
+                ),
+
+                Pair(COM_OPT_DISABLE_BLE_PIN_PAIRING,
+                        CommandOption(
+                                COM_OPT_DISABLE_BLE_PIN_PAIRING,
+                                FAM_OPTION_ID_SYS,
+                                R.drawable.ic_disable_ble_pin_pairing_black_24dp,
+                                R.string.syscommand_disable_ble_pin_title,
+                                R.string.syscommand_disable_ble_pin_description,
+                                DisableBlePinCommand::class.java
                         )
                 ),
 

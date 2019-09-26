@@ -13,6 +13,9 @@
     <string name="ping_command">Ping</string>
     <string name="stop_command">Stop</string>
     <string name="set_config_item_no_value">Set config parameter %1$s</string>
+    <string name="disable_ble_pin_pairing">Disable BLE PIN Pairing</string>
+    <string name="enable_ble_pin_pairing">Enable BLE PIN Pairing with PIN %1$s</string>
+    <string name="enable_ble_pin_pairing_invalid_pin">Enable BLE PIN Pairing command with invalid PIN</string>
     <string name="set_config_item_with_value">Set config parameter %1$s to %2$s</string>
     <string name="activate_blue_led">Activate Blue LED</string>
     <string name="deactivate_blue_led">Deactivate Blue LED</string>

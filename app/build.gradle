@@ -24,8 +24,8 @@ android {
         applicationId "com.taptrack.bletappyexample"
         minSdkVersion globalCfg.minSdkVersion
         targetSdkVersion 28
-        versionCode 24
-        versionName "4.1.4"
+        versionCode 25
+        versionName "4.2.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
@@ -95,7 +95,7 @@ dependencies {
     implementation 'com.taptrack.tcmptappy2:commandfamily-system:2.1.1'
     implementation 'com.taptrack.tcmptappy:tappy-constants:0.8.1'
     implementation 'com.taptrack.tcmptappy2:commandfamily-basicnfc:2.1.0'
-    implementation 'com.taptrack.tcmptappy2:commandfamily-type4:1.0.2'
+    implementation 'com.taptrack.tcmptappy2:commandfamily-type4:1.1.1'
     implementation 'com.taptrack.tcmptappy2:commandfamily-mifareclassic:1.0.1'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
     implementation 'io.reactivex.rxjava2:rxjava:2.2.3'

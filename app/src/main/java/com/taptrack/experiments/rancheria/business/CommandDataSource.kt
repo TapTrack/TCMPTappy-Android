@@ -167,6 +167,7 @@ class CommandDataSource(val context: Context) {
         private val COM_OPT_CONFIGURE_COOLDOWN = 26
         private val COM_OPT_ENABLE_BLE_PIN_PAIRING = 27
         private val COM_OPT_DISABLE_BLE_PIN_PAIRING = 28
+        private val COM_OPT_T4_DETECT_HCE = 29
 
         private val ALL_COMMAND_OPTIONS_MAP: Map<Int, CommandOption> = mapOf(
                 Pair(COM_OPT_GET_BATT,
@@ -341,7 +342,9 @@ class CommandDataSource(val context: Context) {
                 Pair(COM_OPT_T4_LIBV,
                         CommandOption(COM_OPT_T4_LIBV, FAM_OPTION_ID_T4, R.drawable.ic_library_version_48dp, R.string.type4command_get_version_title, R.string.type4command_get_version_description, GetType4LibraryVersionCommand::class.java)),
                 Pair(COM_OPT_T4_TRANS,
-                        CommandOption(COM_OPT_T4_TRANS, FAM_OPTION_ID_T4, R.drawable.ic_transceive_48dp, R.string.type4command_transceive_apdu_title, R.string.type4command_transceive_apdu_description, TransceiveApduCommand::class.java))
+                        CommandOption(COM_OPT_T4_TRANS, FAM_OPTION_ID_T4, R.drawable.ic_transceive_48dp, R.string.type4command_transceive_apdu_title, R.string.type4command_transceive_apdu_description, TransceiveApduCommand::class.java)),
+                Pair(COM_OPT_T4_DETECT_HCE,
+                        CommandOption(COM_OPT_T4_DETECT_HCE, FAM_OPTION_ID_T4, R.drawable.ic_nfc_black_48dp, R.string.type4command_detect_hce_target_title, R.string.type4command_detect_hce_target_description, DetectActiveHCETargetCommand::class.java))
         )
 
         private val ALL_COMMAND_OPTIONS: List<CommandOption> by lazy {

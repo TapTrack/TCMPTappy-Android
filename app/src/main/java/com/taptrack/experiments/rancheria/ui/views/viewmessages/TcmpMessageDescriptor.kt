@@ -272,7 +272,15 @@ object TcmpMessageDescriptor {
                         cmd.timeout and 0xff.toByte(),
                         (byteArrayOf(cmd.afi).toHex()))
             }
+        } else if (command is DetectActiveHCETargetCommand) {
 
+            val cmd = command
+            if (cmd.timeout.toInt() == 0x00) {
+                return String.format(ctx.getString(R.string.detect_hce_target_indefinite))
+            } else {
+                return String.format(ctx.getString(R.string.detect_hce_target_seconds),
+                        cmd.timeout and 0xff.toByte())
+            }
         } else if (command is GetType4LibraryVersionCommand) {
             return ctx.getString(R.string.get_type4_version)
         } else if (command is TransceiveApduCommand) {
@@ -523,6 +531,14 @@ object TcmpMessageDescriptor {
                     R.string.family_type4,
                     errorRes,
                     response as StandardErrorResponse)
+        } else if (response is ActiveHCETargetDetectedResponse) {
+            val resp = response
+            if (resp.firstCommand != null && resp.firstCommand.size != 0) {
+                return String.format(ctx.getString(R.string.type4_hce_targetdetected_with_cmd),
+                        (resp.firstCommand.toHex()))
+            } else {
+                return String.format(ctx.getString(R.string.type4_hce_targetdetected_no_cmd))
+            }
         } else {
             return ctx.getString(R.string.unknown_response)
         }

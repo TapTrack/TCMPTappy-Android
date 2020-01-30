@@ -79,6 +79,8 @@
 
     <string name="type4command_detect_title">Detect Type 4</string>
     <string name="type4command_detect_description">Scan for a Type 4 tag using either Type A or Type B modulation. If you are unsure what type of modulation your tags use, Type A is the most common.</string>
+    <string name="type4command_detect_hce_target_title">Detect HCE Target</string>
+    <string name="type4command_detect_hce_target_description">Scan for an active target for type 4 card emulation.</string>
     <string name="type4command_get_version_title">Library Version</string>
     <string name="type4command_get_version_description">Request the version of the Type 4 library</string>
     <string name="type4command_transceive_apdu_title">Transceive APDU</string>

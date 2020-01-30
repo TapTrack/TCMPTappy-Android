@@ -58,6 +58,8 @@
     <string name="detect_type4b_indefinite">Scan for Type 4B tags indefinitely</string>
     <string name="detect_type4b_afi_seconds">Scan for Type 4B tags with AFI %2$s for %1$d seconds</string>
     <string name="detect_type4b_afi_indefinite">Scan for Type 4B tags with AFI %1$s indefinitely</string>
+    <string name="detect_hce_target_seconds">Scan for active HCE target for %1$d seconds</string>
+    <string name="detect_hce_target_indefinite">Scan for active HCE targets indefinitely</string>
     <string name="get_type4_version">Report Type 4 library version</string>
     <string name="send_apdu">Send the following APDU: %1$s</string>
 
@@ -122,6 +124,8 @@
     <string name="type4_polling_error_successful">Type 4 polling error</string>
     <string name="type4_detected_with_ats">Type 4 tag detected!\nUID: %1$s\nATS: %2$s</string>
     <string name="type4_detected_no_ats">Type 4 tag detected!\nUID: %1$s\nATS: none</string>
+    <string name="type4_hce_targetdetected_with_cmd">Type 4 HCE target detected!\nFirst Command: %1$s</string>
+    <string name="type4_hce_targetdetected_no_cmd">Type 4 HCE target detected!</string>
     <string name="type4b_detected_no_attrib">Type 4B tag detected!\ATQB: %1$s\nATTRIB: none</string>
     <string name="type4b_detected_w_attrib">Type 4B tag detected!\nATQB: %1$s\nATTRIB: %2$s</string>
     <string name="type4b_detected_nothing">Type 4B tag detected!</string>

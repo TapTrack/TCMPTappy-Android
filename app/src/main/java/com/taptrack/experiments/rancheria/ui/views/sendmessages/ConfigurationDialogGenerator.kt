@@ -33,10 +33,7 @@ import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.commands.DetectMifa
 import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.commands.ReadMifareClassicCommand
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.ConfigureOnboardScanCooldownCommand
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.SetConfigItemCommand
-import com.taptrack.tcmptappy2.commandfamilies.type4.commands.DetectType4BCommand
-import com.taptrack.tcmptappy2.commandfamilies.type4.commands.DetectType4BSpecificAfiCommand
-import com.taptrack.tcmptappy2.commandfamilies.type4.commands.DetectType4Command
-import com.taptrack.tcmptappy2.commandfamilies.type4.commands.TransceiveApduCommand
+import com.taptrack.tcmptappy2.commandfamilies.type4.commands.*
 import org.jetbrains.anko.*
 import kotlin.reflect.full.createInstance
 
@@ -765,7 +762,7 @@ object DialogGenerator {
 
                 return Pair(cl, listener)
             }
-            LockTagCommand::class.java, DetectMifareClassicCommand::class.java -> {
+            LockTagCommand::class.java, DetectMifareClassicCommand::class.java, DetectActiveHCETargetCommand::class.java -> {
                 val cl = wrapInConstraintLayout(ctx, R.layout.timeout_command_data_view)
 
                 cl.findOptional<TextView>(R.id.tv_command_title)?.textResource = option.titleRes
@@ -776,13 +773,16 @@ object DialogGenerator {
                 val listener = object : ConfirmListener {
                     override fun didConfirm(v: View): Boolean {
                         try {
-                            val timeout = 1 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 10)
+                            val timeout = 1 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress
+                                    ?: 10)
 
-                            val timeoutAdjusted = if (timeout < 0 ) 0 else if (timeout == 11) 0 else timeout
+                            val timeoutAdjusted = if (timeout < 0) 0 else if (timeout == 11) 0 else timeout
 
                             val tcmpMessage: TCMPMessage
                             if (command == LockTagCommand::class.java) {
                                 tcmpMessage = LockTagCommand(timeoutAdjusted.toByte(), kotlin.ByteArray(0))
+                            } else if (command == DetectActiveHCETargetCommand::class.java) {
+                                tcmpMessage = DetectActiveHCETargetCommand(timeoutAdjusted.toByte())
                             } else {
                                 tcmpMessage = DetectMifareClassicCommand(timeoutAdjusted.toByte())
                             }

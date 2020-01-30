@@ -26,6 +26,9 @@ import com.taptrack.tcmptappy2.ble.TappyBleDeviceDefinition
 import com.taptrack.tcmptappy2.commandfamilies.basicnfc.BasicNfcCommandResolver
 import com.taptrack.tcmptappy2.commandfamilies.basicnfc.responses.NdefFoundResponse
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.PingCommand
+import com.taptrack.tcmptappy2.commandfamilies.type4.Type4CommandResolver
+import com.taptrack.tcmptappy2.commandfamilies.type4.commands.TransceiveApduCommand
+import com.taptrack.tcmptappy2.commandfamilies.type4.responses.ActiveHCETargetDetectedResponse
 import com.taptrack.tcmptappy2.usb.TappyUsb
 import io.reactivex.BackpressureStrategy
 import io.reactivex.disposables.Disposable
@@ -236,7 +239,7 @@ class TappyService: Service() {
                     recordObj.command = false
                     recordObj.message = response.toByteArray()
                 })
-                launchUrlIfNecessary(it)
+                performAutomaticMessageAction(it)
             }
         }
 
@@ -303,7 +306,24 @@ class TappyService: Service() {
         lock.unlock()
     }
 
-    fun launchUrlIfNecessary(message: TCMPMessage) {
+    fun performAutomaticMessageAction(message: TCMPMessage) {
+        try {
+            val response = messageResolver.resolveResponse((message))
+            if (response is ActiveHCETargetDetectedResponse) {
+                // here is where you would inspect for details of the target found if you wanted
+                // to do further detection
+                broadcastSendTcmp(TransceiveApduCommand(byteArrayOf(0x90.toByte(),0x00)), this)
+            }
+        } catch (e: com.taptrack.tcmptappy.tcmp.TCMPMessageParseException) {
+            Timber.e(e)
+        } catch (e: FamilyCodeNotSupportedException) {
+            Timber.e(e)
+        } catch (e: ResponseCodeNotSupportedException) {
+            Timber.e(e)
+        } catch (e: MalformedPayloadException) {
+            Timber.e(e)
+        }
+
         if(shouldAutolaunch) {
             try {
                 val response = messageResolver.resolveResponse((message))
@@ -427,7 +447,7 @@ class TappyService: Service() {
                     recordObj.command = false
                     recordObj.message = response.toByteArray()
                 })
-                launchUrlIfNecessary(it)
+                performAutomaticMessageAction(it)
             }
         }
 
@@ -482,7 +502,8 @@ class TappyService: Service() {
         private val EXTRA_TCMP_MESSAGE = TappyService::class.java.name+".EXTRA_TCMP_MESSAGE"
 
         private val messageResolver: MessageResolverMux = MessageResolverMux(
-                BasicNfcCommandResolver()
+                BasicNfcCommandResolver(),
+                Type4CommandResolver()
         )
 
         fun broadcastSendTcmp(message: TCMPMessage, ctx: Context) {

@@ -17,6 +17,7 @@ android {
 dependencies {
     api libraries.tappy
     api 'com.github.felHR85:UsbSerial:4.5'
+    implementation libraries.okio
 }
 
 archivesBaseName = bintrayCfg.publishedArtifacts.tappyusb.artifact

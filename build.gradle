@@ -103,6 +103,7 @@ ext.bintrayCfg = [
 ext.libraries = [
         androidSupportAnnotations: "com.android.support:support-annotations:26.1.0",
         tcmpLegacy: "com.taptrack.tcmptappy:message-common:0.9.3",
+        okio: "com.squareup.okio:okio:2.6.0",
 
         tappy: project(':tappy'),
         tappyble: project(':tappyble'),

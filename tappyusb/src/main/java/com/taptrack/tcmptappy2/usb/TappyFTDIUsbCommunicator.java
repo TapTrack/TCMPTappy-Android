@@ -17,7 +17,7 @@ import com.taptrack.tcmptappy2.TappySerialCommunicator;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-class TappyUsbCommunicator implements TappySerialCommunicator {
+class TappyFTDIUsbCommunicator implements TappySerialCommunicator {
     private final Context context;
     private final UsbDevice device;
     private final UsbDeviceConnection connection;
@@ -30,8 +30,8 @@ class TappyUsbCommunicator implements TappySerialCommunicator {
 
             if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
                 UsbDevice device = (UsbDevice)intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-                if (device != null && device.equals(TappyUsbCommunicator.this.device)) {
-                    TappyUsbCommunicator.this.close();
+                if (device != null && device.equals(TappyFTDIUsbCommunicator.this.device)) {
+                    TappyFTDIUsbCommunicator.this.close();
                 }
             }
         }
@@ -55,9 +55,9 @@ class TappyUsbCommunicator implements TappySerialCommunicator {
 
     private int currentStatus = Tappy.STATUS_DISCONNECTED;
 
-    TappyUsbCommunicator(@NonNull Context context,
-                         @NonNull UsbDevice device,
-                         @NonNull UsbDeviceConnection connection) {
+    TappyFTDIUsbCommunicator(@NonNull Context context,
+                             @NonNull UsbDevice device,
+                             @NonNull UsbDeviceConnection connection) {
         this.context = context;
         this.device = device;
         this.connection = connection;

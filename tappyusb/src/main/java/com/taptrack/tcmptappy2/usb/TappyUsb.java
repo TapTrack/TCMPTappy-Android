@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.taptrack.tcmptappy2.SerialTappy;
+import com.taptrack.tcmptappy2.TappySerialCommunicator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,10 +19,13 @@ public class TappyUsb extends SerialTappy {
     private static final int PRODUCT_ID_FT232R = 0x6001;
     private static final int PRODUCT_ID_FT231X = 0x6015;
 
+    private static final int VENDOR_ID_NATIVE_TAPPY = 0x04d8;
+    private static final int PRODUCT_ID_NATIVE_TAPPY = 0x0053;
+
     private final UsbDevice backingDevice;
 
-    TappyUsb(Context context, UsbDevice device, UsbDeviceConnection connection) {
-        super(new TappyUsbCommunicator(context, device, connection));
+    TappyUsb(Context context, UsbDevice device, TappySerialCommunicator communicator) {
+        super(communicator);
         this.backingDevice = device;
     }
 
@@ -48,6 +52,8 @@ public class TappyUsb extends SerialTappy {
                 if(productId == PRODUCT_ID_FT231X || productId == PRODUCT_ID_FT232R) {
                     deviceList.add(device);
                 }
+            } else if (vendorId == VENDOR_ID_NATIVE_TAPPY && device.getProductId() == PRODUCT_ID_NATIVE_TAPPY) {
+                deviceList.add(device);
             }
         }
 
@@ -70,11 +76,27 @@ public class TappyUsb extends SerialTappy {
             return null;
         }
 
-        UsbDeviceConnection connection = manager.openDevice(device);
-        if(connection == null) {
-            return null;
+        int vendorId = device.getVendorId();
+        int productId = device.getProductId();
+        if(vendorId == VENDOR_ID_FTDI && (productId == PRODUCT_ID_FT231X || productId == PRODUCT_ID_FT232R)) {
+                UsbDeviceConnection connection = manager.openDevice(device);
+                if(connection == null) {
+                    return null;
+                } else {
+                    return new TappyUsb(
+                            context,
+                            device,
+                            new TappyFTDIUsbCommunicator(context, device, connection)
+                    );
+                }
+        } else if (vendorId == VENDOR_ID_NATIVE_TAPPY && device.getProductId() == PRODUCT_ID_NATIVE_TAPPY) {
+            return new TappyUsb(
+                    context,
+                    device,
+                    new TappyNativeUsbCommunicator(context, device, manager)
+            );
         } else {
-            return new TappyUsb(context,device,connection);
+            return null;
         }
     }
 

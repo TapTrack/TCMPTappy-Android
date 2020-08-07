@@ -26,6 +26,13 @@ public interface TappyBleDeviceDefinition {
     public final static UUID DEFAULT_TRUCONNECT_TX_CHARACTERISTIC_UUID
             = UUID.fromString("cacc07ff-ffff-4c48-8fae-a9ef71b75e26");
 
+    public final static UUID DEFAULT_TRUCONNECT_SERVICE_UUID_V5
+            = UUID.fromString("331a36f5-2459-45ea-9d95-6142f0c4b307");
+    public final static UUID DEFAULT_TRUCONNECT_RX_CHARACTERISTIC_UUID_V5
+            = UUID.fromString("a9da6040-0823-4995-94ec-9ce41ca28833");
+    public final static UUID DEFAULT_TRUCONNECT_TX_CHARACTERISTIC_UUID_V5
+            = UUID.fromString("a73e9a10-628f-4494-a099-12efaf72258f");
+
     String getName();
     String getAddress();
     public UUID getSerialServiceUuid();

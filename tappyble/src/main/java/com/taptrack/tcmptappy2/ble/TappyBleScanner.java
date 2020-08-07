@@ -22,6 +22,8 @@ import android.os.ParcelUuid;
 import com.taptrack.tcmptappy.blescannercompat.BluetoothLeScannerCompat;
 import com.taptrack.tcmptappy.blescannercompat.IBluetoothLeScanner;
 import com.taptrack.tcmptappy.blescannercompat.ScanCallback;
+import com.taptrack.tcmptappy.blescannercompat.ScanFilter;
+import com.taptrack.tcmptappy.blescannercompat.ScanRecord;
 import com.taptrack.tcmptappy.blescannercompat.ScanResult;
 import com.taptrack.tcmptappy.blescannercompat.ScanSettings;
 
@@ -45,14 +47,32 @@ public class TappyBleScanner {
         public void onScanResult(int callbackType, ScanResult result) {
             super.onScanResult(callbackType, result);
             BluetoothDevice device = result.getDevice();
-            TappyBleDeviceDefinition deviceDefinition = new ParcelableTappyBleDeviceDefinition(
-                    device.getName(),
-                    device.getAddress(),
-                    TappyBleDeviceDefinition.DEFAULT_TRUCONNECT_SERVICE_UUID,
-                    TappyBleDeviceDefinition.DEFAULT_TRUCONNECT_RX_CHARACTERISTIC_UUID,
-                    TappyBleDeviceDefinition.DEFAULT_TRUCONNECT_TX_CHARACTERISTIC_UUID
-            );
-            newTappyFound(deviceDefinition);
+            ScanRecord record = result.getScanRecord();
+            if (record != null) {
+                List<ParcelUuid> serviceUUIDs = record.getServiceUuids();
+                for (ParcelUuid uuid : serviceUUIDs) {
+                    if (uuid.getUuid().equals(TappyBleDeviceDefinition.DEFAULT_TRUCONNECT_SERVICE_UUID)) {
+                        TappyBleDeviceDefinition deviceDefinition = new ParcelableTappyBleDeviceDefinition(
+                                device.getName(),
+                                device.getAddress(),
+                                TappyBleDeviceDefinition.DEFAULT_TRUCONNECT_SERVICE_UUID,
+                                TappyBleDeviceDefinition.DEFAULT_TRUCONNECT_RX_CHARACTERISTIC_UUID,
+                                TappyBleDeviceDefinition.DEFAULT_TRUCONNECT_TX_CHARACTERISTIC_UUID
+                        );
+                        newTappyFound(deviceDefinition);
+                    } else if (uuid.getUuid().equals(TappyBleDeviceDefinition.DEFAULT_TRUCONNECT_SERVICE_UUID_V5)) {
+                        TappyBleDeviceDefinition deviceDefinition = new ParcelableTappyBleDeviceDefinition(
+                                device.getName(),
+                                device.getAddress(),
+                                TappyBleDeviceDefinition.DEFAULT_TRUCONNECT_SERVICE_UUID_V5,
+                                TappyBleDeviceDefinition.DEFAULT_TRUCONNECT_RX_CHARACTERISTIC_UUID_V5,
+                                TappyBleDeviceDefinition.DEFAULT_TRUCONNECT_TX_CHARACTERISTIC_UUID_V5
+                        );
+                        newTappyFound(deviceDefinition);
+                    }
+                }
+
+            }
         }
 
         @Override
@@ -102,11 +122,16 @@ public class TappyBleScanner {
     }
 
     public static List<com.taptrack.tcmptappy.blescannercompat.ScanFilter> getCompatScanFilter() {
-        com.taptrack.tcmptappy.blescannercompat.ScanFilter.Builder builder =
-                new com.taptrack.tcmptappy.blescannercompat.ScanFilter.Builder();
-        builder.setServiceUuid(new ParcelUuid(TappyBleDeviceDefinition.DEFAULT_TRUCONNECT_SERVICE_UUID));
-        List<com.taptrack.tcmptappy.blescannercompat.ScanFilter> list = new ArrayList<>(1);
-        list.add(builder.build());
+        List<ScanFilter> list = new ArrayList<>(2);
+
+        ScanFilter.Builder origBuilder =
+                new ScanFilter.Builder();
+        origBuilder.setServiceUuid(new ParcelUuid(TappyBleDeviceDefinition.DEFAULT_TRUCONNECT_SERVICE_UUID));
+        list.add(origBuilder.build());
+
+        ScanFilter.Builder v5Builder = new ScanFilter.Builder();
+        v5Builder.setServiceUuid(new ParcelUuid(TappyBleDeviceDefinition.DEFAULT_TRUCONNECT_SERVICE_UUID_V5));
+        list.add(v5Builder.build());
         return list;
     }
 

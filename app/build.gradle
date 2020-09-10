@@ -23,9 +23,9 @@ android {
     defaultConfig {
         applicationId "com.taptrack.bletappyexample"
         minSdkVersion globalCfg.minSdkVersion
-        targetSdkVersion 28
-        versionCode 25
-        versionName "4.2.0"
+        targetSdkVersion 29
+        versionCode 26
+        versionName "4.3.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true

@@ -17,9 +17,9 @@ import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 
-private data class SearchManagementState(val isResumed: Boolean, val scanningDesired: Boolean, val hasCoarseLocation: Boolean) {
+private data class SearchManagementState(val isResumed: Boolean, val scanningDesired: Boolean, val hasFineLocation: Boolean) {
     val shouldBeScanningBluetooth: Boolean
-    get() = isResumed && scanningDesired && hasCoarseLocation
+    get() = isResumed && scanningDesired && hasFineLocation
 
     val shouldBeScanningUsb: Boolean
     get() = isResumed && scanningDesired
@@ -142,8 +142,8 @@ class SearchManagementDelegate constructor(val ctx: Context, val resultsListener
     }
 
     @Synchronized
-    fun coarseLocationRequestResult(result: Boolean) {
-        state = state.copy(hasCoarseLocation = result)
+    fun fineLocationRequestResult(result: Boolean) {
+        state = state.copy(hasFineLocation = result)
         reset()
     }
 

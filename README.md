@@ -1,6 +1,9 @@
 # Taptrack TCMP Tappy SDK
 This project provides an SDK for interfacing with a TapTrack Tappy NFC readers. The 'app' module contains the Tappy NFC Reader demo app found at
-https://play.google.com/store/apps/details?id=com.taptrack.bletappyexample
+https://play.google.com/store/apps/details?id=com.taptrack.bletappyexample. 
+
+When building the 'app' module for testing, remove all references to the
+keystore from app/build.gradle.
 
 This version replaces the previous TappyBLE SDK and provides a simplified API
 as well as the ability to use TappyUSB readers with Android devices that

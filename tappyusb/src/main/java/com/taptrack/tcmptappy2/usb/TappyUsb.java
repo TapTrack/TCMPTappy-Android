@@ -22,6 +22,9 @@ public class TappyUsb extends SerialTappy {
     private static final int VENDOR_ID_NATIVE_TAPPY = 0x04d8;
     private static final int PRODUCT_ID_NATIVE_TAPPY = 0x0053;
 
+    private static final int VENDOR_ID_CDC_TAPPY = 0x03d8;
+    private static final int PRODUCT_ID_CDC_TAPPY = 0x000a;
+
     private final UsbDevice backingDevice;
 
     TappyUsb(Context context, UsbDevice device, TappySerialCommunicator communicator) {
@@ -47,12 +50,14 @@ public class TappyUsb extends SerialTappy {
         for(Map.Entry<String,UsbDevice> deviceEntry : devices.entrySet()) {
             UsbDevice device = deviceEntry.getValue();
             int vendorId = device.getVendorId();
-            if(vendorId == VENDOR_ID_FTDI) {
-                int productId = device.getProductId();
-                if(productId == PRODUCT_ID_FT231X || productId == PRODUCT_ID_FT232R) {
+            int productId = device.getProductId();
+            if (vendorId == VENDOR_ID_FTDI) {
+                if (productId == PRODUCT_ID_FT231X || productId == PRODUCT_ID_FT232R) {
                     deviceList.add(device);
                 }
-            } else if (vendorId == VENDOR_ID_NATIVE_TAPPY && device.getProductId() == PRODUCT_ID_NATIVE_TAPPY) {
+            } else if (vendorId == VENDOR_ID_CDC_TAPPY && productId == PRODUCT_ID_CDC_TAPPY) {
+                deviceList.add(device);
+            }else if (vendorId == VENDOR_ID_NATIVE_TAPPY && productId == PRODUCT_ID_NATIVE_TAPPY) {
                 deviceList.add(device);
             }
         }
@@ -78,7 +83,8 @@ public class TappyUsb extends SerialTappy {
 
         int vendorId = device.getVendorId();
         int productId = device.getProductId();
-        if(vendorId == VENDOR_ID_FTDI && (productId == PRODUCT_ID_FT231X || productId == PRODUCT_ID_FT232R)) {
+        if ((vendorId == VENDOR_ID_FTDI && (productId == PRODUCT_ID_FT231X || productId == PRODUCT_ID_FT232R)) ||
+            vendorId == VENDOR_ID_CDC_TAPPY && productId == PRODUCT_ID_CDC_TAPPY) {
                 UsbDeviceConnection connection = manager.openDevice(device);
                 if(connection == null) {
                     return null;

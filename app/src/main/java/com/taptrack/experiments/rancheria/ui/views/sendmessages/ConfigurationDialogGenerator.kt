@@ -698,7 +698,7 @@ object DialogGenerator {
                                     startPage.toByte(),
                                     endPage.toByte(),
                                     KeySetting.KEY_A,
-                                    kotlin.ByteArray(6)
+                                    ByteArray(6) { 0xFF.toByte() }
                             )
                             TappyService.broadcastSendTcmp((message),ctx)
                         } catch (ignored: Exception) {
@@ -780,7 +780,7 @@ object DialogGenerator {
 
                             val tcmpMessage: TCMPMessage
                             if (command == LockTagCommand::class.java) {
-                                tcmpMessage = LockTagCommand(timeoutAdjusted.toByte(), kotlin.ByteArray(0))
+                                tcmpMessage = LockTagCommand(timeoutAdjusted.toByte(), ByteArray(0))
                             } else if (command == DetectActiveHCETargetCommand::class.java) {
                                 tcmpMessage = DetectActiveHCETargetCommand(timeoutAdjusted.toByte())
                             } else {

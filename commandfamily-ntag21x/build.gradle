@@ -31,3 +31,31 @@ dependencies {
 repositories {
     mavenCentral()
 }
+
+archivesBaseName = bintrayCfg.publishedArtifacts.ntag21xCommandFamily.artifact
+group = globalCfg.publishedGroupId
+version = globalCfg.publishedVersion
+
+ext {
+    bintrayRepo = bintrayCfg.bintrayRepo
+    publishedGroupId = group
+    siteUrl = bintrayCfg.siteUrl
+    gitUrl = bintrayCfg.gitUrl
+
+    developerId = bintrayCfg.developerId
+    developerName = bintrayCfg.developerName
+    developerEmail = bintrayCfg.developerEmail
+
+    licenseName = bintrayCfg.licenseName
+    licenseUrl = bintrayCfg.licenseUrl
+    allLicenses = bintrayCfg.allLicenses
+
+    bintrayName = bintrayCfg.publishedArtifacts.ntag21xCommandFamily.bintrayName
+    libraryName = bintrayCfg.publishedArtifacts.ntag21xCommandFamily.libraryName
+    artifact = bintrayCfg.publishedArtifacts.ntag21xCommandFamily.artifact
+    libraryDescription = bintrayCfg.publishedArtifacts.ntag21xCommandFamily.libraryDescription
+    libraryVersion = version
+}
+
+apply from: bintrayCfg.mavenInstallScript
+apply from: bintrayCfg.bintrayScript

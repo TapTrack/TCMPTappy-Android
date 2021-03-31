@@ -17,8 +17,8 @@
 package com.taptrack.tcmptappy2;
 
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Size;
+import androidx.annotation.NonNull;
+import androidx.annotation.Size;
 
 public class RawTCMPMessage extends AbstractTCMPMessage {
     protected byte[] payload;

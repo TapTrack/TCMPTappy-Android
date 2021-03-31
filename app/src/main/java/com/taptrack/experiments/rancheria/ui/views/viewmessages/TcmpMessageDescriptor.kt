@@ -2,7 +2,7 @@ package com.taptrack.experiments.rancheria.ui.views.viewmessages
 
 import android.content.Context
 import android.nfc.NdefRecord
-import android.support.annotation.StringRes
+import androidx.annotation.StringRes
 import com.taptrack.experiments.rancheria.R
 import com.taptrack.experiments.rancheria.ui.toHex
 import com.taptrack.experiments.rancheria.ui.toUnsigned

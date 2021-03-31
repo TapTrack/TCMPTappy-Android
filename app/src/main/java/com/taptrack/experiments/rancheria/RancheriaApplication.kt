@@ -3,8 +3,8 @@ package com.taptrack.experiments.rancheria
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
-import android.support.multidex.MultiDexApplication
-import android.support.v7.app.AppCompatDelegate
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.multidex.MultiDexApplication
 import com.f2prateek.rx.preferences2.RxSharedPreferences
 import com.taptrack.experiments.rancheria.business.TappyNotificationManager
 import io.reactivex.Observable

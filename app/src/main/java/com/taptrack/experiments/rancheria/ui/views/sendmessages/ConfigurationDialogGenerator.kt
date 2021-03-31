@@ -5,12 +5,6 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
-import android.support.annotation.LayoutRes
-import android.support.constraint.ConstraintLayout
-import android.support.design.widget.TextInputLayout
-import android.support.v4.app.DialogFragment
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.SwitchCompat
 import android.text.Editable
 import android.text.InputFilter
 import android.text.InputType
@@ -18,6 +12,12 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
+import androidx.annotation.LayoutRes
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.SwitchCompat
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.DialogFragment
+import com.google.android.material.textfield.TextInputLayout
 import com.taptrack.experiments.rancheria.R
 import com.taptrack.experiments.rancheria.business.CommandDataSource
 import com.taptrack.experiments.rancheria.business.CommandOption

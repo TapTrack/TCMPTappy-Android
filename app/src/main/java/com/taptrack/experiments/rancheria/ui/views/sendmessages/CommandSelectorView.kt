@@ -1,11 +1,11 @@
 package com.taptrack.experiments.rancheria.ui.views.sendmessages
 
 import android.content.Context
-import android.support.constraint.ConstraintLayout
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
+import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.taptrack.experiments.rancheria.R
 import com.taptrack.experiments.rancheria.business.CommandFamilyOption
 import com.taptrack.experiments.rancheria.business.CommandOption

@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    tools:parentTag="android.support.constraint.ConstraintLayout"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout"
     tools:layout_width="match_parent"
     tools:layout_height="wrap_content">
     <TextView
@@ -56,7 +56,7 @@
         app:layout_constraintStart_toEndOf="@+id/iv_cardcache_icon"
         android:text="@string/parameter_label_card_memory"
         />
-    <android.support.v7.widget.AppCompatSeekBar
+    <androidx.appcompat.widget.AppCompatSeekBar
         android:id="@+id/sb_cardcache_selection"
         android:layout_height="wrap_content"
         android:layout_width="0dp"
@@ -79,7 +79,7 @@
         android:text="1"
         tools:layout_editor_absoluteX="180dp"
         />
-    <android.support.constraint.Barrier
+    <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrier_cardcache"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -110,7 +110,7 @@
         app:layout_constraintStart_toEndOf="@+id/iv_enablecooldown_icon"
         android:text="@string/parameter_label_card_cooldown_enabled"
         />
-    <android.support.v7.widget.SwitchCompat
+    <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/swc_enablecooldown"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"

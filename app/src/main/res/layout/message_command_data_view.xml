@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    tools:parentTag="android.support.constraint.ConstraintLayout"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout"
     tools:layout_width="match_parent"
     tools:layout_height="wrap_content">
     <TextView
@@ -58,7 +58,7 @@
         app:layout_constraintStart_toEndOf="@+id/iv_message_icon"
         android:text="@string/parameter_label_message"
         />
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_message_container"
         android:layout_height="wrap_content"
         android:layout_width="0dp"
@@ -73,8 +73,8 @@
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             tools:text="A85D13C0FF"/>
-    </android.support.design.widget.TextInputLayout>
-    <android.support.constraint.Barrier
+    </com.google.android.material.textfield.TextInputLayout>
+    <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrier_message"
         android:layout_width="0dp"
         android:layout_height="0dp"

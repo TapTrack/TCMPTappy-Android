@@ -2,8 +2,8 @@ package com.taptrack.experiments.rancheria.ui.views.sendmessages
 
 import android.content.Context
 import android.os.Bundle
-import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.taptrack.experiments.rancheria.R
 import com.taptrack.experiments.rancheria.business.CommandOption
 import com.taptrack.experiments.rancheria.ui.inflateChildren

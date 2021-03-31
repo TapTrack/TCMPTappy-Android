@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    tools:parentTag="android.support.constraint.ConstraintLayout"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout"
     tools:layout_width="match_parent"
     tools:layout_height="match_parent"
     tools:paddingTop="4dp"
@@ -12,7 +12,7 @@
     tools:paddingRight="8dp"
     >
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/nsv_command_data_scroller"
         android:layout_height="0dp"
         android:layout_width="0dp"
@@ -23,15 +23,15 @@
         app:layout_constraintBottom_toTopOf="@+id/bt_send"
         app:layout_constraintVertical_chainStyle="packed"
         >
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_command_data"
             android:layout_width="0dp"
             android:layout_height="0dp"
             >
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </android.support.v4.widget.NestedScrollView>
-    <android.support.constraint.Barrier
+    </androidx.core.widget.NestedScrollView>
+    <androidx.constraintlayout.widget.Barrier
         android:id="@+id/br_button_barrier"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -42,7 +42,7 @@
         app:barrierDirection="bottom"
         app:constraint_referenced_ids="bt_send, bt_cancel"
         />
-    <android.support.v7.widget.AppCompatButton
+    <androidx.appcompat.widget.AppCompatButton
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:id="@+id/bt_send"
         android:layout_width="wrap_content"
@@ -50,7 +50,7 @@
         android:text="@android:string/ok"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
-    <android.support.v7.widget.AppCompatButton
+    <androidx.appcompat.widget.AppCompatButton
         style="@style/Widget.AppCompat.Button.Borderless"
         android:id="@+id/bt_cancel"
         android:layout_width="wrap_content"

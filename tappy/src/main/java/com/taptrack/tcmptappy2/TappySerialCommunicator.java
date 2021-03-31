@@ -1,6 +1,6 @@
 package com.taptrack.tcmptappy2;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Interface definition that abstracts away the details of a transmission medium

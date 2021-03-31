@@ -2,16 +2,16 @@ package com.taptrack.experiments.rancheria.ui.views.findtappies
 
 import android.content.Context
 import android.hardware.usb.UsbDevice
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.AppCompatImageView
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewManager
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.taptrack.experiments.rancheria.R
 import com.taptrack.tcmptappy2.ble.TappyBleDeviceDefinition
 import org.jetbrains.anko.custom.ankoView

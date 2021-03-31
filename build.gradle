@@ -1,16 +1,15 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-//    ext.kotlin_version = '1.1.2-5'
-    ext.kotlin_version = '1.3.10'
+    ext.kotlin_version = '1.4.31'
     repositories {
         jcenter()
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.4.2'
+        classpath 'com.android.tools.build:gradle:4.1.3'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "io.realm:realm-gradle-plugin:5.8.0"
+        classpath "io.realm:realm-gradle-plugin:6.1.0"
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7'
     }
@@ -27,6 +26,7 @@ allprojects {
         maven {
             url "https://maven.google.com"
         }
+        google()
     }
 }
 
@@ -44,7 +44,7 @@ ext.globalCfg = [
         minSdkVersion: 19,
         compileSdkVersion: 29,
         buildToolsVersion: '29.0.3',
-        publishedVersion: "2.2.0",
+        publishedVersion: "2.3.0",
         publishedGroupId : 'com.taptrack.tcmptappy2',
 ]
 
@@ -85,6 +85,38 @@ ext.bintrayCfg = [
                         artifact : 'tappy',
                         libraryDescription : 'Base classes for working with TCMP Tappy devices',
                 ],
+
+                // Command families
+                systemCommandFamily: [
+                        bintrayName : 'commandfamily-system-2',
+                        libraryName : 'System TCMP Command Family',
+                        artifact : 'commandfamily-system',
+                        libraryDescription : 'Command family for system-level tappy commands',
+                ],
+                basicNfcCommandFamily: [
+                        bintrayName : 'commandfamily-basicnfc-2',
+                        libraryName : 'Basic Nfc TCMP Command Family',
+                        artifact : 'commandfamily-basicnfc',
+                        libraryDescription : 'Command family for performing basic NFC operations',
+                ],
+                mifareClassicCommandFamily: [
+                        bintrayName : 'commandfamily-mifareclassic-2',
+                        libraryName : 'Mifare Classic Command Family',
+                        artifact : 'commandfamily-mifareclassic',
+                        libraryDescription : 'Communication family for MIFARE Classic communication',
+                ],
+                ntag21xCommandFamily: [
+                        bintrayName : 'commandfamily-ntag21x',
+                        libraryName : 'NTAG21x Command Family',
+                        artifact : 'commandfamily-ntag21x',
+                        libraryDescription : 'Command family for NTAG21x operations',
+                ],
+                type4CommandFamily: [
+                        bintrayName : 'commandfamily-type4-2',
+                        libraryName : 'Type 4 Communication Command Family',
+                        artifact : 'commandfamily-type4',
+                        libraryDescription : 'Command family for raw Type 4 communication',
+                ],
         ],
 
 
@@ -101,13 +133,24 @@ ext.bintrayCfg = [
 ]
 
 ext.libraries = [
-        androidSupportAnnotations: "com.android.support:support-annotations:26.1.0",
+        androidSupportAnnotations: 'androidx.annotation:annotation:1.2.0',
+
         tcmpLegacy: "com.taptrack.tcmptappy:message-common:0.9.3",
         okio: "com.squareup.okio:okio:2.6.0",
+
+        junit: 'junit:junit:4.12',
+        robolectric: 'org.robolectric:robolectric:3.3',
 
         tappy: project(':tappy'),
         tappyble: project(':tappyble'),
         tappyusb: project(':tappyusb'),
         tcmp: project(':tcmp'),
         tcmpconverter: project(':tcmpconverter'),
+        tcmpTappyConstants : "com.taptrack.tcmptappy:tappy-constants:0.8.1",
+
+        systemCommandFamily: project(':commandfamily-system'),
+        basicNfcCommandFamily: project(':commandfamily-basicnfc'),
+        mifareClassicCommandFamily: project(':commandfamily-mifareclassic'),
+        ntag21xCommandFamily: project(':commandfamily-ntag21x'),
+        type4CommandFamily: project(':commandfamily-type4'),
 ]

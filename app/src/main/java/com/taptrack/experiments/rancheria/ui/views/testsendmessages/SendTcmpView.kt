@@ -2,14 +2,14 @@ package com.taptrack.experiments.rancheria.ui.views.testsendmessages
 
 import android.content.Context
 import android.content.res.Configuration
-import android.support.annotation.StringRes
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.annotation.StringRes
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.taptrack.experiments.rancheria.R
 import com.taptrack.experiments.rancheria.business.TappyService
 import com.taptrack.experiments.rancheria.ui.inflateChildren

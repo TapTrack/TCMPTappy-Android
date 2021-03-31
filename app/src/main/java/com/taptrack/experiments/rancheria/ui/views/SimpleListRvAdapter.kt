@@ -1,7 +1,7 @@
 package com.taptrack.experiments.rancheria.ui.views
 
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 
 abstract class SimpleListRvAdapter<T, V : RecyclerView.ViewHolder> : RecyclerView.Adapter<V> {
     private var items : List<T> = listOf()

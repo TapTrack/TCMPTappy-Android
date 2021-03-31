@@ -1,7 +1,7 @@
 package com.taptrack.tcmptappy2;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Size;
+import androidx.annotation.NonNull;
+import androidx.annotation.Size;
 
 /**
  * A TCMPMessage represents a command that can be sent to the Tappy

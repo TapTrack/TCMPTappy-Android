@@ -9,16 +9,17 @@ import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.os.Looper
-import android.support.design.widget.BottomNavigationView
-import android.support.design.widget.Snackbar
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentPagerAdapter
-import android.support.v4.view.ViewPager
-import android.support.v7.app.AppCompatDelegate
-import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.*
 import android.widget.FrameLayout
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentPagerAdapter
+import androidx.viewpager.widget.ViewPager
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.rxrelay2.BehaviorRelay
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.PermissionToken
@@ -54,7 +55,7 @@ import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.support.v4.dip
 
 
-class MainActivity : android.support.v7.app.AppCompatActivity(), ChooseTappiesViewModelProvider, CommandSelectorViewModelProvider {
+class MainActivity : AppCompatActivity(), ChooseTappiesViewModelProvider, CommandSelectorViewModelProvider {
     private val TAG = MainActivity::class.java.name
 
     private lateinit var permissionDelegate: UsbPermissionDelegate
@@ -242,7 +243,7 @@ class MainActivity : android.support.v7.app.AppCompatActivity(), ChooseTappiesVi
     private var viewpager: ViewPager? = null
     private var mainBottomNavigation: BottomNavigationView? = null
 
-    override fun onCreate(savedInstanceState: android.os.Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setTheme(R.style.AppTheme_NoActionBar)
         setContentView(R.layout.activity_main)

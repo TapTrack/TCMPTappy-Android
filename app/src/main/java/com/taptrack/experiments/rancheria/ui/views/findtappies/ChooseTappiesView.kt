@@ -2,9 +2,6 @@ package com.taptrack.experiments.rancheria.ui.views.findtappies
 
 import android.content.Context
 import android.hardware.usb.UsbDevice
-import android.support.annotation.UiThread
-import android.support.v4.content.ContextCompat
-import android.support.v4.widget.NestedScrollView
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
@@ -13,6 +10,9 @@ import android.view.ViewManager
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.annotation.UiThread
+import androidx.core.content.ContextCompat
+import androidx.core.widget.NestedScrollView
 import com.taptrack.experiments.rancheria.R
 import com.taptrack.experiments.rancheria.ui.views.getHostActivity
 import com.taptrack.experiments.rancheria.ui.views.setTextAppearanceCompat

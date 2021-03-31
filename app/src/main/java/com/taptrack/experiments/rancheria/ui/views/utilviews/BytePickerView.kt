@@ -84,7 +84,7 @@ class BytePickerView : NumberPicker {
         try {
             // refelction call for
             // higherPicker.changeValueByOne(true);
-            method = this.javaClass.superclass.getDeclaredMethod("changeValueByOne", Boolean::class.javaPrimitiveType)
+            method = this.javaClass.superclass!!.getDeclaredMethod("changeValueByOne", Boolean::class.javaPrimitiveType)
             method.isAccessible = true
             method.invoke(this, increment)
         } catch (e: NoSuchMethodException) {

@@ -3,9 +3,9 @@ package com.taptrack.experiments.rancheria.ui.views
 import android.app.Activity
 import android.content.ContextWrapper
 import android.os.Build
-import android.support.annotation.StyleRes
 import android.view.View
 import android.widget.TextView
+import androidx.annotation.StyleRes
 
 fun TextView.setTextAppearanceCompat(@StyleRes appearance: Int) {
     if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {

@@ -7,7 +7,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 public class UsbPermissionDelegate {
     private static final String ACTION_USB_PERMISSION = "com.taptrack.tappy.usb.USB_PERMISSION";

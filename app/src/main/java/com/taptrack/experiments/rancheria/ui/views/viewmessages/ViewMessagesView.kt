@@ -2,15 +2,15 @@ package com.taptrack.experiments.rancheria.ui.views.viewmessages
 
 import android.content.Context
 import android.graphics.Rect
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
 import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.taptrack.experiments.rancheria.R
 import com.taptrack.experiments.rancheria.business.CommandDataSource
 import com.taptrack.experiments.rancheria.business.TappyService

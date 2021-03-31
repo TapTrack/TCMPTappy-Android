@@ -4,8 +4,9 @@ import android.content.Context;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.taptrack.tcmptappy2.SerialTappy;
 import com.taptrack.tcmptappy2.TappySerialCommunicator;

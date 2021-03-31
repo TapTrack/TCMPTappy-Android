@@ -8,9 +8,17 @@ task sourcesJar(type: Jar) {
 }
 
 task javadoc(type: Javadoc) {
+    excludes = ['**/*.kt']
     source = android.sourceSets.main.java.srcDirs
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    classpath += project.files(android.bootClasspath.join(File.pathSeparator))
 }
+
+afterEvaluate {
+    javadoc.classpath += files(android.libraryVariants.collect { variant ->
+        variant.javaCompileProvider.get().classpath.files
+    })
+}
+
 //if (project.hasProperty("android")) { // Android libraries
 //} else { // Java libraries
 //    task sourcesJar(type: Jar, dependsOn: classes) {

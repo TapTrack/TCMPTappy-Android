@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    tools:layout_height="wrap_content"
+    tools:layout_width="match_parent"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+    <TextView
+        android:id="@+id/tv_command_title"
+        style="@style/TextAppearance.AppCompat.Title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/nfccommand_scan_ndef_title"
+        android:textColor="@color/colorAccent"
+        app:layout_constraintBottom_toTopOf="@+id/tv_command_description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="Read Classic" />
+
+    <TextView
+        android:id="@+id/tv_command_description"
+        style="@style/TextAppearance.AppCompat.Body1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_command_title"
+        tools:text="Read data from a MIFARE Classic. For this example, the Tappy will always attempt to authenticate with key A using the default key" />
+
+    <ImageView
+        android:id="@+id/iv_timeout_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:alpha="0.54"
+        app:layout_constraintEnd_toStartOf="@+id/tv_timeout_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_command_description"
+        app:srcCompat="@drawable/ic_duration_black_24dp" />
+
+    <TextView
+        android:id="@+id/tv_timeout_label"
+        style="@style/TextAppearance.AppCompat.Caption"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/iv_timeout_icon"
+        app:layout_constraintTop_toBottomOf="@+id/tv_command_description"
+        android:text="@string/parameter_label_timeout" />
+
+    <androidx.appcompat.widget.AppCompatSeekBar
+        android:id="@+id/sb_timeout_selection"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:max="10"
+        app:layout_constraintEnd_toStartOf="@+id/tv_timeout_value"
+        app:layout_constraintStart_toEndOf="@+id/iv_timeout_icon"
+        app:layout_constraintTop_toBottomOf="@+id/tv_timeout_label" />
+
+    <TextView
+        android:id="@+id/tv_timeout_value"
+        style="@style/TextAppearance.AppCompat.Body1"
+        android:layout_width="24sp"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="@+id/sb_timeout_selection"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/sb_timeout_selection"
+        app:layout_constraintTop_toTopOf="@+id/sb_timeout_selection"
+        tools:layout_editor_absoluteX="180dp"
+        android:text="@string/parameter_value_infinite" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_timeout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="sb_timeout_selection,iv_timeout_icon,tv_timeout_value" />
+
+    <ImageView
+        android:id="@+id/iv_toggle_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:alpha="0.54"
+        app:layout_constraintEnd_toStartOf="@id/tv_toggle_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/barrier_timeout"
+        app:srcCompat="@drawable/ic_lock_black_24dp" />
+
+    <TextView
+        android:id="@+id/tv_toggle_label"
+        style="@style/TextAppearance.AppCompat.Caption"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/iv_toggle_icon"
+        app:layout_constraintTop_toBottomOf="@id/barrier_timeout"
+        android:text="@string/parameter_label_toggle" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/swc_toggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintStart_toEndOf="@id/iv_toggle_icon"
+        app:layout_constraintTop_toBottomOf="@id/tv_toggle_label" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_toggle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="iv_toggle_icon,tv_toggle_label,swc_toggle" />
+
+    <ImageView
+        android:id="@+id/iv_parameter_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:alpha="0.54"
+        app:layout_constraintEnd_toStartOf="@+id/tv_parameter_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/barrier_toggle"
+        app:srcCompat="@drawable/ic_password_black_24dp" />
+
+    <TextView
+        android:id="@+id/tv_parameter_label"
+        style="@style/TextAppearance.AppCompat.Caption"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/parameter_label_pwd_pack"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/iv_parameter_icon"
+        app:layout_constraintTop_toBottomOf="@+id/barrier_toggle" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_parameter_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        app:hintEnabled="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/iv_parameter_icon"
+        app:layout_constraintTop_toBottomOf="@+id/tv_parameter_label">
+
+        <EditText
+            android:id="@+id/et_parameter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="A85D13C0FFFF" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_parameter"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="iv_parameter_icon,til_parameter_container" />
+
+    <ImageView
+        android:id="@+id/iv_message_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:alpha="0.54"
+        app:layout_constraintEnd_toStartOf="@+id/tv_message_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/barrier_parameter"
+        app:srcCompat="@drawable/ic_message_black_24dp" />
+
+    <TextView
+        android:id="@+id/tv_message_label"
+        style="@style/TextAppearance.AppCompat.Caption"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/parameter_label_message"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/iv_message_icon"
+        app:layout_constraintTop_toBottomOf="@+id/barrier_parameter" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_message_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        app:hintEnabled="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/iv_message_icon"
+        app:layout_constraintTop_toBottomOf="@+id/tv_message_label">
+
+        <EditText
+            android:id="@+id/et_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="Hello, world&#33;" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_message"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="iv_message_icon,til_message_container" />
+</merge>

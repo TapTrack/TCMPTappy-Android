@@ -31,11 +31,13 @@ import com.taptrack.tcmptappy2.commandfamilies.basicnfc.commands.*
 import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.KeySetting
 import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.commands.DetectMifareClassicCommand
 import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.commands.ReadMifareClassicCommand
+import com.taptrack.tcmptappy2.commandfamilies.ntag21x.commands.*
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.ConfigureOnboardScanCooldownCommand
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.SetConfigItemCommand
 import com.taptrack.tcmptappy2.commandfamilies.type4.commands.*
 import org.jetbrains.anko.*
 import kotlin.reflect.full.createInstance
+import kotlin.reflect.typeOf
 
 
 private interface ConfirmListener {
@@ -120,7 +122,7 @@ object DialogGenerator {
         sb.setOnSeekBarChangeListener(listener)
     }
 
-    private fun makeNdefDialogPair(ctx: Context, option: CommandOption): Pair<View, ConfirmListener>? {
+    private fun makeNdefDialogPair(ctx: Context, option: CommandOption): Pair<View, ConfirmListener> {
         val cl = wrapInConstraintLayout(ctx, R.layout.timeout_continuous_command_data_view)
 
         cl.findOptional<TextView>(R.id.tv_command_title)?.textResource = option.titleRes
@@ -154,7 +156,7 @@ object DialogGenerator {
         return Pair(cl, listener)
     }
 
-    private fun makeScanDialogPair(ctx: Context, option: CommandOption): Pair<View, ConfirmListener>? {
+    private fun makeScanDialogPair(ctx: Context, option: CommandOption): Pair<View, ConfirmListener> {
         val cl = wrapInConstraintLayout(ctx, R.layout.timeout_continuous_command_data_view)
 
         cl.findOptional<TextView>(R.id.tv_command_title)?.textResource = option.titleRes
@@ -188,7 +190,7 @@ object DialogGenerator {
         return Pair(cl, listener)
     }
 
-    private fun makeType4DialogPair(ctx: Context, option: CommandOption): Pair<View, ConfirmListener>? {
+    private fun makeType4DialogPair(ctx: Context, option: CommandOption): Pair<View, ConfirmListener> {
         val cl = wrapInConstraintLayout(ctx, R.layout.timeout_modulation_afi_command_data_view)
 
         cl.findOptional<TextView>(R.id.tv_command_title)?.textResource = option.titleRes
@@ -202,11 +204,10 @@ object DialogGenerator {
         val afiEt = cl.findOptional<EditText>(R.id.et_afi)
 
         cl.findOptional<SwitchCompat>(R.id.swc_modulation)?.setOnCheckedChangeListener { buttonView, isChecked ->
-            val afiVisibility: Int
-            if (isChecked) {
-                afiVisibility = View.VISIBLE
+            val afiVisibility = if (isChecked) {
+                View.VISIBLE
             } else {
-                afiVisibility = View.GONE
+                View.GONE
             }
 
             afiIcon?.visibility = afiVisibility
@@ -217,7 +218,7 @@ object DialogGenerator {
         if (afiEt != null && afiTil != null) {
             afiEt.addTextChangedListener(object : TextWatcher {
                 override fun afterTextChanged(s: Editable?) {
-                    if (!(s?.toString()?.trim()?.isTextValidHex() ?: true)) {
+                    if (s?.toString()?.trim()?.isTextValidHex() == false) {
                         afiTil.error = ctx.getString(R.string.error_must_be_hex_byte)
                     } else {
                         afiTil.error = null
@@ -273,8 +274,7 @@ object DialogGenerator {
     private fun getConfigurationView(ctx: Context, option: CommandOption): Pair<View, ConfirmListener>? {
         // this is super inefficient
         val commands = option.clazzes
-
-        var command: Class<out TCMPMessage>? = null
+        val command: Class<out TCMPMessage>?
         if (commands.isEmpty()) {
             return null
         } else if (commands.size > 1) {
@@ -441,7 +441,6 @@ object DialogGenerator {
                 cl.findOptional<TextView>(R.id.tv_command_description)?.textResource = option.descriptionRes
 
                 val parameterTil = cl.find<TextInputLayout>(R.id.til_parameter_container)
-//                val parameterPusherTil = cl.find<TextInputLayout>(R.id.til_parameter_container_pusher)
                 val parameterEt = cl.find<EditText>(R.id.et_parameter)
 
                 parameterEt.filters = parameterEt.filters.plus(
@@ -536,7 +535,7 @@ object DialogGenerator {
                             }
 
 
-                            val cmd = SetConfigItemCommand(hexParameter[0],hexValue);
+                            val cmd = SetConfigItemCommand(hexParameter[0],hexValue)
                             TappyService.broadcastSendTcmp(cmd,ctx)
 
                         } catch (ignored: Exception) {
@@ -558,7 +557,7 @@ object DialogGenerator {
                 cl.findOptional<TextView>(R.id.tv_command_title)?.textResource = option.titleRes
                 cl.findOptional<TextView>(R.id.tv_command_description)?.textResource = option.descriptionRes
 
-                applyTimeoutListener(ctx,cl)
+                applyTimeoutListener(ctx, cl)
 
                 val listener = object : ConfirmListener {
                     override fun didConfirm(v: View): Boolean {
@@ -566,48 +565,16 @@ object DialogGenerator {
                             val rawTimeout = 1 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 10)
                             val uri = cl.findOptional<EditText>(R.id.et_message)?.text?.toString() ?: ""
 
-                            val timeoutAdjusted = if (rawTimeout < 0 ) 0 else if (rawTimeout == 11) 0 else rawTimeout
+                            val timeoutAdjusted = if (rawTimeout < 0) 0 else if (rawTimeout == 11) 0 else rawTimeout
 
-                            val uriMessage: WriteNdefUriRecordCommand
-                            if (uri.startsWith("https://www.")) {
-                                uriMessage = WriteNdefUriRecordCommand(timeoutAdjusted.toByte(),
-                                        false,
-                                        NdefUriCodes.URICODE_HTTPSWWW,
-                                        uri.substring("https://www.".length).toByteArray())
-                            } else if (uri.startsWith("http://www.")) {
-                                uriMessage = WriteNdefUriRecordCommand(timeoutAdjusted.toByte(),
-                                        false,
-                                        NdefUriCodes.URICODE_HTTPWWW,
-                                        uri.substring("http://www.".length).toByteArray())
-                            } else if (uri.startsWith("http://")) {
-                                uriMessage = WriteNdefUriRecordCommand(timeoutAdjusted.toByte(),
-                                        false,
-                                        NdefUriCodes.URICODE_HTTP,
-                                        uri.substring("http://".length).toByteArray())
-                            } else if (uri.startsWith("https://")) {
-                                uriMessage = WriteNdefUriRecordCommand(timeoutAdjusted.toByte(),
-                                        false,
-                                        NdefUriCodes.URICODE_HTTPS,
-                                        uri.substring("https://".length).toByteArray())
-                            } else if (uri.startsWith("tel:")) {
-                                uriMessage = WriteNdefUriRecordCommand(timeoutAdjusted.toByte(),
-                                        false,
-                                        NdefUriCodes.URICODE_TEL,
-                                        uri.substring("tel:".length).toByteArray())
-                            } else if (uri.startsWith("mailto:")) {
-                                uriMessage = WriteNdefUriRecordCommand(timeoutAdjusted.toByte(),
-                                        false,
-                                        NdefUriCodes.URICODE_MAILTO,
-                                        uri.substring("mailto:".length).toByteArray())
-                            } else {
-                                uriMessage = WriteNdefUriRecordCommand(timeoutAdjusted.toByte(),
-                                        false,
-                                        NdefUriCodes.URICODE_NOPREFIX,
-                                        uri.toByteArray())
-                            }
-
-                            TappyService.broadcastSendTcmp((uriMessage),ctx)
-
+                            val (uriCode, uriBytes) = parseUriCodeAndUriBytes(uri)
+                            val uriMessage = WriteNdefUriRecordCommand(
+                                timeoutAdjusted.toByte(),
+                                false,
+                                uriCode,
+                                uriBytes
+                            )
+                            TappyService.broadcastSendTcmp(uriMessage, ctx)
                         } catch (ignored: Exception) {
                             // cant instantiate
                         }
@@ -726,7 +693,7 @@ object DialogGenerator {
                 if (apduET != null && apduTIL != null) {
                     apduET.addTextChangedListener(object : TextWatcher {
                         override fun afterTextChanged(s: Editable?) {
-                            if (!(s?.toString()?.trim()?.isTextValidHex() ?: true)) {
+                            if (s?.toString()?.trim()?.isTextValidHex() == false) {
                                 apduTIL.error = ctx.getString(R.string.error_must_be_hex)
                             } else {
                                 apduTIL.error = null
@@ -797,6 +764,408 @@ object DialogGenerator {
 
                 return Pair(cl, listener)
             }
+            ReadNdefWithPasswordBytesCommand::class.java -> {
+                val cl = wrapInConstraintLayout(ctx, R.layout.timeout_message_command_data_view)
+                applyTimeoutListener(ctx, cl)
+
+                cl.findOptional<TextView>(R.id.tv_command_title)?.textResource = option.titleRes
+                cl.findOptional<TextView>(R.id.tv_command_description)?.textResource = option.descriptionRes
+                cl.findOptional<TextView>(R.id.tv_message_label)?.textResource = R.string.parameter_label_pwd_pack
+                cl.findOptional<ImageView>(R.id.iv_message_icon)?.imageResource = R.drawable.ic_password_black_24dp
+
+                val passwordTextInputLayout = cl.find<TextInputLayout>(R.id.til_message_container)
+                val passwordEditText = cl.find<EditText>(R.id.et_message)
+                passwordEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
+                passwordEditText.maxLines = 1
+
+                val passwordLength = 12
+
+                passwordEditText.filters = passwordEditText.filters.plus(
+                    arrayOf(
+                        InputFilter.AllCaps(),
+                        InputFilter.LengthFilter(passwordLength)
+                    )
+                )
+
+                passwordEditText.addTextChangedListener(object : TextWatcher {
+                    override fun afterTextChanged(s: Editable?) {
+                        if (s != null) {
+                            val str = s.toString()
+                            if (str.length > 12) {
+                                val truncated = str.substring(startIndex = 0, endIndex = passwordLength - 1)
+                                passwordEditText.setText(truncated)
+                            } else {
+                                val modified = "[^A-F0-9]".toRegex().replace(str.toUpperCase(), "")
+                                if (str != modified) {
+                                    passwordEditText.setText(modified)
+                                } else {
+                                    if (!str.trim().isTextValidHex()) {
+                                        val errorText = ctx.getString(R.string.error_must_be_hex_byte)
+                                        passwordTextInputLayout.error = errorText
+                                    } else {
+                                        passwordTextInputLayout.error = null
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                    }
+
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    }
+                })
+
+                val listener = object : ConfirmListener {
+                    override fun didConfirm(v: View): Boolean {
+                        val pwdPackText = passwordEditText.text.toString().trim()
+
+                        if (!pwdPackText.isTextValidHex() || pwdPackText.length != 12) {
+                            return false
+                        }
+
+                        val passwordBytes = pwdPackText.substring(0..7).hexStringToByteArray()
+                        val ackBytes = pwdPackText.substring(8..pwdPackText.lastIndex).hexStringToByteArray()
+
+                        val timeout = 1 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 10)
+
+                        val timeoutAdjusted = when {
+                            timeout < 0 || timeout == 11 -> 0
+                            else -> timeout
+                        }
+
+                        try {
+                            val message = ReadNdefWithPasswordBytesCommand(
+                                timeoutAdjusted.toByte(),
+                                passwordBytes,
+                                ackBytes,
+                            )
+                            TappyService.broadcastSendTcmp(message, ctx)
+                        } catch (ignored: Exception) {
+                            ignored.printStackTrace()
+                            // cant instantiate
+                        }
+                        return true
+                    }
+                }
+
+                return Pair(cl, listener)
+            }
+            ReadNdefWithPasswordCommand::class.java -> {
+                val cl = wrapInConstraintLayout(ctx, R.layout.timeout_message_command_data_view)
+                applyTimeoutListener(ctx, cl)
+
+                cl.findOptional<TextView>(R.id.tv_command_title)?.textResource = option.titleRes
+                cl.findOptional<TextView>(R.id.tv_command_description)?.textResource = option.descriptionRes
+                cl.findOptional<TextView>(R.id.tv_message_label)?.textResource = R.string.parameter_label_password
+                cl.findOptional<ImageView>(R.id.iv_message_icon)?.imageResource = R.drawable.ic_password_black_24dp
+
+                val passwordEditText = cl.find<EditText>(R.id.et_message)
+                passwordEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_NORMAL
+                passwordEditText.maxLines = 1
+
+                val listener = object : ConfirmListener {
+                    override fun didConfirm(v: View): Boolean {
+                        val password = passwordEditText.text.toString().trim()
+                        val timeout = 1 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 10)
+
+                        val timeoutAdjusted = when {
+                            timeout < 0 || timeout == 11 -> 0
+                            else -> timeout
+                        }
+
+                        try {
+                            val message = ReadNdefWithPasswordCommand(timeoutAdjusted.toByte(), password)
+                            TappyService.broadcastSendTcmp(message, ctx)
+                        } catch (ignored: Exception) {
+                            ignored.printStackTrace()
+                            // cant instantiate
+                        }
+                        return true
+                    }
+                }
+
+                return Pair(cl, listener)
+            }
+            WriteTextNdefWithPasswordBytesCommand::class.java -> {
+                val cl = wrapInConstraintLayout(ctx, R.layout.timeout_toggle_parameter_message_command_data_view)
+                applyTimeoutListener(ctx, cl)
+
+                cl.findOptional<TextView>(R.id.tv_command_title)?.textResource = option.titleRes
+                cl.findOptional<TextView>(R.id.tv_command_description)?.textResource = option.descriptionRes
+                cl.findOptional<TextView>(R.id.tv_parameter_label)?.textResource = R.string.parameter_label_pwd_pack
+
+                val messageEditText = cl.find<EditText>(R.id.et_message)
+                val passwordTextInputLayout = cl.find<TextInputLayout>(R.id.til_parameter_container)
+                val passwordEditText = cl.find<EditText>(R.id.et_parameter)
+                passwordEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
+                passwordEditText.maxLines = 1
+
+                val passwordLength = 12
+
+                passwordEditText.filters = passwordEditText.filters.plus(
+                    arrayOf(
+                        InputFilter.AllCaps(),
+                        InputFilter.LengthFilter(passwordLength)
+                    )
+                )
+
+                passwordEditText.addTextChangedListener(object : TextWatcher {
+                    override fun afterTextChanged(s: Editable?) {
+                        if (s != null) {
+                            val str = s.toString()
+                            if (str.length > 12) {
+                                val truncated = str.substring(startIndex = 0, endIndex = passwordLength - 1)
+                                passwordEditText.setText(truncated)
+                            } else {
+                                val modified = "[^A-F0-9]".toRegex().replace(str.toUpperCase(), "")
+                                if (str != modified) {
+                                    passwordEditText.setText(modified)
+                                } else {
+                                    if (!str.trim().isTextValidHex()) {
+                                        val errorText = ctx.getString(R.string.error_must_be_hex_byte)
+                                        passwordTextInputLayout.error = errorText
+                                    } else {
+                                        passwordTextInputLayout.error = null
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                    }
+
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    }
+                })
+
+                val listener = object : ConfirmListener {
+                    override fun didConfirm(v: View): Boolean {
+                        val pwdPackText = passwordEditText.text.toString().trim()
+
+                        if (!pwdPackText.isTextValidHex() || pwdPackText.length != 12) {
+                            return false
+                        }
+
+                        val passwordBytes = pwdPackText.substring(0..7).hexStringToByteArray()
+                        val ackBytes = pwdPackText.substring(8..pwdPackText.lastIndex).hexStringToByteArray()
+                        val timeout = 1 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 10)
+
+                        val timeoutAdjusted = when {
+                            timeout < 0 || timeout == 11 -> 0
+                            else -> timeout
+                        }
+
+                        val text = messageEditText.text.toString().trim()
+
+                        val readProtectionEnabled = cl.findViewById<SwitchCompat>(R.id.swc_toggle).isChecked
+
+                        try {
+                            val message = WriteTextNdefWithPasswordBytesCommand(
+                                timeoutAdjusted.toByte(),
+                                readProtectionEnabled,
+                                passwordBytes,
+                                ackBytes,
+                                text
+                            )
+                            TappyService.broadcastSendTcmp(message, ctx)
+                        } catch (ignored: Exception) {
+                            ignored.printStackTrace()
+                            // cant instantiate
+                        }
+                        return true
+                    }
+                }
+
+                return Pair(cl, listener)
+            }
+            WriteTextNdefWithPasswordCommand::class.java -> {
+                val cl = wrapInConstraintLayout(ctx, R.layout.timeout_toggle_parameter_message_command_data_view)
+                applyTimeoutListener(ctx, cl)
+
+                cl.findOptional<TextView>(R.id.tv_command_title)?.textResource = option.titleRes
+                cl.findOptional<TextView>(R.id.tv_command_description)?.textResource = option.descriptionRes
+                cl.findOptional<TextView>(R.id.tv_parameter_label)?.textResource = R.string.parameter_label_password
+
+                val messageEditText = cl.find<EditText>(R.id.et_message)
+                val passwordEditText = cl.find<EditText>(R.id.et_parameter)
+                passwordEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_NORMAL
+                passwordEditText.maxLines = 1
+
+                val listener = object : ConfirmListener {
+                    override fun didConfirm(v: View): Boolean {
+                        val password = passwordEditText.text.toString().trim()
+                        val timeout = 1 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 10)
+
+                        val timeoutAdjusted = when {
+                            timeout < 0 || timeout == 11 -> 0
+                            else -> timeout
+                        }
+
+                        val text = messageEditText.text.toString().trim()
+
+                        val readProtectionEnabled = cl.findViewById<SwitchCompat>(R.id.swc_toggle).isChecked
+
+                        try {
+                            val message = WriteTextNdefWithPasswordCommand(
+                                timeoutAdjusted.toByte(),
+                                readProtectionEnabled,
+                                password,
+                                text
+                            )
+                            TappyService.broadcastSendTcmp(message, ctx)
+                        } catch (ignored: Exception) {
+                            ignored.printStackTrace()
+                            // cant instantiate
+                        }
+                        return true
+                    }
+                }
+
+                return Pair(cl, listener)
+            }
+            WriteUriNdefWithPasswordBytesCommand::class.java -> {
+                val cl = wrapInConstraintLayout(ctx, R.layout.timeout_toggle_parameter_message_command_data_view)
+                applyTimeoutListener(ctx, cl)
+
+                cl.findOptional<TextView>(R.id.tv_command_title)?.textResource = option.titleRes
+                cl.findOptional<TextView>(R.id.tv_command_description)?.textResource = option.descriptionRes
+                cl.findOptional<TextView>(R.id.tv_parameter_label)?.textResource = R.string.parameter_label_pwd_pack
+
+                val uriEditText = cl.find<EditText>(R.id.et_message)
+                val passwordTextInputLayout = cl.find<TextInputLayout>(R.id.til_parameter_container)
+                val passwordEditText = cl.find<EditText>(R.id.et_parameter)
+                passwordEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI
+                passwordEditText.maxLines = 1
+
+                val passwordLength = 12
+
+                passwordEditText.filters = passwordEditText.filters.plus(
+                    arrayOf(
+                        InputFilter.AllCaps(),
+                        InputFilter.LengthFilter(passwordLength)
+                    )
+                )
+
+                passwordEditText.addTextChangedListener(object : TextWatcher {
+                    override fun afterTextChanged(s: Editable?) {
+                        if (s != null) {
+                            val str = s.toString()
+                            if (str.length > 12) {
+                                val truncated = str.substring(startIndex = 0, endIndex = passwordLength - 1)
+                                passwordEditText.setText(truncated)
+                            } else {
+                                val modified = "[^A-F0-9]".toRegex().replace(str.toUpperCase(), "")
+                                if (str != modified) {
+                                    passwordEditText.setText(modified)
+                                } else {
+                                    if (!str.trim().isTextValidHex()) {
+                                        val errorText = ctx.getString(R.string.error_must_be_hex_byte)
+                                        passwordTextInputLayout.error = errorText
+                                    } else {
+                                        passwordTextInputLayout.error = null
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                    }
+
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    }
+                })
+
+                val listener = object : ConfirmListener {
+                    override fun didConfirm(v: View): Boolean {
+                        val pwdPackText = passwordEditText.text.toString().trim()
+
+                        if (!pwdPackText.isTextValidHex() || pwdPackText.length != 12) {
+                            return false
+                        }
+
+                        val passwordBytes = pwdPackText.substring(0..7).hexStringToByteArray()
+                        val ackBytes = pwdPackText.substring(8..pwdPackText.lastIndex).hexStringToByteArray()
+                        val timeout = 1 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 10)
+
+                        val timeoutAdjusted = when {
+                            timeout < 0 || timeout == 11 -> 0
+                            else -> timeout
+                        }
+
+                        val readProtectionEnabled = cl.findViewById<SwitchCompat>(R.id.swc_toggle).isChecked
+                        val fullUriString = uriEditText.text.toString().trim()
+                        val (uriCode, uriBytes) = parseUriCodeAndUriBytes(fullUriString)
+
+                        try {
+                            val message = WriteUriNdefWithPasswordBytesCommand(
+                                timeoutAdjusted.toByte(),
+                                readProtectionEnabled,
+                                passwordBytes,
+                                ackBytes,
+                                uriCode,
+                                uriBytes
+                            )
+                            TappyService.broadcastSendTcmp(message, ctx)
+                        } catch (ignored: Exception) {
+                            ignored.printStackTrace()
+                            // cant instantiate
+                        }
+                        return true
+                    }
+                }
+
+                return Pair(cl, listener)
+            }
+            WriteUriNdefWithPasswordCommand::class.java -> {
+                val cl = wrapInConstraintLayout(ctx, R.layout.timeout_toggle_parameter_message_command_data_view)
+                applyTimeoutListener(ctx, cl)
+
+                cl.findOptional<TextView>(R.id.tv_command_title)?.textResource = option.titleRes
+                cl.findOptional<TextView>(R.id.tv_command_description)?.textResource = option.descriptionRes
+                cl.findOptional<TextView>(R.id.tv_parameter_label)?.textResource = R.string.parameter_label_password
+
+                val uriEditText = cl.find<EditText>(R.id.et_message)
+                val passwordEditText = cl.find<EditText>(R.id.et_parameter)
+                passwordEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_NORMAL
+                passwordEditText.maxLines = 1
+
+                val listener = object : ConfirmListener {
+                    override fun didConfirm(v: View): Boolean {
+                        val password = passwordEditText.text.toString().trim()
+                        val timeout = 1 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 10)
+
+                        val timeoutAdjusted = when {
+                            timeout < 0 || timeout == 11 -> 0
+                            else -> timeout
+                        }
+
+                        val readProtectionEnabled = cl.findViewById<SwitchCompat>(R.id.swc_toggle).isChecked
+                        val fullUriString = uriEditText.text.toString().trim()
+                        val (uriCode, uriBytes) = parseUriCodeAndUriBytes(fullUriString)
+
+                        try {
+                            val message = WriteUriNdefWithPasswordCommand(
+                                timeoutAdjusted.toByte(),
+                                readProtectionEnabled,
+                                password,
+                                uriCode,
+                                uriBytes
+                            )
+                            TappyService.broadcastSendTcmp(message, ctx)
+                        } catch (ignored: Exception) {
+                            ignored.printStackTrace()
+                            // cant instantiate
+                        }
+                        return true
+                    }
+                }
+
+                return Pair(cl, listener)
+            }
             else -> {
                 val cl = wrapInConstraintLayout(ctx, R.layout.noargs_command_data_view)
 
@@ -806,10 +1175,8 @@ object DialogGenerator {
                 val listener = object : ConfirmListener {
                     override fun didConfirm(v: View): Boolean {
                         try {
-                            val message = command?.kotlin?.createInstance()
-                            if (message != null) {
-                                TappyService.broadcastSendTcmp((message),ctx)
-                            }
+                            val message = command.kotlin.createInstance()
+                            TappyService.broadcastSendTcmp((message),ctx)
                         } catch (ignored: Exception) {
                             // cant instantiate
                         }
@@ -854,7 +1221,7 @@ class ConfigureCommandDialogFragment : DialogFragment() {
     }
 
     companion object {
-        private val KEY_COMMAND_ID = "TAPPY_COMMAND_ID"
+        private const val KEY_COMMAND_ID = "TAPPY_COMMAND_ID"
 
         fun createConfigureCommandFragment(commandOption: CommandOption): ConfigureCommandDialogFragment {
             val args = Bundle()
@@ -865,4 +1232,36 @@ class ConfigureCommandDialogFragment : DialogFragment() {
             return frag
         }
     }
+}
+
+private fun parseUriCodeAndUriBytes(fullUriString: String): Pair<Byte, ByteArray> = when {
+    fullUriString.startsWith("https://www.") -> Pair(
+        NdefUriCodes.URICODE_HTTPSWWW,
+        fullUriString.substring("https://www.".length).toByteArray()
+    )
+    fullUriString.startsWith("http://www.") -> Pair(
+        NdefUriCodes.URICODE_HTTPWWW,
+        fullUriString.substring("http://www.".length).toByteArray()
+    )
+    fullUriString.startsWith("http://") -> Pair(
+        NdefUriCodes.URICODE_HTTP,
+        fullUriString.substring("http://".length).toByteArray()
+    )
+    fullUriString.startsWith("https://") -> Pair(
+        NdefUriCodes.URICODE_HTTPS,
+        fullUriString.substring("https://".length).toByteArray()
+    )
+    fullUriString.startsWith("tel:") -> Pair(
+        NdefUriCodes.URICODE_TEL,
+        fullUriString.substring("tel:".length).toByteArray()
+    )
+
+    fullUriString.startsWith("mailto:") -> Pair(
+        NdefUriCodes.URICODE_MAILTO,
+        fullUriString.substring("mailto:".length).toByteArray()
+    )
+    else -> Pair(
+        NdefUriCodes.URICODE_NOPREFIX,
+        fullUriString.toByteArray()
+    )
 }

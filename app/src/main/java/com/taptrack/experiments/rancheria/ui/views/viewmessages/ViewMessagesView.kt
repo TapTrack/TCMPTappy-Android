@@ -24,6 +24,7 @@ import com.taptrack.tcmptappy.tcmp.common.ResponseCodeNotSupportedException
 import com.taptrack.tcmptappy2.*
 import com.taptrack.tcmptappy2.commandfamilies.basicnfc.BasicNfcCommandResolver
 import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.MifareClassicCommandResolver
+import com.taptrack.tcmptappy2.commandfamilies.ntag21x.Ntag21xCommandResolver
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.SystemCommandResolver
 import com.taptrack.tcmptappy2.commandfamilies.type4.Type4CommandResolver
 import io.realm.OrderedRealmCollection
@@ -194,7 +195,8 @@ private class MessageAdapter(private val hostView: RecyclerView, data: OrderedRe
                     SystemCommandResolver(),
                     BasicNfcCommandResolver(),
                     Type4CommandResolver(),
-                    MifareClassicCommandResolver()
+                    MifareClassicCommandResolver(),
+                    Ntag21xCommandResolver(),
             )
 
             val formatter: DateFormat

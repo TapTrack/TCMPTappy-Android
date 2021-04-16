@@ -86,4 +86,17 @@
     <string name="type4command_transceive_apdu_title">Transceive APDU</string>
     <string name="type4command_transceive_apdu_description">Transceive Type 4 APDU</string>
 
+    <string name="read_ndef_with_password_bytes_title">Read NDEF Password Bytes</string>
+    <string name="read_ndef_with_password_bytes_description">Read NDEF data protected with password bytes from an NTAG 21x</string>
+    <string name="read_ndef_with_password_string_title">Read NDEF Password String</string>
+    <string name="read_ndef_with_password_string_description">Read NDEF data protected with a password string from an NTAG 21x</string>
+    <string name="write_text_with_password_bytes_title">Write Text Password Bytes</string>
+    <string name="write_text_with_password_bytes_description">Write text protected with password bytes to an NTAG 21x</string>
+    <string name="write_text_with_password_string_title">Write Text Password String</string>
+    <string name="write_text_with_password_string_description">Write text protected with a password string to an NTAG 21x</string>
+    <string name="write_uri_with_password_bytes_title">Write URI Password Bytes</string>
+    <string name="write_uri_with_password_bytes_description">Write URI protected with password bytes to an NTAG 21x</string>
+    <string name="write_uri_with_password_string_title">Write URI Password String</string>
+    <string name="write_uri_with_password_string_description">Write URI protected with a password string to an NTAG 21x</string>
+
 </resources>

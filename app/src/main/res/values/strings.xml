@@ -65,4 +65,7 @@
     <string name="tappy_channel_name">Active Tappies</string>
     <string name="tappy_channel_description">Displays the currently connected Tappies</string>
     <string name="bluetooth_not_on_message">Bluetooth is not enabled, so TappyBLE devices will be unavailable</string>
+    <string name="parameter_label_toggle">Read Protection</string>
+    <string name="parameter_label_pwd_pack">PWD/PACK Bytes</string>
+    <string name="parameter_label_password">Password</string>
 </resources>

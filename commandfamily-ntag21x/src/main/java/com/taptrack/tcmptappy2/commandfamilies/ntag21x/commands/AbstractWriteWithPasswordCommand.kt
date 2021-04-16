@@ -7,20 +7,11 @@ import com.taptrack.tcmptappy2.commandfamilies.ntag21x.toUInt16
 
 abstract class AbstractWriteWithPasswordCommand : AbstractPasswordCommand {
 
-    private var _readProtection: Boolean = false
-    private var _content: ByteArray = byteArrayOf()
+    var readProtectionEnabled = false
+        protected set
 
-    var readProtectionEnabled: Boolean
-        get() = _readProtection
-        protected set(value) {
-            _readProtection = value
-        }
-
-    var content: ByteArray
-        get() = _content
-        protected set(value) {
-            _content = value
-        }
+    var content = byteArrayOf()
+        protected set
 
     private val contentLengthBytes: ByteArray
         @Size(2)

@@ -9,20 +9,11 @@ class GetNtag21xCommandFamilyVersionResponse : AbstractNtag21xMessage {
         const val COMMAND_CODE: Byte = 0x04
     }
 
-    private var _majorVersion: Byte = 0x00
-    private var _minorVersion: Byte = 0x00
+    var majorVersion: Byte = 0x00
+        private set
 
-    var majorVersion: Byte
-        get() = _majorVersion
-        private set(value) {
-            _majorVersion = value
-        }
-
-    var minorVersion: Byte
-        get() = _minorVersion
-        private set(value) {
-            _minorVersion = value
-        }
+    var minorVersion: Byte = 0x00
+        private set
 
     constructor() : super()
 

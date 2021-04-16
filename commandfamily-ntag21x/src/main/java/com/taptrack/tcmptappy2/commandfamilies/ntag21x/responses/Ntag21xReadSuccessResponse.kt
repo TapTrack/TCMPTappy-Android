@@ -8,13 +8,8 @@ class Ntag21xReadSuccessResponse : AbstractSuccessResponse {
         const val COMMAND_CODE: Byte = 0x01
     }
 
-    private var _ndefMessage: ByteArray = byteArrayOf()
-
-    var ndefMessage: ByteArray
-        get() = _ndefMessage
-        private set(value) {
-            _ndefMessage = value
-        }
+    var ndefMessage: ByteArray = byteArrayOf()
+        private set
 
     constructor() : super()
 

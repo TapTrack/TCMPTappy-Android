@@ -28,14 +28,14 @@ class WriteUriNdefWithPasswordBytesCommand : AbstractWriteWithPasswordBytesComma
     @Throws(IllegalArgumentException::class)
     constructor(
         timeout: Byte,
-        readProtectionEnabled: Boolean,
+        readProtection: Boolean,
         @Size(4) password: ByteArray,
         @Size(2) passwordAcknowledgement: ByteArray,
         uriCode: Byte,
         uri: ByteArray,
     ) : super(
         timeout,
-        readProtectionEnabled,
+        readProtection,
         password,
         passwordAcknowledgement,
         byteArrayOf(uriCode, *uri)
@@ -44,14 +44,14 @@ class WriteUriNdefWithPasswordBytesCommand : AbstractWriteWithPasswordBytesComma
     @Throws(IllegalArgumentException::class)
     constructor(
         timeout: Byte,
-        readProtectionEnabled: Boolean,
+        readProtection: Boolean,
         @Size(4) password: ByteArray,
         @Size(2) passwordAcknowledgement: ByteArray,
         uriCode: Byte,
         uri: String,
     ) : this(
         timeout,
-        readProtectionEnabled,
+        readProtection,
         password,
         passwordAcknowledgement,
         uriCode,

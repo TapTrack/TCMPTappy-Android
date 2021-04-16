@@ -6,20 +6,11 @@ import com.taptrack.tcmptappy2.commandfamilies.ntag21x.toUInt16
 
 abstract class AbstractSuccessResponse : AbstractNtag21xMessage() {
 
-    private var _tagType: Byte = 0x00
-    private var _uid: ByteArray = byteArrayOf()
+    var tagType: Byte = 0x00
+        protected set
 
-    var tagType: Byte
-        get() = _tagType
-        protected set(value) {
-            _tagType = value
-        }
-
-    var uid: ByteArray
-        get() = _uid
-        protected set(value) {
-            _uid = value
-        }
+    var uid: ByteArray = byteArrayOf()
+        protected set
 
     protected val uidLengthBytes: ByteArray
         @Size(2)

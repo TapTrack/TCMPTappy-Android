@@ -62,6 +62,13 @@
     <string name="detect_hce_target_indefinite">Scan for active HCE targets indefinitely</string>
     <string name="get_type4_version">Report Type 4 library version</string>
     <string name="send_apdu">Send the following APDU: %1$s</string>
+    <!-- NTAG 21x Commands -->
+    <string name="read_password_bytes">Scan for an NDEF tag with password bytes protection from an NTAG 21x %1$s</string>
+    <string name="read_password_string">Scan for an NDEF tag with password string protection from an NTAG 21x %1$s</string>
+    <string name="write_ndef_txt_password_bytes">%1$s attempt to write the following password bytes protected text %2$s read protection to an NTAG 21x: \n%3$s</string>
+    <string name="write_ndef_txt_password_string">%1$s attempt to write the following password string protected text %2$s read protection to an NTAG 21x: \n%3$s</string>
+    <string name="write_ndef_uri_password_bytes">%1$s attempt to write the following password bytes protected URI %2$s read protection to an NTAG 21x: \n%3$s</string>
+    <string name="write_ndef_uri_password_string">%1$s attempt to write the following password string protected URI %2$s read protection to an NTAG 21x: \n%3$s</string>
 
     <!-- Responses -->
     <string name="unknown_response">Unsupported Response</string>
@@ -131,6 +138,10 @@
     <string name="type4b_detected_nothing">Type 4B tag detected!</string>
     <string name="type4_timeout">Type 4 timeout</string>
 
+    <!-- NTAG 21x Responses -->
+    <string name="ntag_21x_password_tag_written_response">Password-protected data written to tag with UID %1$s</string>
+    <string name="ntag_21x_polling_timeout">NTAG 21x polling timed out</string>
+
     <!-- Error Descriptions -->
     <string name="err_invalid_parameter">invalid parameter</string>
     <string name="err_too_few_parameters">too few parameters</string>
@@ -149,14 +160,23 @@
     <string name="err_ndef_creation_error">NDEF creation error</string>
     <string name="err_ndef_writing_error">NDEF writing error</string>
     <string name="err_locking_error">NDEF locking error</string>
+    <string name="ntag_21x_application_error_generic">NTAG 21x application error (%1$d): %2$s</string>
 
     <!-- Command family names -->
     <string name="family_basicnfc">Basic NFC</string>
     <string name="family_system">System</string>
     <string name="family_classic">MIFARE Classic</string>
     <string name="family_type4">Type 4</string>
+    <string name="family_ntag21x">NTAG 21x</string>
     <string name="family_unknown">Unknown family</string>
     <string name="resp_hardware">Hardware</string>
     <string name="resp_firmware">Firmware</string>
+
+    <!-- Misc -->
+    <string name="for_duration_singular">for 1 second</string>
+    <string name="for_duration_plural">for %1$d seconds</string>
+    <string name="indefinitely">indefinitely</string>
+    <string name="with">with</string>
+    <string name="without">without</string>
 
 </resources>

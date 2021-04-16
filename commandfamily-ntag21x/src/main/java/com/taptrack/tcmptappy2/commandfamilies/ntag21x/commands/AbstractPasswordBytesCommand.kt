@@ -5,33 +5,19 @@ import com.taptrack.tcmptappy2.commandfamilies.ntag21x.AbstractNtag21xMessage
 
 abstract class AbstractPasswordBytesCommand : AbstractNtag21xMessage {
 
-    private var _timeout: Byte = 0x00
-
-    @Size(4)
-    private var _password: ByteArray = ByteArray(4)
-
     @Size(2)
     private var _passwordAcknowledgement: ByteArray = ByteArray(2)
 
-    var timeout: Byte
-        get() = _timeout
-        protected set(value) {
-            _timeout = value
-        }
+    var timeout: Byte = 0x00
+        protected set
 
-    var password: ByteArray
-        @Size(4)
-        get() = _password
-        protected set(@Size(4) value) {
-            _password = value
-        }
+    @Size(4)
+    var password = ByteArray(4)
+        protected set
 
-    var passwordAcknowledgement: ByteArray
-        @Size(2)
-        get() = _passwordAcknowledgement
-        protected set(@Size(2) value) {
-            _passwordAcknowledgement = value
-        }
+    @Size(2)
+    var passwordAcknowledgement= ByteArray(2)
+        protected set
 
     constructor() : super()
 

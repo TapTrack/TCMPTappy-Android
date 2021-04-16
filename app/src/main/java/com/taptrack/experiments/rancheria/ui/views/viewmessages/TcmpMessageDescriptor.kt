@@ -1,6 +1,7 @@
 package com.taptrack.experiments.rancheria.ui.views.viewmessages
 
 import android.content.Context
+import android.nfc.NdefMessage
 import android.nfc.NdefRecord
 import androidx.annotation.StringRes
 import com.taptrack.experiments.rancheria.R
@@ -21,6 +22,9 @@ import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.commands.DetectMifa
 import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.commands.GetMifareClassicLibraryVersionCommand
 import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.commands.ReadMifareClassicCommand
 import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.responses.*
+import com.taptrack.tcmptappy2.commandfamilies.ntag21x.AbstractNtag21xMessage
+import com.taptrack.tcmptappy2.commandfamilies.ntag21x.commands.*
+import com.taptrack.tcmptappy2.commandfamilies.ntag21x.responses.*
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.AbstractSystemMessage
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.*
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.responses.*
@@ -36,16 +40,25 @@ object TcmpMessageDescriptor {
 
     fun getCommandDescription(command: TCMPMessage,
                               ctx: Context): String {
-        if (command is AbstractBasicNfcMessage) {
-            return getCommandDescriptionBasicNfc(command, ctx)
-        } else if (command is AbstractSystemMessage) {
-            return getCommandDescriptionSystem(command, ctx)
-        } else if (command is AbstractMifareClassicMessage) {
-            return getCommandDescriptionClassic(command, ctx)
-        } else if (command is AbstractType4Message) {
-            return getCommandDescriptionType4(command, ctx)
-        } else {
-            return ctx.getString(R.string.unknown_command)
+        return when (command) {
+            is AbstractBasicNfcMessage -> {
+                getCommandDescriptionBasicNfc(command, ctx)
+            }
+            is AbstractSystemMessage -> {
+                getCommandDescriptionSystem(command, ctx)
+            }
+            is AbstractMifareClassicMessage -> {
+                getCommandDescriptionClassic(command, ctx)
+            }
+            is AbstractType4Message -> {
+                getCommandDescriptionType4(command, ctx)
+            }
+            is AbstractNtag21xMessage -> {
+                getCommandDescriptionNtag21x(command, ctx)
+            }
+            else -> {
+                ctx.getString(R.string.unknown_command)
+            }
         }
     }
 
@@ -290,6 +303,44 @@ object TcmpMessageDescriptor {
         }
     }
 
+    fun getCommandDescriptionNtag21x(command: TCMPMessage, ctx: Context): String {
+        return when (command) {
+            is ReadNdefWithPasswordBytesCommand -> {
+                val duration = parseDurationFromTimeout(command.timeout, ctx)
+                ctx.getString(R.string.read_password_bytes, duration)
+            }
+            is ReadNdefWithPasswordCommand -> {
+                val duration = parseDurationFromTimeout(command.timeout, ctx)
+                ctx.getString(R.string.read_password_string, duration)
+            }
+            is WriteTextNdefWithPasswordBytesCommand -> {
+                val duration = parseDurationFromTimeout(command.timeout, ctx).capitalize(Locale.getDefault())
+                val readProtection = parseWithOrWithoutFromBoolean(command.readProtectionEnabled, ctx)
+                ctx.getString(R.string.write_ndef_txt_password_bytes, duration, readProtection, command.text)
+            }
+            is WriteTextNdefWithPasswordCommand -> {
+                val duration = parseDurationFromTimeout(command.timeout, ctx)
+                val readProtection = parseWithOrWithoutFromBoolean(command.readProtectionEnabled, ctx)
+                ctx.getString(R.string.write_ndef_txt_password_string, duration, readProtection, command.text)
+            }
+            is WriteUriNdefWithPasswordBytesCommand -> {
+                val duration = parseDurationFromTimeout(command.timeout, ctx)
+                val readProtection = parseWithOrWithoutFromBoolean(command.readProtectionEnabled, ctx)
+                val uri = NdefUriCodeUtils.decodeNdefUri(command.uriCode, command.uri.toByteArray())
+                ctx.getString(R.string.write_ndef_uri_password_bytes, duration, readProtection, uri)
+            }
+            is WriteUriNdefWithPasswordCommand -> {
+                val duration = parseDurationFromTimeout(command.timeout, ctx)
+                val readProtection = parseWithOrWithoutFromBoolean(command.readProtectionEnabled, ctx)
+                val uri = NdefUriCodeUtils.decodeNdefUri(command.uriCode, command.uri.toByteArray())
+                ctx.getString(R.string.write_ndef_uri_password_string, duration, readProtection, uri)
+            }
+            else -> {
+                ctx.getString(R.string.unknown_command)
+            }
+        }
+    }
+
     fun getResponseDescription(response: TCMPMessage,
                                ctx: Context): String {
         if (response is StandardLibraryVersionResponse) {
@@ -303,6 +354,8 @@ object TcmpMessageDescriptor {
                 return parseStandardLibraryVersionResponse(ctx, R.string.family_classic, response)
             } else if (response is Type4LibraryVersionResponse) {
                 return parseStandardLibraryVersionResponse(ctx, R.string.family_type4, response)
+//            } else if (response is GetNtag21xCommandFamilyVersionResponse) {
+//                TODO: Implement this
             } else {
                 return parseStandardLibraryVersionResponse(ctx, R.string.family_unknown, response)
             }
@@ -314,10 +367,14 @@ object TcmpMessageDescriptor {
             return getType4ResponseDescription(response, ctx)
         } else if (response is AbstractMifareClassicMessage) {
             return getClassicResponseDescription(response, ctx)
+        } else if (response is AbstractNtag21xMessage) {
+            return getNtag21xResponseDescription(response, ctx)
         } else if (response is StandardErrorResponse) {
-            return parseStandardErrorResponse(ctx,
-                    R.string.family_unknown,
-                    response)
+            return parseStandardErrorResponse(
+                ctx,
+                R.string.family_unknown,
+                response
+            )
         } else {
             return ctx.getString(R.string.unknown_response)
         }
@@ -601,6 +658,26 @@ object TcmpMessageDescriptor {
         }
     }
 
+    private fun getNtag21xResponseDescription(response: TCMPMessage, ctx: Context): String {
+        return when (response) {
+            is Ntag21xReadSuccessResponse -> {
+                parseNtag21xReadSuccessResponse(ctx, response)
+            }
+            is Ntag21xWriteSuccessResponse -> {
+                ctx.getString(R.string.ntag_21x_password_tag_written_response, response.uid.toHex())
+            }
+            is Ntag21xPollingTimeoutResponse -> {
+                ctx.getString(R.string.ntag_21x_polling_timeout)
+            }
+            is Ntag21xApplicationErrorResponse -> {
+                ctx.getString(R.string.ntag_21x_application_error_generic, response.appErrorCode, response.errorDescription)
+            }
+            else -> {
+                ctx.getString(R.string.unknown_response)
+            }
+        }
+    }
+
     private fun parseStandardErrorResponse(ctx: Context,
                                            @StringRes libraryName: Int,
                                            @StringRes description: Int,
@@ -651,6 +728,13 @@ object TcmpMessageDescriptor {
                     parseTagType(ctx, resp.tagType),
                     parseNdefRecord(ctx, records[0]))
         }
+    }
+
+    private fun parseNtag21xReadSuccessResponse(ctx: Context, resp: Ntag21xReadSuccessResponse): String {
+        val raw = resp.ndefMessage
+        val msg = NdefMessage(raw)
+        val ndefFoundResp = NdefFoundResponse(resp.uid, resp.tagType, msg)
+        return parseNdefFoundResponse(ctx, ndefFoundResp)
     }
 
     private fun parseNdefRecord(ctx: Context, record: NdefRecord): String {
@@ -806,4 +890,16 @@ object TcmpMessageDescriptor {
             }
         }
     }
+}
+
+private fun parseDurationFromTimeout(timeout: Byte, ctx: Context): String {
+    return when (timeout.toInt()) {
+        0x00 -> ctx.getString(R.string.indefinitely)
+        0x01 -> ctx.getString(R.string.for_duration_singular)
+        else -> ctx.getString(R.string.for_duration_plural, timeout.toUnsigned())
+    }
+}
+
+private fun parseWithOrWithoutFromBoolean(boolean: Boolean, ctx: Context): String {
+    return if (boolean) ctx.getString(R.string.with) else ctx.getString(R.string.without)
 }

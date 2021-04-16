@@ -9,7 +9,7 @@ abstract class AbstractWriteWithPasswordBytesCommand : AbstractPasswordBytesComm
     private var _readProtection: Boolean = false
     private var _content: ByteArray = byteArrayOf()
 
-    var readProtection: Boolean
+    var readProtectionEnabled: Boolean
         get() = _readProtection
         protected set(value) {
             _readProtection = value
@@ -33,7 +33,7 @@ abstract class AbstractWriteWithPasswordBytesCommand : AbstractPasswordBytesComm
     @Throws(IllegalArgumentException::class)
     constructor(
         timeout: Byte,
-        readProtection: Boolean,
+        readProtectionEnabled: Boolean,
         @Size(4) password: ByteArray,
         @Size(2) passwordAcknowledgement: ByteArray,
         content: ByteArray
@@ -43,7 +43,7 @@ abstract class AbstractWriteWithPasswordBytesCommand : AbstractPasswordBytesComm
         }
 
         this.content = content
-        this.readProtection = readProtection
+        this.readProtectionEnabled = readProtectionEnabled
     }
 
     @Throws(MalformedPayloadException::class)
@@ -66,7 +66,7 @@ abstract class AbstractWriteWithPasswordBytesCommand : AbstractPasswordBytesComm
             )
         }
 
-        this.readProtection = readProtection != 0x00.toByte()
+        this.readProtectionEnabled = readProtection != 0x00.toByte()
         password = payload.sliceArray(2..5)
         passwordAcknowledgement = payload.sliceArray(6..7)
 
@@ -77,7 +77,7 @@ abstract class AbstractWriteWithPasswordBytesCommand : AbstractPasswordBytesComm
 
     final override fun getPayload(): ByteArray = byteArrayOf(
         timeout,
-        if (readProtection) 0x01 else 0x00,
+        if (readProtectionEnabled) 0x01 else 0x00,
         *password,
         *passwordAcknowledgement,
         *contentLengthBytes,

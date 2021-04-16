@@ -9,34 +9,13 @@ class Ntag21xApplicationErrorResponse : AbstractNtag21xMessage {
         const val COMMAND_CODE: Byte = 0x7F
     }
 
-    private var _appErrorCode: Byte = 0x00
-    private var _internalErrorCode: Byte = 0x00
-    private var _readerStatusCode: Byte = 0x00
-    private var _errorDescription: String = ""
+    var appErrorCode: Byte = 0x00
 
-    var appErrorCode
-        get() = _appErrorCode
-        set(value) {
-            _appErrorCode = value
-        }
+    var internalErrorCode: Byte = 0x00
 
-    var internalErrorCode
-        get() = _internalErrorCode
-        set(value) {
-            _internalErrorCode = value
-        }
+    var readerStatusCode: Byte = 0x00
 
-    var readerStatusCode
-        get() = _readerStatusCode
-        set(value) {
-            _readerStatusCode = value
-        }
-
-    var errorDescription
-        get() = _errorDescription
-        set(value) {
-            _errorDescription = value
-        }
+    var errorDescription = ""
 
     constructor() : super()
 

@@ -6,20 +6,11 @@ import com.taptrack.tcmptappy2.commandfamilies.ntag21x.toUInt16
 
 abstract class AbstractPasswordCommand : AbstractNtag21xMessage {
 
-    private var _timeout: Byte = 0x00
-    private var _password: ByteArray = byteArrayOf()
+    var timeout: Byte = 0x00
+        protected set
 
-    var timeout: Byte
-        get() = _timeout
-        protected set(value) {
-            _timeout = value
-        }
-
-    var password: ByteArray
-        get() = _password
-        protected set(value) {
-            _password = value
-        }
+    var password = byteArrayOf()
+        protected set
 
     val passwordString: String
         get() = password.decodeToString()

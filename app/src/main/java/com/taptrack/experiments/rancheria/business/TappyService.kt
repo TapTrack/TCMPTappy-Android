@@ -25,6 +25,7 @@ import com.taptrack.tcmptappy2.ble.TappyBle
 import com.taptrack.tcmptappy2.ble.TappyBleDeviceDefinition
 import com.taptrack.tcmptappy2.commandfamilies.basicnfc.BasicNfcCommandResolver
 import com.taptrack.tcmptappy2.commandfamilies.basicnfc.responses.NdefFoundResponse
+import com.taptrack.tcmptappy2.commandfamilies.ntag21x.Ntag21xCommandResolver
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.PingCommand
 import com.taptrack.tcmptappy2.commandfamilies.type4.Type4CommandResolver
 import com.taptrack.tcmptappy2.commandfamilies.type4.commands.TransceiveApduCommand
@@ -491,9 +492,9 @@ class TappyService: Service() {
     companion object {
         private val TAG = TappyService::class.java.name
 
-        private val THROTTLE_URL_MIN_TIME: Long = 500
+        private const val THROTTLE_URL_MIN_TIME: Long = 500
 
-        private val NOTIFICATION_ID = 3415
+        private const val NOTIFICATION_ID = 3415
         private val ACTION_DISCONNECT_ALL_TAPPIES = TappyService::class.java.name+".ACTION_DISCONNECT_ALL_TAPPIES"
 
         private val WAKELOCK_TAG = TappyService::class.java.name
@@ -503,7 +504,8 @@ class TappyService: Service() {
 
         private val messageResolver: MessageResolverMux = MessageResolverMux(
                 BasicNfcCommandResolver(),
-                Type4CommandResolver()
+                Type4CommandResolver(),
+                Ntag21xCommandResolver(),
         )
 
         fun broadcastSendTcmp(message: TCMPMessage, ctx: Context) {

@@ -31,6 +31,7 @@ import com.taptrack.tcmptappy2.commandfamilies.basicnfc.commands.EmulateCustomNd
 import com.taptrack.tcmptappy2.commandfamilies.basicnfc.commands.EmulateTextRecordCommand;
 import com.taptrack.tcmptappy2.commandfamilies.basicnfc.commands.EmulateUriRecordCommand;
 import com.taptrack.tcmptappy2.commandfamilies.basicnfc.commands.GetBasicNfcLibraryVersionCommand;
+import com.taptrack.tcmptappy2.commandfamilies.basicnfc.commands.InitiateTappyTagHandshakeCommand;
 import com.taptrack.tcmptappy2.commandfamilies.basicnfc.commands.LockTagCommand;
 import com.taptrack.tcmptappy2.commandfamilies.basicnfc.commands.ScanNdefCommand;
 import com.taptrack.tcmptappy2.commandfamilies.basicnfc.commands.ScanTagCommand;
@@ -52,6 +53,7 @@ import com.taptrack.tcmptappy2.commandfamilies.basicnfc.responses.SignedTagFound
 import com.taptrack.tcmptappy2.commandfamilies.basicnfc.responses.TagFoundResponse;
 import com.taptrack.tcmptappy2.commandfamilies.basicnfc.responses.TagLockedResponse;
 import com.taptrack.tcmptappy2.commandfamilies.basicnfc.responses.TagWrittenResponse;
+import com.taptrack.tcmptappy2.commandfamilies.basicnfc.responses.TappyTagDataReceivedResponse;
 
 import java.util.Arrays;
 
@@ -139,6 +141,10 @@ public class BasicNfcCommandResolver implements CommandFamilyMessageResolver {
                 parsedMessage = new EmulateCustomNdefRecordCommand();
                 break;
 
+            case InitiateTappyTagHandshakeCommand.COMMAND_CODE:
+                parsedMessage = new InitiateTappyTagHandshakeCommand();
+                break;
+
             default:
                 return null;
         }
@@ -199,6 +205,10 @@ public class BasicNfcCommandResolver implements CommandFamilyMessageResolver {
 
             case EmulationStoppedResponse.COMMAND_CODE:
                 parsedMessage = new EmulationStoppedResponse();
+                break;
+
+            case TappyTagDataReceivedResponse.COMMAND_CODE:
+                parsedMessage = new TappyTagDataReceivedResponse();
                 break;
 
             default:

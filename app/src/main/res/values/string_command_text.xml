@@ -120,7 +120,7 @@
     <string name="autopoll_tag_unrecognized">Unrecognized</string>
     <string name="autopoll_tag_all">All</string>
     <!-- TODO: This is a placeholder -->
-    <string name="tappytag_response">Received TappyTag response</string>
+    <string name="tappytag_response">Received TappyTag response: %1$s</string>
 
     <!-- Classic Responses -->
     <string name="mifareclassic_1k_detected">Detected MIFARE Classic 1K\nUID: %1$s</string>

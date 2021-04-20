@@ -564,7 +564,7 @@ object TcmpMessageDescriptor {
                     response as StandardErrorResponse)
             }
             is TappyTagDataReceivedResponse -> {
-                return ctx.getString(R.string.tappytag_response)
+                return ctx.getString(R.string.tappytag_response, response.payload.decodeToString())
             }
             else -> {
                 return ctx.getString(R.string.unknown_response)

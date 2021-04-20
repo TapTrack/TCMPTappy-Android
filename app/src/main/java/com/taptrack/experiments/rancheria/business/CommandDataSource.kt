@@ -612,7 +612,7 @@ class CommandDataSource(val context: Context) {
                 CommandOption(
                     COM_OPT_INITIATE_TAPPYTAG_HANDSHAKE,
                     FAM_OPTION_ID_BASIC,
-                    R.drawable.ic_emulation_black_48dp,
+                    R.drawable.ic_tappytag_black_48dp,
                     R.string.nfccommand_tappytag_handshake_title,
                     R.string.nfccommand_tappytag_handshake_description,
                     InitiateTappyTagHandshakeCommand::class.java

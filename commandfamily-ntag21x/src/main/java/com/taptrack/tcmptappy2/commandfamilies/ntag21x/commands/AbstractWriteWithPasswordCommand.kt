@@ -72,7 +72,7 @@ abstract class AbstractWriteWithPasswordCommand : AbstractPasswordCommand {
         val passwordLastIndex = (4 + passwordLength) - 1
         password = payload.sliceArray(4..passwordLastIndex)
 
-        val contentStartIndex = passwordLastIndex + 1
+        val contentStartIndex = passwordLastIndex + 3
         content = payload.sliceArray(contentStartIndex..payload.lastIndex)
     }
 

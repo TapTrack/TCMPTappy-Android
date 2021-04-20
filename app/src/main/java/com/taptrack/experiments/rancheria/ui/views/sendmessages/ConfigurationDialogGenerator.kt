@@ -3,7 +3,6 @@ package com.taptrack.experiments.rancheria.ui.views.sendmessages
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
@@ -36,8 +35,8 @@ import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.ConfigureOn
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.SetConfigItemCommand
 import com.taptrack.tcmptappy2.commandfamilies.type4.commands.*
 import org.jetbrains.anko.*
+import java.util.*
 import kotlin.reflect.full.createInstance
-import kotlin.reflect.typeOf
 
 
 private interface ConfirmListener {
@@ -58,8 +57,7 @@ object DialogGenerator {
         } else {
             val dialog = d.setCancelable(true)
                     .setView(configuration.first)
-                    .setNegativeButton(act.getString(android.R.string.cancel)
-                    ) { dialog, which -> dialog.dismiss() }
+                    .setNegativeButton(act.getString(android.R.string.cancel)) { dialog, which -> dialog.dismiss() }
                     .setPositiveButton(act.getString(android.R.string.ok),null)
                     .create()
             dialog.setOnShowListener {
@@ -300,6 +298,25 @@ object DialogGenerator {
         }
 
         when (command) {
+            InitiateTappyTagHandshakeCommand::class.java -> {
+                val cl = wrapInConstraintLayout(ctx, R.layout.timeout_command_data_view)
+
+                cl.findOptional<TextView>(R.id.tv_command_title)?.textResource = option.titleRes
+                cl.findOptional<TextView>(R.id.tv_command_description)?.textResource = option.descriptionRes
+
+                applyTimeoutListener(ctx, cl)
+
+                val listener = object : ConfirmListener {
+                    override fun didConfirm(v: View): Boolean {
+                        // TODO: Implement verification when more settings are added
+                        val cmd = InitiateTappyTagHandshakeCommand()
+                        TappyService.broadcastSendTcmp(cmd, ctx)
+                        return true
+                    }
+                }
+
+                return Pair(cl, listener)
+            }
             SetBLEPinCommand::class.java -> {
                 val cl = wrapInConstraintLayout(ctx, R.layout.message_command_data_view)
 
@@ -456,7 +473,7 @@ object DialogGenerator {
                                 )
                                 parameterEt.setText(truncated)
                             } else {
-                                val modified = ("[^A-F0-9]").toRegex().replace(str.toUpperCase(),"")
+                                val modified = ("[^A-F0-9]").toRegex().replace(str.toUpperCase(Locale.ROOT),"")
                                 if(str != modified) {
                                     parameterEt.setText(modified)
                                 } else {
@@ -795,7 +812,7 @@ object DialogGenerator {
                                 val truncated = str.substring(startIndex = 0, endIndex = passwordLength - 1)
                                 passwordEditText.setText(truncated)
                             } else {
-                                val modified = "[^A-F0-9]".toRegex().replace(str.toUpperCase(), "")
+                                val modified = "[^A-F0-9]".toRegex().replace(str.toUpperCase(Locale.ROOT), "")
                                 if (str != modified) {
                                     passwordEditText.setText(modified)
                                 } else {
@@ -862,12 +879,17 @@ object DialogGenerator {
                 cl.findOptional<ImageView>(R.id.iv_message_icon)?.imageResource = R.drawable.ic_password_black_24dp
 
                 val passwordEditText = cl.find<EditText>(R.id.et_message)
-                passwordEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_NORMAL
+                passwordEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
                 passwordEditText.maxLines = 1
 
                 val listener = object : ConfirmListener {
                     override fun didConfirm(v: View): Boolean {
                         val password = passwordEditText.text.toString().trim()
+
+                        if (password.isEmpty()) {
+                            return false
+                        }
+
                         val timeout = 1 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 10)
 
                         val timeoutAdjusted = when {
@@ -919,7 +941,7 @@ object DialogGenerator {
                                 val truncated = str.substring(startIndex = 0, endIndex = passwordLength - 1)
                                 passwordEditText.setText(truncated)
                             } else {
-                                val modified = "[^A-F0-9]".toRegex().replace(str.toUpperCase(), "")
+                                val modified = "[^A-F0-9]".toRegex().replace(str.toUpperCase(Locale.ROOT), "")
                                 if (str != modified) {
                                     passwordEditText.setText(modified)
                                 } else {
@@ -991,12 +1013,17 @@ object DialogGenerator {
 
                 val messageEditText = cl.find<EditText>(R.id.et_message)
                 val passwordEditText = cl.find<EditText>(R.id.et_parameter)
-                passwordEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_NORMAL
+                passwordEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
                 passwordEditText.maxLines = 1
 
                 val listener = object : ConfirmListener {
                     override fun didConfirm(v: View): Boolean {
                         val password = passwordEditText.text.toString().trim()
+
+                        if (password.isEmpty()) {
+                            return false
+                        }
+
                         val timeout = 1 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 10)
 
                         val timeoutAdjusted = when {
@@ -1033,11 +1060,15 @@ object DialogGenerator {
                 cl.findOptional<TextView>(R.id.tv_command_title)?.textResource = option.titleRes
                 cl.findOptional<TextView>(R.id.tv_command_description)?.textResource = option.descriptionRes
                 cl.findOptional<TextView>(R.id.tv_parameter_label)?.textResource = R.string.parameter_label_pwd_pack
+                cl.findOptional<TextView>(R.id.tv_message_label)?.textResource = R.string.parameter_label_url
+                cl.findOptional<ImageView>(R.id.iv_message_icon)?.imageResource = R.drawable.ic_link_black_24dp
 
                 val uriEditText = cl.find<EditText>(R.id.et_message)
+                uriEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI
+
                 val passwordTextInputLayout = cl.find<TextInputLayout>(R.id.til_parameter_container)
                 val passwordEditText = cl.find<EditText>(R.id.et_parameter)
-                passwordEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI
+                passwordEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
                 passwordEditText.maxLines = 1
 
                 val passwordLength = 12
@@ -1057,7 +1088,7 @@ object DialogGenerator {
                                 val truncated = str.substring(startIndex = 0, endIndex = passwordLength - 1)
                                 passwordEditText.setText(truncated)
                             } else {
-                                val modified = "[^A-F0-9]".toRegex().replace(str.toUpperCase(), "")
+                                val modified = "[^A-F0-9]".toRegex().replace(str.toUpperCase(Locale.ROOT), "")
                                 if (str != modified) {
                                     passwordEditText.setText(modified)
                                 } else {
@@ -1127,15 +1158,24 @@ object DialogGenerator {
                 cl.findOptional<TextView>(R.id.tv_command_title)?.textResource = option.titleRes
                 cl.findOptional<TextView>(R.id.tv_command_description)?.textResource = option.descriptionRes
                 cl.findOptional<TextView>(R.id.tv_parameter_label)?.textResource = R.string.parameter_label_password
+                cl.findOptional<TextView>(R.id.tv_message_label)?.textResource = R.string.parameter_label_url
+                cl.findOptional<ImageView>(R.id.iv_message_icon)?.imageResource = R.drawable.ic_link_black_24dp
 
                 val uriEditText = cl.find<EditText>(R.id.et_message)
+                uriEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI
+
                 val passwordEditText = cl.find<EditText>(R.id.et_parameter)
-                passwordEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_NORMAL
+                passwordEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
                 passwordEditText.maxLines = 1
 
                 val listener = object : ConfirmListener {
                     override fun didConfirm(v: View): Boolean {
                         val password = passwordEditText.text.toString().trim()
+
+                        if (password.isEmpty()) {
+                            return false
+                        }
+
                         val timeout = 1 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 10)
 
                         val timeoutAdjusted = when {
@@ -1212,11 +1252,7 @@ class ConfigureCommandDialogFragment : DialogFragment() {
         return AlertDialog.Builder(act,R.style.AppTheme_Dialog)
                 .setTitle(R.string.error)
                 .setCancelable(true)
-                .setPositiveButton(android.R.string.ok, object : DialogInterface.OnClickListener {
-                    override fun onClick(dialog: DialogInterface?, which: Int) {
-                        dialog?.dismiss()
-                    }
-                })
+                .setPositiveButton(android.R.string.ok) { dialog, _ -> dialog?.dismiss() }
                 .create()
     }
 

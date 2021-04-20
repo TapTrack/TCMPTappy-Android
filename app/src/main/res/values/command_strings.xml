@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2016. Papyrus Electronics, Inc
+  ~ Copyright (c) 2021. Papyrus Electronics, Inc
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -65,10 +65,12 @@
     <string name="nfccommand_stop_description">Command the Tappy to stop doing whatever it is doing</string>
     <string name="nfccommand_write_text_title">Write Text</string>
     <string name="nfccommand_write_text_description">Command the Tappy to write text to tags</string>
-    <string name="nfccommand_write_uri_title">Write Url</string>
+    <string name="nfccommand_write_uri_title">Write URL</string>
     <string name="nfccommand_write_uri_description">Command the Tappy to write a link to tags</string>
     <string name="nfccommand_lock_tag_title">Lock Tag</string>
     <string name="nfccommand_lock_tag_description">Command the Tappy to lock a tag</string>
+    <string name="nfccommand_tappytag_handshake_title">TappyTag Handshake</string>
+    <string name="nfccommand_tappytag_handshake_description">Command the Tappy to transmit data to or receive data from an iPhone or Android device</string>
 
     <string name="classiccommand_detect_title">Detect Classic</string>
     <string name="classiccommand_detect_description">Scan for a MIFARE Classic</string>
@@ -86,17 +88,19 @@
     <string name="type4command_transceive_apdu_title">Transceive APDU</string>
     <string name="type4command_transceive_apdu_description">Transceive Type 4 APDU</string>
 
-    <string name="read_ndef_with_password_bytes_title">Read NDEF Password Bytes</string>
-    <string name="read_ndef_with_password_bytes_description">Read NDEF data protected with password bytes from an NTAG 21x</string>
-    <string name="read_ndef_with_password_string_title">Read NDEF Password String</string>
-    <string name="read_ndef_with_password_string_description">Read NDEF data protected with a password string from an NTAG 21x</string>
-    <string name="write_text_with_password_bytes_title">Write Text Password Bytes</string>
-    <string name="write_text_with_password_bytes_description">Write text protected with password bytes to an NTAG 21x</string>
-    <string name="write_text_with_password_string_title">Write Text Password String</string>
-    <string name="write_text_with_password_string_description">Write text protected with a password string to an NTAG 21x</string>
-    <string name="write_uri_with_password_bytes_title">Write URI Password Bytes</string>
-    <string name="write_uri_with_password_bytes_description">Write URI protected with password bytes to an NTAG 21x</string>
-    <string name="write_uri_with_password_string_title">Write URI Password String</string>
-    <string name="write_uri_with_password_string_description">Write URI protected with a password string to an NTAG 21x</string>
+    <string name="ntag21xcommand_get_version_title">Library Version</string>
+    <string name="ntag21xcommand_get_version_description">Request the version of the NTAG 21X library</string>
+    <string name="ntag21xcommand_read_ndef_with_password_bytes_title">Read Password-Protected NDEF w/ Password Bytes</string>
+    <string name="ntag21xcommand_read_ndef_with_password_bytes_description">Read NDEF data protected with password bytes from an NTAG 21X</string>
+    <string name="ntag21xcommand_read_ndef_with_password_string_title">Read Password-Protected NDEF</string>
+    <string name="ntag21xcommand_read_ndef_with_password_string_description">Read password-protected NDEF data from an NTAG 21X</string>
+    <string name="ntag21xcommand_write_text_with_password_bytes_title">Write Password-Protected Text w/ Password Bytes</string>
+    <string name="ntag21xcommand_write_text_with_password_bytes_description">Write text protected with password bytes to an NTAG 21X. When the toggle below is unset, the tag will be write protected. When set, the tag will be read and write protected.</string>
+    <string name="ntag21xcommand_write_text_with_password_string_title">Write Password-Protected Text</string>
+    <string name="ntag21xcommand_write_text_with_password_string_description">Write password-protected text to an NTAG 21X. When the toggle below is unset, the tag will be write protected. When set, the tag will be read and write protected.</string>
+    <string name="ntag21xcommand_write_uri_with_password_bytes_title">Write Password-Protected URL w/ Password Bytes</string>
+    <string name="ntag21xcommand_write_uri_with_password_bytes_description">Write a URL protected with password bytes to an NTAG 21X. When the toggle below is unset, the tag will be write protected. When set, the tag will be read and write protected.</string>
+    <string name="ntag21xcommand_write_uri_with_password_string_title">Write Password-Protected URL</string>
+    <string name="ntag21xcommand_write_uri_with_password_string_description">Write a password-protected URL to an NTAG 21X. When the toggle below is unset, the tag will be write protected. When set, the tag will be read and write protected.</string>
 
 </resources>

@@ -62,60 +62,65 @@ object TcmpMessageDescriptor {
         }
     }
 
-    fun getCommandDescriptionBasicNfc(command: TCMPMessage,
-                                      ctx: Context): String {
-        if (command is GetBasicNfcLibraryVersionCommand) {
-            return ctx.getString(R.string.get_basic_nfc_lib_version)
-        } else if (command is ScanNdefCommand) {
-            if (command.timeout.toInt() != 0) {
-                val form = ctx.getString(R.string.scan_ndef_seconds)
-                return String.format(form, command.timeout.toUnsigned())
-            } else {
-                return ctx.getString(R.string.scan_ndef_indefinite)
+    fun getCommandDescriptionBasicNfc(command: TCMPMessage, ctx: Context): String {
+        return when (command) {
+            is GetBasicNfcLibraryVersionCommand -> {
+                ctx.getString(R.string.get_basic_nfc_lib_version)
             }
-        } else if (command is StreamNdefCommand) {
-            if (command.timeout.toInt() != 0) {
-                val form = ctx.getString(R.string.stream_ndef_seconds)
-                return String.format(form, (command.timeout.toUnsigned()))
-            } else {
-                return ctx.getString(R.string.stream_ndef_indefinite)
+            is ScanNdefCommand -> {
+                if (command.timeout.toInt() != 0) {
+                    val form = ctx.getString(R.string.scan_ndef_seconds)
+                    String.format(form, command.timeout.toUnsigned())
+                } else {
+                    ctx.getString(R.string.scan_ndef_indefinite)
+                }
             }
-        } else if (command is ScanTagCommand) {
-            if (command.timeout.toInt() != 0) {
-                val form = ctx.getString(R.string.scan_tag_seconds)
-                return String.format(form, command.timeout.toUnsigned())
-            } else {
-                return ctx.getString(R.string.scan_tag_indefinitely)
+            is StreamNdefCommand -> {
+                if (command.timeout.toInt() != 0) {
+                    val form = ctx.getString(R.string.stream_ndef_seconds)
+                    String.format(form, (command.timeout.toUnsigned()))
+                } else {
+                    ctx.getString(R.string.stream_ndef_indefinite)
+                }
             }
+            is ScanTagCommand -> {
+                if (command.timeout.toInt() != 0) {
+                    val form = ctx.getString(R.string.scan_tag_seconds)
+                    String.format(form, command.timeout.toUnsigned())
+                } else {
+                    ctx.getString(R.string.scan_tag_indefinitely)
+                }
 
-        } else if (command is StreamTagsCommand) {
-            if (command.timeout.toInt() != 0) {
-                val form = ctx.getString(R.string.stream_tag_seconds)
-                return String.format(form, command.timeout.toUnsigned())
-            } else {
-                return ctx.getString(R.string.stream_tag_indefinitely)
             }
-        } else if (command is WriteNdefTextRecordCommand) {
-            val cmd = command
-            if (cmd.timeout.toInt() != 0) {
-                val form = ctx.getString(R.string.write_ndef_txt_seconds)
-                return String.format(form, command.timeout.toUnsigned(), cmd.text)
-            } else {
-                val form = ctx.getString(R.string.write_ndef_txt_indefinite)
-                return String.format(form, cmd.text)
+            is StreamTagsCommand -> {
+                if (command.timeout.toInt() != 0) {
+                    val form = ctx.getString(R.string.stream_tag_seconds)
+                    String.format(form, command.timeout.toUnsigned())
+                } else {
+                    ctx.getString(R.string.stream_tag_indefinitely)
+                }
             }
-        } else if (command is WriteNdefUriRecordCommand) {
-            val cmd = command
-            val uri = NdefUriCodeUtils.decodeNdefUri(cmd.uriCode, cmd.uriBytes)
-            if (cmd.timeout.toInt() != 0) {
-                val form = ctx.getString(R.string.write_ndef_uri_seconds)
-                return String.format(form, command.timeout.toUnsigned(), uri)
-            } else {
-                val form = ctx.getString(R.string.write_ndef_uri_indefinite)
-                return String.format(form, uri)
+            is WriteNdefTextRecordCommand -> {
+                if (command.timeout.toInt() != 0) {
+                    val form = ctx.getString(R.string.write_ndef_txt_seconds)
+                    String.format(form, command.timeout.toUnsigned(), command.text)
+                } else {
+                    val form = ctx.getString(R.string.write_ndef_txt_indefinite)
+                    String.format(form, command.text)
+                }
             }
-        } else if (command is AutoPollCommand) {
-            return String.format(
+            is WriteNdefUriRecordCommand -> {
+                val uri = NdefUriCodeUtils.decodeNdefUri(command.uriCode, command.uriBytes)
+                if (command.timeout.toInt() != 0) {
+                    val form = ctx.getString(R.string.write_ndef_uri_seconds)
+                    String.format(form, command.timeout.toUnsigned(), uri)
+                } else {
+                    val form = ctx.getString(R.string.write_ndef_uri_indefinite)
+                    String.format(form, uri)
+                }
+            }
+            is AutoPollCommand -> {
+                String.format(
                     ctx.getString(R.string.autopoll_for_tags),
                     when (command.scanModeIndicator) {
                         AutoPollingConstants.ScanModes.TYPE_1 -> ctx.getString(R.string.autopoll_tag_t1)
@@ -135,19 +140,25 @@ object TcmpMessageDescriptor {
                     } else {
                         ctx.getString(R.string.autopoll_for_tags_buzzer_enabled)
                     }
-            )
-        } else if (command is StopCommand) {
-            return ctx.getString(R.string.stop_command)
-        } else if (command is LockTagCommand) {
-            val cmd = command
-            if (cmd.timeout.toInt() != 0) {
-                val form = ctx.getString(R.string.lock_tags_seconds)
-                return String.format(form, command.timeout.toUnsigned())
-            } else {
-                return ctx.getString(R.string.lock_tags_indefinite)
+                )
             }
-        } else {
-            return ctx.getString(R.string.unknown_command)
+            is StopCommand -> {
+                ctx.getString(R.string.stop_command)
+            }
+            is LockTagCommand -> {
+                if (command.timeout.toInt() != 0) {
+                    val form = ctx.getString(R.string.lock_tags_seconds)
+                    String.format(form, command.timeout.toUnsigned())
+                } else {
+                    ctx.getString(R.string.lock_tags_indefinite)
+                }
+            }
+            is InitiateTappyTagHandshakeCommand -> {
+                ctx.getString(R.string.initiate_tappytag_handshake)
+            }
+            else -> {
+                ctx.getString(R.string.unknown_command)
+            }
         }
     }
 
@@ -315,23 +326,23 @@ object TcmpMessageDescriptor {
             }
             is WriteTextNdefWithPasswordBytesCommand -> {
                 val duration = parseDurationFromTimeout(command.timeout, ctx).capitalize(Locale.getDefault())
-                val readProtection = parseWithOrWithoutFromBoolean(command.readProtectionEnabled, ctx)
+                val readProtection = parseProtectionTypeFromBoolean(command.readProtectionEnabled, ctx)
                 ctx.getString(R.string.write_ndef_txt_password_bytes, duration, readProtection, command.text)
             }
             is WriteTextNdefWithPasswordCommand -> {
                 val duration = parseDurationFromTimeout(command.timeout, ctx)
-                val readProtection = parseWithOrWithoutFromBoolean(command.readProtectionEnabled, ctx)
+                val readProtection = parseProtectionTypeFromBoolean(command.readProtectionEnabled, ctx)
                 ctx.getString(R.string.write_ndef_txt_password_string, duration, readProtection, command.text)
             }
             is WriteUriNdefWithPasswordBytesCommand -> {
                 val duration = parseDurationFromTimeout(command.timeout, ctx)
-                val readProtection = parseWithOrWithoutFromBoolean(command.readProtectionEnabled, ctx)
+                val readProtection = parseProtectionTypeFromBoolean(command.readProtectionEnabled, ctx)
                 val uri = NdefUriCodeUtils.decodeNdefUri(command.uriCode, command.uri.toByteArray())
                 ctx.getString(R.string.write_ndef_uri_password_bytes, duration, readProtection, uri)
             }
             is WriteUriNdefWithPasswordCommand -> {
                 val duration = parseDurationFromTimeout(command.timeout, ctx)
-                val readProtection = parseWithOrWithoutFromBoolean(command.readProtectionEnabled, ctx)
+                val readProtection = parseProtectionTypeFromBoolean(command.readProtectionEnabled, ctx)
                 val uri = NdefUriCodeUtils.decodeNdefUri(command.uriCode, command.uri.toByteArray())
                 ctx.getString(R.string.write_ndef_uri_password_string, duration, readProtection, uri)
             }
@@ -343,40 +354,57 @@ object TcmpMessageDescriptor {
 
     fun getResponseDescription(response: TCMPMessage,
                                ctx: Context): String {
-        if (response is StandardLibraryVersionResponse) {
-            if (response is HardwareVersionResponse) {
-                return parseStandardLibraryVersionResponse(ctx, R.string.resp_hardware, response)
-            } else if (response is FirmwareVersionResponse) {
-                return parseStandardLibraryVersionResponse(ctx, R.string.resp_firmware, response)
-            } else if (response is BasicNfcLibraryVersionResponse) {
-                return parseStandardLibraryVersionResponse(ctx, R.string.family_basicnfc, response)
-            } else if (response is MifareClassicLibraryVersionResponse) {
-                return parseStandardLibraryVersionResponse(ctx, R.string.family_classic, response)
-            } else if (response is Type4LibraryVersionResponse) {
-                return parseStandardLibraryVersionResponse(ctx, R.string.family_type4, response)
-//            } else if (response is GetNtag21xCommandFamilyVersionResponse) {
-//                TODO: Implement this
-            } else {
-                return parseStandardLibraryVersionResponse(ctx, R.string.family_unknown, response)
+        when (response) {
+            is StandardLibraryVersionResponse -> {
+                return when (response) {
+                    is HardwareVersionResponse -> {
+                        parseStandardLibraryVersionResponse(ctx, R.string.resp_hardware, response)
+                    }
+                    is FirmwareVersionResponse -> {
+                        parseStandardLibraryVersionResponse(ctx, R.string.resp_firmware, response)
+                    }
+                    is BasicNfcLibraryVersionResponse -> {
+                        parseStandardLibraryVersionResponse(ctx, R.string.family_basicnfc, response)
+                    }
+                    is MifareClassicLibraryVersionResponse -> {
+                        parseStandardLibraryVersionResponse(ctx, R.string.family_classic, response)
+                    }
+                    is Type4LibraryVersionResponse -> {
+                        parseStandardLibraryVersionResponse(ctx, R.string.family_type4, response)
+                    }
+//                    is GetNtag21xCommandFamilyVersionResponse -> {
+//                        // TODO: Implement this
+//                    }
+                    else -> {
+                        parseStandardLibraryVersionResponse(ctx, R.string.family_unknown, response)
+                    }
+                }
             }
-        } else if (response is AbstractSystemMessage) {
-            return getSystemResponseDescription(response, ctx)
-        } else if (response is AbstractBasicNfcMessage) {
-            return getBasicNfcResponseDescription(response, ctx)
-        } else if (response is AbstractType4Message) {
-            return getType4ResponseDescription(response, ctx)
-        } else if (response is AbstractMifareClassicMessage) {
-            return getClassicResponseDescription(response, ctx)
-        } else if (response is AbstractNtag21xMessage) {
-            return getNtag21xResponseDescription(response, ctx)
-        } else if (response is StandardErrorResponse) {
-            return parseStandardErrorResponse(
-                ctx,
-                R.string.family_unknown,
-                response
-            )
-        } else {
-            return ctx.getString(R.string.unknown_response)
+            is AbstractSystemMessage -> {
+                return getSystemResponseDescription(response, ctx)
+            }
+            is AbstractBasicNfcMessage -> {
+                return getBasicNfcResponseDescription(response, ctx)
+            }
+            is AbstractType4Message -> {
+                return getType4ResponseDescription(response, ctx)
+            }
+            is AbstractMifareClassicMessage -> {
+                return getClassicResponseDescription(response, ctx)
+            }
+            is AbstractNtag21xMessage -> {
+                return getNtag21xResponseDescription(response, ctx)
+            }
+            is StandardErrorResponse -> {
+                return parseStandardErrorResponse(
+                    ctx,
+                    R.string.family_unknown,
+                    response
+                )
+            }
+            else -> {
+                return ctx.getString(R.string.unknown_response)
+            }
         }
     }
 
@@ -455,26 +483,32 @@ object TcmpMessageDescriptor {
 
     private fun getBasicNfcResponseDescription(response: TCMPMessage,
                                                ctx: Context): String {
-        if (response is NdefFoundResponse) {
-            return parseNdefFoundResponse(ctx, response)
-        } else if (response is ScanTimeoutResponse) {
-            return ctx.getString(R.string.scan_timeout_response)
-        } else if (response is TagFoundResponse) {
-            val resp = response
-            return String.format(
+        when (response) {
+            is NdefFoundResponse -> {
+                return parseNdefFoundResponse(ctx, response)
+            }
+            is ScanTimeoutResponse -> {
+                return ctx.getString(R.string.scan_timeout_response)
+            }
+            is TagFoundResponse -> {
+                val resp = response
+                return String.format(
                     ctx.getString(R.string.tag_found_response),
                     (resp.tagCode).toHex(),
                     parseTagType(ctx, resp.tagType))
-        } else if (response is TagWrittenResponse) {
-            return String.format(
+            }
+            is TagWrittenResponse -> {
+                return String.format(
                     ctx.getString(R.string.tag_written_response),
                     (response.tagCode).toHex())
-        } else if (response is TagLockedResponse) {
-            return String.format(
+            }
+            is TagLockedResponse -> {
+                return String.format(
                     ctx.getString(R.string.tag_locked_response),
                     (response.tagCode).toHex())
-        } else if (response is AutoPollTagEnteredResponse) {
-            return String.format(
+            }
+            is AutoPollTagEnteredResponse -> {
+                return String.format(
                     ctx.getString(R.string.tag_entered_response),
                     when (response.detectedTagType) {
                         AutoPollingConstants.ResponseTagTypes.TYPE_1 -> ctx.getString(R.string.autopoll_tag_t1)
@@ -485,9 +519,10 @@ object TcmpMessageDescriptor {
                         else -> ""
                     },
                     response.tagMetadata.toHex()
-            )
-        } else if (response is AutoPollTagExitedResponse) {
-            return String.format(
+                )
+            }
+            is AutoPollTagExitedResponse -> {
+                return String.format(
                     ctx.getString(R.string.tag_exited_response),
                     when (response.detectedTagType) {
                         AutoPollingConstants.ResponseTagTypes.TYPE_1 -> ctx.getString(R.string.autopoll_tag_t1)
@@ -498,36 +533,42 @@ object TcmpMessageDescriptor {
                         else -> ""
                     },
                     response.tagMetadata.toHex()
-            )
-        } else if (response is BasicNfcErrorResponse) {
-            val resp = response
-            val errorRes: Int
-            if (resp.errorCode == BasicNfcErrorResponse.ErrorCodes.INVALID_PARAMETER) {
-                errorRes = R.string.err_invalid_parameter
-            } else if (resp.errorCode == BasicNfcErrorResponse.ErrorCodes.POLLING_ERROR) {
-                errorRes = R.string.err_polling_error
-            } else if (resp.errorCode == BasicNfcErrorResponse.ErrorCodes.TOO_FEW_PARAMETERS) {
-                errorRes = R.string.err_too_few_parameters
-            } else if (resp.errorCode == BasicNfcErrorResponse.ErrorCodes.NDEF_MESSAGE_TOO_LARGE) {
-                errorRes = R.string.err_ndef_too_large
-            } else if (resp.errorCode == BasicNfcErrorResponse.ErrorCodes.ERROR_CREATING_NDEF_CONTENT) {
-                errorRes = R.string.err_ndef_creation_error
-            } else if (resp.errorCode == BasicNfcErrorResponse.ErrorCodes.ERROR_WRITING_NDEF_CONTENT) {
-                errorRes = R.string.err_ndef_writing_error
-            } else if (resp.errorCode == BasicNfcErrorResponse.ErrorCodes.ERROR_LOCKING_TAG) {
-                errorRes = R.string.err_locking_error
-            } else {
-                return parseStandardErrorResponse(ctx,
+                )
+            }
+            is BasicNfcErrorResponse -> {
+                val resp = response
+                val errorRes: Int
+                if (resp.errorCode == BasicNfcErrorResponse.ErrorCodes.INVALID_PARAMETER) {
+                    errorRes = R.string.err_invalid_parameter
+                } else if (resp.errorCode == BasicNfcErrorResponse.ErrorCodes.POLLING_ERROR) {
+                    errorRes = R.string.err_polling_error
+                } else if (resp.errorCode == BasicNfcErrorResponse.ErrorCodes.TOO_FEW_PARAMETERS) {
+                    errorRes = R.string.err_too_few_parameters
+                } else if (resp.errorCode == BasicNfcErrorResponse.ErrorCodes.NDEF_MESSAGE_TOO_LARGE) {
+                    errorRes = R.string.err_ndef_too_large
+                } else if (resp.errorCode == BasicNfcErrorResponse.ErrorCodes.ERROR_CREATING_NDEF_CONTENT) {
+                    errorRes = R.string.err_ndef_creation_error
+                } else if (resp.errorCode == BasicNfcErrorResponse.ErrorCodes.ERROR_WRITING_NDEF_CONTENT) {
+                    errorRes = R.string.err_ndef_writing_error
+                } else if (resp.errorCode == BasicNfcErrorResponse.ErrorCodes.ERROR_LOCKING_TAG) {
+                    errorRes = R.string.err_locking_error
+                } else {
+                    return parseStandardErrorResponse(ctx,
                         R.string.family_basicnfc,
                         response as StandardErrorResponse)
-            }
+                }
 
-            return parseStandardErrorResponse(ctx,
+                return parseStandardErrorResponse(ctx,
                     R.string.family_basicnfc,
                     errorRes,
                     response as StandardErrorResponse)
-        } else {
-            return ctx.getString(R.string.unknown_response)
+            }
+            is TappyTagDataReceivedResponse -> {
+                return ctx.getString(R.string.tappytag_response)
+            }
+            else -> {
+                return ctx.getString(R.string.unknown_response)
+            }
         }
     }
 
@@ -900,6 +941,6 @@ private fun parseDurationFromTimeout(timeout: Byte, ctx: Context): String {
     }
 }
 
-private fun parseWithOrWithoutFromBoolean(boolean: Boolean, ctx: Context): String {
-    return if (boolean) ctx.getString(R.string.with) else ctx.getString(R.string.without)
+private fun parseProtectionTypeFromBoolean(boolean: Boolean, ctx: Context): String {
+    return if (boolean) ctx.getString(R.string.read_and_write_protection) else ctx.getString(R.string.write_protection)
 }

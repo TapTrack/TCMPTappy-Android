@@ -64,7 +64,7 @@ class CommandDataSource(val context: Context) {
     }
 
     private val sortedNtag21xCommands by lazy {
-        NTAG_21X_COMMANDS.sortedBy { context.getString(it.titleRes) }
+        NTAG_21X_COMMANDS // Ignoring sort by title since string commands take priority
     }
 
 
@@ -139,7 +139,7 @@ class CommandDataSource(val context: Context) {
             CommandFamilyOption(FAM_OPTION_ID_BASIC, R.drawable.ic_nfc_black_48dp, R.string.desc_basic_nfc_family),
             CommandFamilyOption(FAM_OPTION_ID_CLASSIC, R.drawable.ic_classic_black_48dp, R.string.desc_classic_family),
             CommandFamilyOption(FAM_OPTION_ID_T4, R.drawable.ic_type4_black_48dp, R.string.desc_type_4_family),
-            CommandFamilyOption(FAM_OPTION_ID_NTAG21X, R.drawable.ic_tappy_connected_notification, R.string.desc_ntag_21x_family)
+            CommandFamilyOption(FAM_OPTION_ID_NTAG21X, R.drawable.ic_lock_black_48dp, R.string.desc_ntag_21x_family)
         )
 
         private const val COM_OPT_GET_BATT = 0
@@ -178,6 +178,7 @@ class CommandDataSource(val context: Context) {
         private const val COM_OPT_NTAG21X_WRITE_TEXT_PASSWORD_STRING = 33
         private const val COM_OPT_NTAG21X_WRITE_URI_PASSWORD_BYTES = 34
         private const val COM_OPT_NTAG21X_WRITE_URI_PASSWORD_STRING = 35
+        private const val COM_OPT_INITIATE_TAPPYTAG_HANDSHAKE = 36
 
         private val ALL_COMMAND_OPTIONS_MAP: Map<Int, CommandOption> = mapOf(
             Pair(
@@ -535,38 +536,14 @@ class CommandDataSource(val context: Context) {
             ),
 
             Pair(
-                COM_OPT_NTAG21X_READ_PASSWORD_BYTES,
-                CommandOption(
-                    COM_OPT_NTAG21X_READ_PASSWORD_BYTES,
-                    FAM_OPTION_ID_NTAG21X,
-                    R.drawable.ic_scan_ndef_48dp,
-                    R.string.read_ndef_with_password_bytes_title,
-                    R.string.read_ndef_with_password_bytes_description,
-                    ReadNdefWithPasswordBytesCommand::class.java
-                )
-            ),
-
-            Pair(
                 COM_OPT_NTAG21X_READ_PASSWORD_STRING,
                 CommandOption(
                     COM_OPT_NTAG21X_READ_PASSWORD_STRING,
                     FAM_OPTION_ID_NTAG21X,
                     R.drawable.ic_scan_ndef_48dp,
-                    R.string.read_ndef_with_password_string_title,
-                    R.string.read_ndef_with_password_string_description,
+                    R.string.ntag21xcommand_read_ndef_with_password_string_title,
+                    R.string.ntag21xcommand_read_ndef_with_password_string_description,
                     ReadNdefWithPasswordCommand::class.java
-                )
-            ),
-
-            Pair(
-                COM_OPT_NTAG21X_WRITE_TEXT_PASSWORD_BYTES,
-                CommandOption(
-                    COM_OPT_NTAG21X_WRITE_TEXT_PASSWORD_BYTES,
-                    FAM_OPTION_ID_NTAG21X,
-                    R.drawable.ic_scan_ndef_48dp,
-                    R.string.write_text_with_password_bytes_title,
-                    R.string.write_text_with_password_bytes_description,
-                    WriteTextNdefWithPasswordBytesCommand::class.java
                 )
             ),
 
@@ -575,22 +552,10 @@ class CommandDataSource(val context: Context) {
                 CommandOption(
                     COM_OPT_NTAG21X_WRITE_TEXT_PASSWORD_STRING,
                     FAM_OPTION_ID_NTAG21X,
-                    R.drawable.ic_scan_ndef_48dp,
-                    R.string.write_text_with_password_string_title,
-                    R.string.write_text_with_password_string_description,
+                    R.drawable.ic_description_black_48dp,
+                    R.string.ntag21xcommand_write_text_with_password_string_title,
+                    R.string.ntag21xcommand_write_text_with_password_string_description,
                     WriteTextNdefWithPasswordCommand::class.java
-                )
-            ),
-
-            Pair(
-                COM_OPT_NTAG21X_WRITE_URI_PASSWORD_BYTES,
-                CommandOption(
-                    COM_OPT_NTAG21X_WRITE_URI_PASSWORD_BYTES,
-                    FAM_OPTION_ID_NTAG21X,
-                    R.drawable.ic_scan_ndef_48dp,
-                    R.string.write_uri_with_password_bytes_title,
-                    R.string.write_uri_with_password_bytes_description,
-                    WriteUriNdefWithPasswordBytesCommand::class.java
                 )
             ),
 
@@ -599,12 +564,60 @@ class CommandDataSource(val context: Context) {
                 CommandOption(
                     COM_OPT_NTAG21X_WRITE_URI_PASSWORD_STRING,
                     FAM_OPTION_ID_NTAG21X,
-                    R.drawable.ic_scan_ndef_48dp,
-                    R.string.write_uri_with_password_string_title,
-                    R.string.write_uri_with_password_string_description,
+                    R.drawable.ic_link_black_48dp,
+                    R.string.ntag21xcommand_write_uri_with_password_string_title,
+                    R.string.ntag21xcommand_write_uri_with_password_string_description,
                     WriteUriNdefWithPasswordCommand::class.java
                 )
             ),
+
+            Pair(
+                COM_OPT_NTAG21X_READ_PASSWORD_BYTES,
+                CommandOption(
+                    COM_OPT_NTAG21X_READ_PASSWORD_BYTES,
+                    FAM_OPTION_ID_NTAG21X,
+                    R.drawable.ic_scan_ndef_48dp,
+                    R.string.ntag21xcommand_read_ndef_with_password_bytes_title,
+                    R.string.ntag21xcommand_read_ndef_with_password_bytes_description,
+                    ReadNdefWithPasswordBytesCommand::class.java
+                )
+            ),
+
+            Pair(
+                COM_OPT_NTAG21X_WRITE_TEXT_PASSWORD_BYTES,
+                CommandOption(
+                    COM_OPT_NTAG21X_WRITE_TEXT_PASSWORD_BYTES,
+                    FAM_OPTION_ID_NTAG21X,
+                    R.drawable.ic_description_black_48dp,
+                    R.string.ntag21xcommand_write_text_with_password_bytes_title,
+                    R.string.ntag21xcommand_write_text_with_password_bytes_description,
+                    WriteTextNdefWithPasswordBytesCommand::class.java
+                )
+            ),
+
+            Pair(
+                COM_OPT_NTAG21X_WRITE_URI_PASSWORD_BYTES,
+                CommandOption(
+                    COM_OPT_NTAG21X_WRITE_URI_PASSWORD_BYTES,
+                    FAM_OPTION_ID_NTAG21X,
+                    R.drawable.ic_link_black_48dp,
+                    R.string.ntag21xcommand_write_uri_with_password_bytes_title,
+                    R.string.ntag21xcommand_write_uri_with_password_bytes_description,
+                    WriteUriNdefWithPasswordBytesCommand::class.java
+                )
+            ),
+
+            Pair(
+                COM_OPT_INITIATE_TAPPYTAG_HANDSHAKE,
+                CommandOption(
+                    COM_OPT_INITIATE_TAPPYTAG_HANDSHAKE,
+                    FAM_OPTION_ID_BASIC,
+                    R.drawable.ic_emulation_black_48dp,
+                    R.string.nfccommand_tappytag_handshake_title,
+                    R.string.nfccommand_tappytag_handshake_description,
+                    InitiateTappyTagHandshakeCommand::class.java
+                )
+            )
         )
 
         private val ALL_COMMAND_OPTIONS: List<CommandOption> by lazy {

@@ -19,7 +19,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
-        tools:text="Read Classic" />
+        tools:text="@string/ntag21xcommand_write_text_with_password_bytes_title" />
 
     <TextView
         android:id="@+id/tv_command_description"
@@ -30,7 +30,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_command_title"
-        tools:text="Read data from a MIFARE Classic. For this example, the Tappy will always attempt to authenticate with key A using the default key" />
+        tools:text="@string/ntag21xcommand_write_text_with_password_bytes_description" />
 
     <ImageView
         android:id="@+id/iv_timeout_icon"

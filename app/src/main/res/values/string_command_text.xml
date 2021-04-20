@@ -37,14 +37,15 @@
     <string name="stream_tag_indefinitely">Stream tags indefinitely</string>
     <string name="write_ndef_txt_seconds">For %1$d seconds, attempt to write the following text to a tag: \n%2$s</string>
     <string name="write_ndef_txt_indefinite">Indefinitely attempt to write the following text to a tag: \n%1$s</string>
-    <string name="write_ndef_uri_seconds">For %1$d seconds, attempt to write the following URI to a tag: \n%2$s</string>
-    <string name="write_ndef_uri_indefinite">Indefinitely attempt to write the following URI to a tag: \n%1$s</string>
+    <string name="write_ndef_uri_seconds">For %1$d seconds, attempt to write the following URL to a tag: \n%2$s</string>
+    <string name="write_ndef_uri_indefinite">Indefinitely attempt to write the following URL to a tag: \n%1$s</string>
     <string name="lock_tags_seconds">For %1$d seconds, attempt to lock the next tag encountered</string>
     <string name="lock_tags_indefinite">Indefinitely attempt to lock the next tag encountered</string>
     <string name="autopoll_for_tags">Autopoll for tags\nMode: %1$s\nHeartbeat: %2$s\nBuzzer: %3$s</string>
     <string name="autopoll_for_tags_hb_disabled">Disabled</string>
     <string name="autopoll_for_tags_buzzer_disabled">Disabled</string>
     <string name="autopoll_for_tags_buzzer_enabled">Enabled</string>
+    <string name="initiate_tappytag_handshake">Initiate TappyTag handshake</string>
     <!-- Classic Commands -->
     <string name="detect_classic_seconds">Scan for MIFARE Classic for %1$d seconds</string>
     <string name="detect_classic_indefinite">Scan for MIFARE Classic indefinitely</string>
@@ -62,13 +63,13 @@
     <string name="detect_hce_target_indefinite">Scan for active HCE targets indefinitely</string>
     <string name="get_type4_version">Report Type 4 library version</string>
     <string name="send_apdu">Send the following APDU: %1$s</string>
-    <!-- NTAG 21x Commands -->
-    <string name="read_password_bytes">Scan for an NDEF tag with password bytes protection from an NTAG 21x %1$s</string>
-    <string name="read_password_string">Scan for an NDEF tag with password string protection from an NTAG 21x %1$s</string>
-    <string name="write_ndef_txt_password_bytes">%1$s attempt to write the following password bytes protected text %2$s read protection to an NTAG 21x: \n%3$s</string>
-    <string name="write_ndef_txt_password_string">%1$s attempt to write the following password string protected text %2$s read protection to an NTAG 21x: \n%3$s</string>
-    <string name="write_ndef_uri_password_bytes">%1$s attempt to write the following password bytes protected URI %2$s read protection to an NTAG 21x: \n%3$s</string>
-    <string name="write_ndef_uri_password_string">%1$s attempt to write the following password string protected URI %2$s read protection to an NTAG 21x: \n%3$s</string>
+    <!-- NTAG 21X Commands -->
+    <string name="read_password_bytes">Scan for an NDEF tag with password bytes protection from an NTAG 21X %1$s</string>
+    <string name="read_password_string">Scan for an NDEF tag with password protection from an NTAG 21X %1$s</string>
+    <string name="write_ndef_txt_password_bytes">%1$s attempt to write the following password bytes protected text with %2$s to an NTAG 21X: \n%3$s</string>
+    <string name="write_ndef_txt_password_string">%1$s attempt to write the following password protected text with %2$s to an NTAG 21X: \n%3$s</string>
+    <string name="write_ndef_uri_password_bytes">%1$s attempt to write the following password bytes protected URL with %2$s to an NTAG 21X: \n%3$s</string>
+    <string name="write_ndef_uri_password_string">%1$s attempt to write the following password protected URL with %2$s to an NTAG 21X: \n%3$s</string>
 
     <!-- Responses -->
     <string name="unknown_response">Unsupported Response</string>
@@ -106,7 +107,7 @@
     <string name="tag_written_response">Data written to tag with UID %1$s</string>
     <string name="tag_locked_response">Tag with UID %1$s was locked</string>
     <string name="ndef_record_generic_display_format">TNF: %1$s\n Type: %2$s\n Payload: %3$s\n </string>
-    <string name="ndef_record_uri_display_format">Uri: %1$s</string>
+    <string name="ndef_record_uri_display_format">URL: %1$s</string>
     <string name="ndef_record_text_display_format">Text: %1$s</string>
     <string name="ndef_no_record">No records</string>
     <string name="tag_entered_response">Tag entered:\nType: %1$s\nMetadata: %2$s</string>
@@ -118,6 +119,8 @@
     <string name="autopoll_tag_t4b">Type 4B</string>
     <string name="autopoll_tag_unrecognized">Unrecognized</string>
     <string name="autopoll_tag_all">All</string>
+    <!-- TODO: This is a placeholder -->
+    <string name="tappytag_response">Received TappyTag response</string>
 
     <!-- Classic Responses -->
     <string name="mifareclassic_1k_detected">Detected MIFARE Classic 1K\nUID: %1$s</string>
@@ -176,7 +179,7 @@
     <string name="for_duration_singular">for 1 second</string>
     <string name="for_duration_plural">for %1$d seconds</string>
     <string name="indefinitely">indefinitely</string>
-    <string name="with">with</string>
-    <string name="without">without</string>
+    <string name="write_protection">write protection</string>
+    <string name="read_and_write_protection">read and write protection</string>
 
 </resources>

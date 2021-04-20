@@ -5,5 +5,5 @@
     <string name="desc_system_family">System</string>
     <string name="desc_classic_family">Classic</string>
     <string name="desc_type_4_family">Type 4</string>
-    <string name="desc_ntag_21x_family">NTAG 21x</string>
+    <string name="desc_ntag_21x_family">NTAG 21X Password Protection</string>
 </resources>

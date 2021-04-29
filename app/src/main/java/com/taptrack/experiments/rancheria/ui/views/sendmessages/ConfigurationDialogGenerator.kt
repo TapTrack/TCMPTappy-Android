@@ -32,6 +32,7 @@ import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.commands.DetectMifa
 import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.commands.ReadMifareClassicCommand
 import com.taptrack.tcmptappy2.commandfamilies.ntag21x.commands.*
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.ConfigureOnboardScanCooldownCommand
+import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.SetBootConfigCommand
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.SetConfigItemCommand
 import com.taptrack.tcmptappy2.commandfamilies.type4.commands.*
 import org.jetbrains.anko.*
@@ -1198,6 +1199,94 @@ object DialogGenerator {
                             TappyService.broadcastSendTcmp(message, ctx)
                         } catch (ignored: Exception) {
                             ignored.printStackTrace()
+                            // cant instantiate
+                        }
+                        return true
+                    }
+                }
+
+                return Pair(cl, listener)
+            }
+            SetBootConfigCommand::class.java -> {
+                val cl = wrapInConstraintLayout(ctx, R.layout.configure_boot_view)
+
+                cl.findOptional<TextView>(R.id.tv_message_label)?.textResource = R.string.parameter_label_boot_config_param_id
+                cl.findOptional<ImageView>(R.id.iv_message_icon)?.imageResource = R.drawable.ic_link_black_24dp
+                cl.findOptional<EditText>(R.id.et_message)?.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
+                val paramEt = cl.findOptional<EditText>(R.id.et_parameter)
+                paramEt?.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
+                paramEt?.maxLines = 1
+
+
+                cl.findOptional<TextView>(R.id.tv_command_title)?.textResource = option.titleRes
+                cl.findOptional<TextView>(R.id.tv_command_title)?.textResource = option.titleRes
+                cl.findOptional<TextView>(R.id.tv_command_description)?.textResource = option.descriptionRes
+
+                val parameterTil = cl.find<TextInputLayout>(R.id.til_parameter_container)
+                val parameterEt = cl.find<EditText>(R.id.et_parameter)
+
+                parameterEt.filters = parameterEt.filters.plus(
+                    arrayOf(InputFilter.AllCaps(),InputFilter.LengthFilter(2)))
+                parameterEt.addTextChangedListener(object : TextWatcher {
+                    override fun afterTextChanged(s: Editable?) {
+                        if (s != null) {
+                            val str = s.toString()
+                            if ((str.length)> 2) {
+                                val truncated = str.substring(
+                                    startIndex = 0,
+                                    endIndex = 2
+                                )
+                                parameterEt.setText(truncated)
+                            } else {
+                                val modified = ("[^A-F0-9]").toRegex().replace(str.toUpperCase(Locale.ROOT),"")
+                                if(str != modified) {
+                                    parameterEt.setText(modified)
+                                } else {
+                                    if (!str.trim().isTextValidHex()) {
+                                        val errorText = ctx.getString(R.string.error_must_be_hex_byte)
+                                        parameterTil.error = errorText
+                                    } else {
+                                        parameterTil.error = null
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                    }
+
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    }
+                })
+
+                val listener = object : ConfirmListener {
+                    override fun didConfirm(v: View): Boolean {
+                        try {
+                            val rawParameter = cl.findOptional<EditText>(R.id.et_parameter)?.text?.toString()
+                            if (rawParameter == null || rawParameter.isEmpty() || !rawParameter.isTextValidHex()) {
+                                return false
+                            }
+
+                            val hexParameter = rawParameter.hexStringToByteArray()
+                            if (hexParameter.size != 1) {
+                                return false
+                            }
+
+                            val rawValue = cl.findOptional<EditText>(R.id.et_value)?.text?.toString() ?: ""
+
+                            if (rawValue.isNotEmpty() && !rawValue.isTextValidHex()) {
+                                return false
+                            }
+                            val hexValue = if (rawValue.isEmpty()) {
+                                byteArrayOf()
+                            } else {
+                                rawValue.hexStringToByteArray()
+                            }
+                            val cmd = SetBootConfigCommand()
+                            TappyService.broadcastSendTcmp(cmd,ctx)
+
+                        } catch (ignored: Exception) {
                             // cant instantiate
                         }
                         return true

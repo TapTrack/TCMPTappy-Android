@@ -179,6 +179,8 @@ class CommandDataSource(val context: Context) {
         private const val COM_OPT_NTAG21X_WRITE_URI_PASSWORD_BYTES = 34
         private const val COM_OPT_NTAG21X_WRITE_URI_PASSWORD_STRING = 35
         private const val COM_OPT_INITIATE_TAPPYTAG_HANDSHAKE = 36
+        private const val COM_OPT_SET_BOOT_CONFIG = 37
+        private const val COM_OPT_GET_BOOT_CONFIG = 38
 
         private val ALL_COMMAND_OPTIONS_MAP: Map<Int, CommandOption> = mapOf(
             Pair(
@@ -616,6 +618,30 @@ class CommandDataSource(val context: Context) {
                     R.string.nfccommand_tappytag_handshake_title,
                     R.string.nfccommand_tappytag_handshake_description,
                     InitiateTappyTagHandshakeCommand::class.java
+                )
+            ),
+
+            Pair(
+                COM_OPT_SET_BOOT_CONFIG,
+                CommandOption(
+                    COM_OPT_SET_BOOT_CONFIG,
+                    FAM_OPTION_ID_SYS,
+                    R.drawable.ic_set_config_item_48dp,
+                    R.string.syscommand_set_boot_configuration_title,
+                    R.string.syscommand_set_boot_configuration_description,
+                    SetBootConfigCommand::class.java
+                )
+            ),
+
+            Pair(
+                COM_OPT_GET_BOOT_CONFIG,
+                CommandOption(
+                    COM_OPT_GET_BOOT_CONFIG,
+                    FAM_OPTION_ID_SYS,
+                    R.drawable.ic_set_config_item_48dp,
+                    R.string.syscommand_get_boot_configuration_title,
+                    R.string.syscommand_get_boot_configuration_description,
+                    GetBootConfigCommand::class.java
                 )
             )
         )

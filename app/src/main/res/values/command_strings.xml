@@ -50,6 +50,10 @@
     <string name="syscommand_disable_ble_pin_description">Disable BLE PIN pairing</string>
     <string name="syscommand_set_configuration_item_title">Set Configuration Item</string>
     <string name="syscommand_set_configuration_item_description">Sets a configuration item value on the Tappy</string>
+    <string name="syscommand_set_boot_configuration_title">Set Boot Configuration</string>
+    <string name="syscommand_set_boot_configuration_description">Allows you to specify boot configurations for the Tappy</string>
+    <string name="syscommand_get_boot_configuration_title">Get Boot Configuration</string>
+    <string name="syscommand_get_boot_configuration_description">Request the boot configuration of the Tappy</string>
 
     <string name="nfccommand_get_libraryv_title">BasicNFC Lib Version</string>
     <string name="nfccommand_get_libraryv_description">Request the version of the basic NFC library</string>

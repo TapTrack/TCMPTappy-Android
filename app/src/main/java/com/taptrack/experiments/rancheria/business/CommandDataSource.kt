@@ -626,7 +626,7 @@ class CommandDataSource(val context: Context) {
                 CommandOption(
                     COM_OPT_SET_BOOT_CONFIG,
                     FAM_OPTION_ID_SYS,
-                    R.drawable.ic_set_config_item_48dp,
+                    R.drawable.ic_settings_suggest_24dp,
                     R.string.syscommand_set_boot_configuration_title,
                     R.string.syscommand_set_boot_configuration_description,
                     SetBootConfigCommand::class.java
@@ -638,7 +638,7 @@ class CommandDataSource(val context: Context) {
                 CommandOption(
                     COM_OPT_GET_BOOT_CONFIG,
                     FAM_OPTION_ID_SYS,
-                    R.drawable.ic_set_config_item_48dp,
+                    R.drawable.ic_settings_black_48dp,
                     R.string.syscommand_get_boot_configuration_title,
                     R.string.syscommand_get_boot_configuration_description,
                     GetBootConfigCommand::class.java

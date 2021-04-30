@@ -6,7 +6,7 @@ import com.taptrack.tcmptappy2.commandfamilies.systemfamily.AbstractSystemMessag
 class GetBootConfigResponse : AbstractSystemMessage {
 
     companion object {
-        const val COMMAND_CODE: Byte = 0x18
+        const val COMMAND_CODE: Byte = 0x19
     }
 
     // TODO: When user-friendly TLV structures are supported, consider using this as a backing field

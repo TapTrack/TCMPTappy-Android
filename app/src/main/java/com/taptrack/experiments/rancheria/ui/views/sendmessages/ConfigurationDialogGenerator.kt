@@ -1226,28 +1226,20 @@ object DialogGenerator {
                 val parameterEt = cl.find<EditText>(R.id.et_parameter)
 
                 parameterEt.filters = parameterEt.filters.plus(
-                    arrayOf(InputFilter.AllCaps(),InputFilter.LengthFilter(2)))
+                    arrayOf(InputFilter.AllCaps()))
                 parameterEt.addTextChangedListener(object : TextWatcher {
                     override fun afterTextChanged(s: Editable?) {
                         if (s != null) {
                             val str = s.toString()
-                            if ((str.length)> 2) {
-                                val truncated = str.substring(
-                                    startIndex = 0,
-                                    endIndex = 2
-                                )
-                                parameterEt.setText(truncated)
+                            val modified = ("[^A-F0-9]").toRegex().replace(str.toUpperCase(Locale.ROOT),"")
+                            if(str != modified) {
+                                parameterEt.setText(modified)
                             } else {
-                                val modified = ("[^A-F0-9]").toRegex().replace(str.toUpperCase(Locale.ROOT),"")
-                                if(str != modified) {
-                                    parameterEt.setText(modified)
+                                if (!str.trim().isTextValidHex()) {
+                                    val errorText = ctx.getString(R.string.error_must_be_hex_byte)
+                                    parameterTil.error = errorText
                                 } else {
-                                    if (!str.trim().isTextValidHex()) {
-                                        val errorText = ctx.getString(R.string.error_must_be_hex_byte)
-                                        parameterTil.error = errorText
-                                    } else {
-                                        parameterTil.error = null
-                                    }
+                                    parameterTil.error = null
                                 }
                             }
                         }
@@ -1269,9 +1261,6 @@ object DialogGenerator {
                             }
 
                             val hexParameter = rawParameter.hexStringToByteArray()
-                            if (hexParameter.size != 1) {
-                                return false
-                            }
 
                             val rawValue = cl.findOptional<EditText>(R.id.et_value)?.text?.toString() ?: ""
 
@@ -1283,7 +1272,7 @@ object DialogGenerator {
                             } else {
                                 rawValue.hexStringToByteArray()
                             }
-                            val cmd = SetBootConfigCommand()
+                            val cmd = SetBootConfigCommand(hexParameter)
                             TappyService.broadcastSendTcmp(cmd,ctx)
 
                         } catch (ignored: Exception) {

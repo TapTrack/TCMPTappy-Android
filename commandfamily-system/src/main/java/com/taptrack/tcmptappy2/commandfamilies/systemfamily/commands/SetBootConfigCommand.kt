@@ -1,9 +1,10 @@
-package com.taptrack.tcmptappy2.commandfamilies.systemfamily.responses
+package com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands
 
+import com.taptrack.tcmptappy2.MalformedPayloadException
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.AbstractSystemMessage
 
-// TODO: Provide convenience accessors exposing user-friendly TLV structure
-class GetNVMConfigResponse : AbstractSystemMessage {
+// TODO: Provide convenience constructors and accessors accepting user-friendly TLV structure
+class SetBootConfigCommand : AbstractSystemMessage {
 
     companion object {
         const val COMMAND_CODE: Byte = 0x18
@@ -14,10 +15,12 @@ class GetNVMConfigResponse : AbstractSystemMessage {
 
     constructor() : super()
 
+    @Throws(MalformedPayloadException::class)
     constructor(payload: ByteArray) : super() {
         parsePayload(payload)
     }
 
+    @Throws(MalformedPayloadException::class)
     override fun parsePayload(payload: ByteArray) {
         _rawTlvs = payload
     }

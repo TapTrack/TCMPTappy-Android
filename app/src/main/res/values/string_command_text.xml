@@ -25,6 +25,8 @@
     <string name="deactivate_green_led">Deactivate Green LED</string>
     <string name="activate_buzzer">Activate Buzzer</string>
     <string name="deactivate_buzzer">Deactivate Buzzer</string>
+    <string name="get_boot_config">Get boot configuration</string>
+    <string name="set_boot_config">Set boot configuration to %1$s</string>
     <!-- Basic NFC Commands -->
     <string name="get_basic_nfc_lib_version">Report Basic NFC command library version</string>
     <string name="scan_ndef_seconds">Scan for an NDEF-formatted tag for %1$d seconds</string>
@@ -94,6 +96,8 @@
     <string name="blue_led_deactivated_response">Blue LED Deactivated</string>
     <string name="buzzer_activated_response">Buzzer Activated</string>
     <string name="buzzer_deactivated_response">Buzzer Deactivated</string>
+    <string name="set_boot_config_response">Boot Config Set</string>
+    <string name="get_boot_config_response">Boot Config: %1$s</string>
 
     <string name="enabled_scan_cooldown_with_tag_memory_response">Enabled scan cooldown with %1$d tag memory</string>
     <string name="disabled_scan_cooldown_response">Disabled scan cooldown</string>

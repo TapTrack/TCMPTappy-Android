@@ -51,6 +51,7 @@
     <string name="parameter_label_url">URL</string>
     <string name="parameter_label_config_param_id">Parameter Identifier (hex)</string>
     <string name="parameter_label_config_param_value">Value (hex)</string>
+    <string name="parameter_label_boot_config_param_id">Boot config TLVs (hex)</string>
 
     <string name="parameter_label_ble_pin">PIN</string>
 

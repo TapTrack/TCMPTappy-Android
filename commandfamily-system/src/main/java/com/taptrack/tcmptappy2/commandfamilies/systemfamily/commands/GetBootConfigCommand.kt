@@ -2,7 +2,7 @@ package com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands
 
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.AbstractSystemMessage
 
-class GetNVMConfigCommand : AbstractSystemMessage() {
+class GetBootConfigCommand : AbstractSystemMessage() {
 
     companion object {
         const val COMMAND_CODE: Byte = 0x17

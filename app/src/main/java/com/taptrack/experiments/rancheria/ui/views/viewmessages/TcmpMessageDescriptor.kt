@@ -7,6 +7,7 @@ import androidx.annotation.StringRes
 import com.taptrack.experiments.rancheria.R
 import com.taptrack.experiments.rancheria.ui.toHex
 import com.taptrack.experiments.rancheria.ui.toUnsigned
+import com.taptrack.experiments.rancheria.ui.views.sendmessages.DialogGenerator
 import com.taptrack.experiments.rancheria.ui.views.sendmessages.SetBLEPinCommand
 import com.taptrack.tcmptappy.tappy.constants.TagTypes
 import com.taptrack.tcmptappy2.StandardErrorResponse
@@ -223,7 +224,7 @@ object TcmpMessageDescriptor {
                 } else {
                     ctx.getString(
                             R.string.set_config_item_with_value,
-                            byteArrayOf(command.parameter).toHex(),
+                            byteArrayOf(command.parameter),
                             command.multibyteValue.toHex()
                     )
                 }
@@ -232,6 +233,10 @@ object TcmpMessageDescriptor {
             return ctx.getString(R.string.get_hardware_version)
         } else if (command is PingCommand) {
             return ctx.getString(R.string.ping_command)
+        } else if (command is GetBootConfigCommand) {
+            return ctx.getString(R.string.get_boot_config)
+        } else if (command is SetBootConfigCommand) {
+            return ctx.getString(R.string.set_boot_config, command.payload.toHex())
         } else {
             return ctx.getString(R.string.unknown_command)
         }
@@ -476,6 +481,10 @@ object TcmpMessageDescriptor {
                     R.string.family_system,
                     errorRes,
                     response as StandardErrorResponse)
+        } else if (response is SetBootConfigResponse) {
+            return ctx.getString(R.string.set_boot_config_response)
+        } else if (response is GetBootConfigResponse) {
+            return ctx.getString(R.string.get_boot_config_response, response.payload.toHex())
         } else {
             return ctx.getString(R.string.unknown_response)
         }

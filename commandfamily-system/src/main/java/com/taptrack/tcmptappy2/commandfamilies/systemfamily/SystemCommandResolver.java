@@ -27,10 +27,10 @@ import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.GetClockSta
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.GetFirmwareVersionCommand;
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.GetHardwareVersionCommand;
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.GetIndicatorStatusCommand;
-import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.GetNVMConfigCommand;
+import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.GetBootConfigCommand;
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.PingCommand;
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.SetConfigItemCommand;
-import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.SetNVMConfigCommand;
+import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.SetBootConfigCommand;
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.responses.BlueLEDActivatedResponse;
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.responses.BlueLEDDeactivatedResponse;
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.responses.BuzzerActivatedResponse;
@@ -43,7 +43,7 @@ import com.taptrack.tcmptappy2.commandfamilies.systemfamily.responses.CrcMismatc
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.responses.DisableHostHeartbeatTransmissionResponse;
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.responses.FirmwareVersionResponse;
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.responses.GetBatteryLevelResponse;
-import com.taptrack.tcmptappy2.commandfamilies.systemfamily.responses.GetNVMConfigResponse;
+import com.taptrack.tcmptappy2.commandfamilies.systemfamily.responses.GetBootConfigResponse;
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.responses.GreenLEDActivatedResponse;
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.responses.GreenLEDDeactivatedResponse;
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.responses.HardwareVersionResponse;
@@ -54,7 +54,7 @@ import com.taptrack.tcmptappy2.commandfamilies.systemfamily.responses.LengthMism
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.responses.PingResponse;
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.responses.RedLEDActivatedResponse;
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.responses.RedLEDDeactivatedResponse;
-import com.taptrack.tcmptappy2.commandfamilies.systemfamily.responses.SetNVMConfigResponse;
+import com.taptrack.tcmptappy2.commandfamilies.systemfamily.responses.SetBootConfigResponse;
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.responses.SystemErrorResponse;
 
 import java.util.Arrays;
@@ -163,12 +163,12 @@ public class SystemCommandResolver implements CommandFamilyMessageResolver {
                 parsedMessage = new DisableHostHeartbeatTransmissionCommand();
                 break;
 
-            case GetNVMConfigCommand.COMMAND_CODE:
-                parsedMessage = new GetNVMConfigCommand();
+            case GetBootConfigCommand.COMMAND_CODE:
+                parsedMessage = new GetBootConfigCommand();
                 break;
 
-            case SetNVMConfigCommand.COMMAND_CODE:
-                parsedMessage = new SetNVMConfigCommand();
+            case SetBootConfigCommand.COMMAND_CODE:
+                parsedMessage = new SetBootConfigCommand();
                 break;
 
             default:
@@ -278,12 +278,12 @@ public class SystemCommandResolver implements CommandFamilyMessageResolver {
                 parsedMessage = new DisableHostHeartbeatTransmissionResponse();
                 break;
 
-            case GetNVMConfigResponse.COMMAND_CODE:
-                parsedMessage = new GetNVMConfigResponse();
+            case GetBootConfigResponse.COMMAND_CODE:
+                parsedMessage = new GetBootConfigResponse();
                 break;
 
-            case SetNVMConfigResponse.COMMAND_CODE:
-                parsedMessage = new SetNVMConfigResponse();
+            case SetBootConfigResponse.COMMAND_CODE:
+                parsedMessage = new SetBootConfigResponse();
                 break;
 
             default:

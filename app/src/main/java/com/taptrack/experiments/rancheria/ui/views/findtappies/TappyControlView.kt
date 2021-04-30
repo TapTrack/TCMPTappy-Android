@@ -112,7 +112,7 @@ private class TappyControlAdapter : RecyclerView.Adapter<TappyControlAdapter.VH>
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {
-        val tappy = namedTappyWithStatuses[position]
+        val tappy = namedTappyWithStatuses.elementAtOrNull(position)
         if (tappy != null) {
             holder.bind(tappy)
         }

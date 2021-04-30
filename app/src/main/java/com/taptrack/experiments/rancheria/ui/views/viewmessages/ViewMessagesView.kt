@@ -132,11 +132,11 @@ private class MessageAdapter(private val hostView: RecyclerView, data: OrderedRe
     }
 
     override fun getItemViewType(position: Int): Int {
-        val item = getItem(position) as? RealmTcmpCommunique
-        if (item?.command ?: false) {
-            return TYPE_COMMAND
+        val item = getItem(position)
+        return if (item?.command == true) {
+            TYPE_COMMAND
         } else {
-            return TYPE_RESPONSE
+            TYPE_RESPONSE
         }
     }
 
@@ -152,8 +152,8 @@ private class MessageAdapter(private val hostView: RecyclerView, data: OrderedRe
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH =
         when(viewType) {
-            TYPE_RESPONSE -> ResponseVH.inflate(parent!!)
-            TYPE_COMMAND -> CommandVH.inflate(commandDataSource, parent!!)
+            TYPE_RESPONSE -> ResponseVH.inflate(parent)
+            TYPE_COMMAND -> CommandVH.inflate(commandDataSource, parent)
             else -> {
                 throw IllegalArgumentException()
             }
@@ -165,7 +165,7 @@ private class MessageAdapter(private val hostView: RecyclerView, data: OrderedRe
 
         when(holder) {
             is ResponseVH -> {
-                var shouldShowName = false
+                val shouldShowName: Boolean
                 if (position == 0) {
                     // we're the last item
                     shouldShowName = true
@@ -210,8 +210,8 @@ private class MessageAdapter(private val hostView: RecyclerView, data: OrderedRe
 
     class CommandVH(val commandDataSource: CommandDataSource, val rootView: View) : VH(rootView) {
         val ctx = rootView.context
-        val messageView: TextView = rootView.find<TextView>(R.id.tv_message_content) as TextView
-        val timeView: TextView = rootView.find<TextView>(R.id.tv_caption) as TextView
+        val messageView: TextView = rootView.find(R.id.tv_message_content)
+        val timeView: TextView = rootView.find(R.id.tv_caption)
 
         var currentMessage: ByteArray? = null
         var currentTime: Long? = null

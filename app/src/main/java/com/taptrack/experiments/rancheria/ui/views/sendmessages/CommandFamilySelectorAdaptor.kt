@@ -53,9 +53,9 @@ class CommandFamilySelectorAdaptor(
         fun bind(option: SelectableFamilyOption) {
             val color = if (option.isSelected) R.color.colorAccent else R.color.colorUnselected
 
-            icon?.setImageDrawable(context.getColorResTintedDrawable(option.family.imageRes,color))
-            text?.setTextColor(ContextCompat.getColor(context,color))
-            text?.setText(option.family.descriptionRes)
+            icon.setImageDrawable(context.getColorResTintedDrawable(option.family.imageRes,color))
+            text.setTextColor(ContextCompat.getColor(context,color))
+            text.setText(option.family.descriptionRes)
 
             this.option = option
         }

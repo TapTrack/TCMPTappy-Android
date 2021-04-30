@@ -55,7 +55,7 @@ class CommandSelectorView : ConstraintLayout, CommandFamilySelectedListener, Com
                 (2*context.resources.getDimension(R.dimen.command_selector_fam_horiz_margin)))*1.5
         val familyColCount = Math.max((screenWidth / commandFamilyElementWidth.toInt()), 1)
 
-        var familyLayoutManager: RecyclerView.LayoutManager? = null
+        val familyLayoutManager: RecyclerView.LayoutManager?
         familyLayoutManager = GridLayoutManager(context,familyColCount)
 
         familyAdapter = CommandFamilySelectorAdaptor(this)

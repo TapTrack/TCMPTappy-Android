@@ -21,7 +21,7 @@ inline fun View.getHostActivity(): Activity? {
         if (context is Activity) {
             return context
         }
-        context = (context as ContextWrapper).baseContext
+        context = context.baseContext
     }
     return null
 }

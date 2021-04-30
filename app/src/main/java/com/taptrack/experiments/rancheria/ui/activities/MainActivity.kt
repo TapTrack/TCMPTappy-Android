@@ -132,7 +132,7 @@ class MainActivity : AppCompatActivity(), ChooseTappiesViewModelProvider, Comman
     private val chooseTappiesViewModel = object: ChooseTappiesViewModel {
         override fun setBluetoothStataus(bluetoothOn: Boolean) {
 
-            var newState: ChooseTappiesViewState? = null
+            var newState: ChooseTappiesViewState?
             synchronized(stateMutationLock) {
                 newState = state.copy(bluetoothOn = bluetoothOn)
                 state = newState ?: state
@@ -148,7 +148,7 @@ class MainActivity : AppCompatActivity(), ChooseTappiesViewModelProvider, Comman
         private var stateRelay: BehaviorRelay<ChooseTappiesViewState> = BehaviorRelay.createDefault(state)
 
         fun setSearchResults(bleDevices: Collection<TappyBleDeviceDefinition>, usbDevices: Collection<UsbDevice>) {
-            var newState: ChooseTappiesViewState? = null
+            var newState: ChooseTappiesViewState?
             synchronized(stateMutationLock) {
                 newState = state.copy(foundBleDevices = bleDevices, foundUsbDevices = usbDevices)
                 state = newState ?: state
@@ -166,7 +166,7 @@ class MainActivity : AppCompatActivity(), ChooseTappiesViewModelProvider, Comman
                     else -> NamedTappy(tappy = it, name = getString(R.string.unknown_tappy_name))
                 }
             }
-            var newState: ChooseTappiesViewState? = null
+            var newState: ChooseTappiesViewState?
             synchronized(stateMutationLock) {
                 newState = state.copy(activeDevices = named)
                 state = newState ?: state
@@ -262,7 +262,7 @@ class MainActivity : AppCompatActivity(), ChooseTappiesViewModelProvider, Comman
             }
         })
 
-        mainBottomNavigation = find<BottomNavigationView>(R.id.bnv_main_navigation) as BottomNavigationView
+        mainBottomNavigation = find<BottomNavigationView>(R.id.bnv_main_navigation)
         mainBottomNavigation?.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

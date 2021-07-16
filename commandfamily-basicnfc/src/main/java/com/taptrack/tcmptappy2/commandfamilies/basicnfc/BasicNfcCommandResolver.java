@@ -48,6 +48,7 @@ import com.taptrack.tcmptappy2.commandfamilies.basicnfc.responses.BasicNfcLibrar
 import com.taptrack.tcmptappy2.commandfamilies.basicnfc.responses.EmulationStoppedResponse;
 import com.taptrack.tcmptappy2.commandfamilies.basicnfc.responses.EmulationSuccessResponse;
 import com.taptrack.tcmptappy2.commandfamilies.basicnfc.responses.NdefFoundResponse;
+import com.taptrack.tcmptappy2.commandfamilies.basicnfc.responses.ResponseDataTransmitted;
 import com.taptrack.tcmptappy2.commandfamilies.basicnfc.responses.ScanTimeoutResponse;
 import com.taptrack.tcmptappy2.commandfamilies.basicnfc.responses.SignedTagFoundResponse;
 import com.taptrack.tcmptappy2.commandfamilies.basicnfc.responses.TagFoundResponse;
@@ -209,6 +210,10 @@ public class BasicNfcCommandResolver implements CommandFamilyMessageResolver {
 
             case TappyTagDataReceivedResponse.COMMAND_CODE:
                 parsedMessage = new TappyTagDataReceivedResponse();
+                break;
+
+            case ResponseDataTransmitted.COMMAND_CODE:
+                parsedMessage = new ResponseDataTransmitted();
                 break;
 
             default:

@@ -43,6 +43,12 @@ public class AutoPollNdefCommand extends AbstractAutoPollCommand {
         super(scanModeIndicator, heartbeatPeriod, buzzerDisabled);
     }
 
+    public AutoPollNdefCommand(
+            byte heartbeatPeriod
+    ) {
+        super((byte) 0x00, heartbeatPeriod, false);
+    }
+
     @Override
     public byte getCommandCode() {
         return COMMAND_CODE;

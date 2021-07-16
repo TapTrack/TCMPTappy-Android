@@ -48,10 +48,12 @@
 
     <string name="syscommand_disable_ble_pin_title">Disable BLE PIN</string>
     <string name="syscommand_disable_ble_pin_description">Disable BLE PIN pairing</string>
+    <string name="syscommand_clear_bonding_cache_title">Clear bonding cache</string>
+    <string name="syscommand_clear_bonding_cache_description">After clearing bonding cache the device will be unpaired with the TappyBLE, and then a new pairing can be established. THIS CANNOT BE UNDONE</string>
     <string name="syscommand_set_configuration_item_title">Set Configuration Item</string>
     <string name="syscommand_set_configuration_item_description">Sets a configuration item value on the Tappy</string>
     <string name="syscommand_set_boot_configuration_title">Set Boot Configuration</string>
-    <string name="syscommand_set_boot_configuration_description">Allows you to specify boot configurations for the Tappy</string>
+    <string name="syscommand_set_boot_configuration_description">Allows user to specify boot configurations for the Tappy</string>
     <string name="syscommand_get_boot_configuration_title">Get Boot Configuration</string>
     <string name="syscommand_get_boot_configuration_description">Request the boot configuration of the Tappy</string>
 
@@ -65,16 +67,28 @@
     <string name="nfccommand_scan_tag_description">Command the Tappy to scan for NFC tags</string>
     <string name="nfccommand_stream_tag_title">Stream Tag</string>
     <string name="nfccommand_stream_tag_description">Command the Tappy to stream NFC tags</string>
+    <string name="nfccommand_dispatch_tag_description">The Tappy will report the tag\'s UID and any NDEF message discovered for the first tag detected</string>
+    <string name="nfccommand_dispatch_tags_title">Tag Dispatch</string>
+    <string name="nfccommand_dispatch_tags_description">The Tappy will report the tag\'s UID and any NDEF message discovered for the first tag detected or continuously when enabled as long as the timeout has not expired</string>
     <string name="nfccommand_stop_title">Stop</string>
     <string name="nfccommand_stop_description">Command the Tappy to stop doing whatever it is doing</string>
     <string name="nfccommand_write_text_title">Write Text</string>
     <string name="nfccommand_write_text_description">Command the Tappy to write text to tags</string>
     <string name="nfccommand_write_uri_title">Write URL</string>
     <string name="nfccommand_write_uri_description">Command the Tappy to write a link to tags</string>
+    <string name="nfccommand_emulate_text_title">Emulate text NDEF</string>
+    <string name="nfccommand_emulate_text_description">Command the Tappy to emulate an NDEF tag with text as the payload</string>
+    <string name="nfccommand_emulate_uri_title">Emulate URL NDEF</string>
+    <string name="nfccommand_emulate_uri_description">Command the Tappy to emulate an NDEF tag with a URI as the payload</string>
     <string name="nfccommand_lock_tag_title">Lock Tag</string>
     <string name="nfccommand_lock_tag_description">Command the Tappy to lock a tag</string>
     <string name="nfccommand_tappytag_handshake_title">TappyTag Handshake</string>
     <string name="nfccommand_tappytag_handshake_description">Command the Tappy to transmit data to or receive data from an iPhone or Android device</string>
+    <string name="nfccommand_auto_poll_title">Auto Poll</string>
+    <string name="nfccommand_auto_poll_description">Receive automated alerts when tags enter and exit the detection area of the Tappy</string>
+    <string name="nfccommand_auto_poll_ndef_title">Auto Poll NDEF</string>
+    <string name="nfccommand_auto_poll_ndef_description">Receive automated alerts when tags enter and exit the detection area of the Tappy, including any discovered NDEF messages</string>
+
 
     <string name="classiccommand_detect_title">Detect Classic</string>
     <string name="classiccommand_detect_description">Scan for a MIFARE Classic</string>
@@ -107,4 +121,72 @@
     <string name="ntag21xcommand_write_uri_with_password_string_title">Write Password-Protected URL</string>
     <string name="ntag21xcommand_write_uri_with_password_string_description">Write a password-protected URL to an NTAG 21X. When the toggle below is unset, the tag will be write protected. When set, the tag will be read and write protected.</string>
 
+    <string name="STMicroM24SR02_change_read_ndef_password_title">Change Read NDEF Password</string>
+    <string name="STMicroM24SR02_change_read_ndef_password_description">Change the Read NDEF password by entering the current 16 byte password and the new 16 byte password</string>
+    <string name="STMicroM24SR02_change_write_ndef_password_title">Change Write NDEF Password</string>
+    <string name="STMicroM24SR02_change_write_ndef_password_description">Change the write NDEF password by entering the current 16 byte password and the new 16 byte password</string>
+    <string name="STMicroM24SR02_password_lock_write_access_title">Enter Password to Lock NDEF Write Access</string>
+    <string name="STMicroM24SR02_password_lock_write_access_description">Enter password to lock NDEF write access</string>
+    <string name="STMicroM24SR02_password_lock_read_access_title">Enter Password to Lock NDEF Read Access</string>
+    <string name="STMicroM24SR02_password_lock_read_access_description">Enter password to lock NDEF read access</string>
+    <string name="STMicroM24SR02_password_unlock_write_access_title">Enter Password to Unlock NDEF Write Access</string>
+    <string name="STMicroM24SR02_password_unlock_write_access_description">Enter password to unlock NDEF write access</string>
+    <string name="STMicroM24SR02_password_unlock_read_access_title">Enter Password to Unlock NDEF Read Access</string>
+    <string name="STMicroM24SR02_password_unlock_read_access_description">Enter password to unlock NDEF read access</string>
+    <string name="STMicroM24SR02_get_I2C_setting_title">Get I2C Protection Setting</string>
+    <string name="STMicroM24SR02_get_I2C_setting_description">Request the I2C protection setting of the STMicro-M24SR02 microchip</string>
+    <string name="STMicroM24SR02_read_ndef_with_password_title">Read Password Protected NDEF Message</string>
+    <string name="STMicroM24SR02_read_ndef_with_password_description">Read password-protected NDEF data from an STMicro-M24SR02</string>
+    <string name="STMicroM24SR02_write_ndef_with_password_title">Write Password Protected NDEF Message</string>
+    <string name="STMicroM24SR02_write_ndef_with_password_description">Write password-protected NDEF to a STMicro-M24SR02</string>
+    <string name="STMicroM24SR02_perma_lock_ndef_write_access_title">Permanently Lock NDEF Write Access</string>
+    <string name="STMicroM24SR02_perma_lock_ndef_write_access_description">Enter password to permanently lock NDEF write access</string>
+    <string name="STMicroM24SR02_get_command_family_title">Get Command Family Version</string>
+    <string name="STMicroM24SR02_get_command_family_description">Request the command family version of the STMicro-M24SR02 command family</string>
+
+    <string name="StandaloneCheckin_get_checkin_count_title">Get Checkin Count</string>
+    <string name="StandaloneCheckin_get_checkin_count_description">Request checkin count from Tappy checkin station</string>
+    <string name="StandaloneCheckin_get_checkins_title">Download Checkins</string>
+    <string name="StandaloneCheckin_get_checkins_description">Request checkins from Tappy checkin station</string>
+    <string name="StandaloneCheckin_get_family_version_title">Get Command Family Version</string>
+    <string name="StandaloneCheckin_get_family_version_description">Request Standalone Checkin command family version</string>
+    <string name="StandaloneCheckin_get_station_info_title">Get Station Info</string>
+    <string name="StandaloneCheckin_get_station_info_description">Request station info from Tappy checkin station</string>
+    <string name="StandaloneCheckin_get_time_and_date_title">Get Time and Date</string>
+    <string name="StandaloneCheckin_get_time_and_date_description">Request time and date from Tappy checkin station</string>
+    <string name="StandaloneCheckin_read_checkin_card_uid_title">Read Checkin Card UID</string>
+    <string name="StandaloneCheckin_read_checkin_card_uid_description">Reports the UID of the checkin card</string>
+    <string name="StandaloneCheckin_reset_checkins_title">Reset Checkins</string>
+    <string name="StandaloneCheckin_reset_checkins_description">Reset checkins for Tappy checkin station</string>
+    <string name="StandaloneCheckin_set_station_id_title">Set Station ID</string>
+    <string name="StandaloneCheckin_set_station_id_description">Set the station ID for Tappy checkin station</string>
+    <string name="StandaloneCheckin_set_station_name_title">Set Station Name</string>
+    <string name="StandaloneCheckin_set_station_name_description">Set the station name for Tappy checkin station</string>
+    <string name="StandaloneCheckin_set_time_and_date_title">Set Time and Date</string>
+    <string name="StandaloneCheckin_set_time_and_date_description">Set the time and date for Tappy checkin station</string>
+
+    <string name="wristcoinPOS_debit_wristband_full_title">Debit Wristband Full Response</string>
+    <string name="wristcoinPOS_debit_wristband_full_description">Debit wrisband and output wristband status\n\nWristCoin offers a full closed-loop NFC payment system for events, venues, and festivals of all sizes. This command family is an SDK to help POS makers integrate cashless closed loop technology into their products.  We\'ve made an example demo here to evaluate or even use as a basic POS.  Tappy readers featuring WristCoin POS capabilities have to be special ordered from WristCoin directly.  If interested, contact WristCoin at:\n\nwww.mywristcoin.com\n1-800-293-6094\ninfo@mywristcoin.com
+    </string>
+    <string name="wristcoinPOS_debit_wristband_short_title">Debit Wristband Short Response</string>
+    <string name="wristcoinPOS_debit_wristband_short_description">Debit wristband and only show resulting wristband balance\n\nWristCoin offers a full closed-loop NFC payment system for events, venues, and festivals of all sizes. This command family is an SDK to help POS makers integrate cashless closed loop technology into their products. We\'ve made an example demo here to evaluate or even use as a basic POS.  Tappy readers featuring WristCoin POS capabilities have to be special ordered from WristCoin directly.  If interested, contact WristCoin at:\n\nwww.mywristcoin.com\n1-800-293-6094\ninfo@mywristcoin.com
+    </string>
+    <string name="wristcoinPOS_topup_wristband_full_title">Topup Wristband Full Response</string>
+    <string name="wristcoinPOS_topup_wristband_full_description">Topup wrisband and output wristband status\n\nWristCoin offers a full closed-loop NFC payment system for events, venues, and festivals of all sizes. This command family is an SDK to help POS makers integrate cashless closed loop technology into their products.  We\'ve made an example demo here to evaluate or even use as a basic POS.  Tappy readers featuring WristCoin POS capabilities have to be special ordered from WristCoin directly.  If interested, contact WristCoin at:\n\nwww.mywristcoin.com\n1-800-293-6094\ninfo@mywristcoin.com
+    </string>
+    <string name="wristcoinPOS_topup_wristband_short_title">Topup Wristband Short Response</string>
+    <string name="wristcoinPOS_topup_wristband_short_description">Topup wristband and only show resulting wristband balance\n\nWristCoin offers a full closed-loop NFC payment system for events, venues, and festivals of all sizes. This command family is an SDK to help POS makers integrate cashless closed loop technology into their products. We\'ve made an example demo here to evaluate or even use as a basic POS.  Tappy readers featuring WristCoin POS capabilities have to be special ordered from WristCoin directly.  If interested, contact WristCoin at:\n\nwww.mywristcoin.com\n1-800-293-6094\ninfo@mywristcoin.com
+    </string>
+    <string name="wristcoinPOS_get_wristband_status_title">Get Wristband Status</string>
+    <string name="wristcoinPOS_get_wristband_status_description">Show all wristband data\n\nWristCoin offers a full closed-loop NFC payment system for events, venues, and festivals of all sizes. This command family is an SDK to help POS makers integrate cashless closed loop technology into their products. We\'ve made an example demo here to evaluate or even use as a basic POS.  Tappy readers featuring WristCoin POS capabilities have to be special ordered from WristCoin directly.  If interested, contact WristCoin at:\n\nwww.mywristcoin.com\n1-800-293-6094\ninfo@mywristcoin.com
+    </string>
+    <string name="wristcoinPOS_get_command_family_version_title">Get Command Family Version</string>
+    <string name="wristcoinPOS_get_command_family_version_description">Request WristCoin POS command family version\n\nWristCoin offers a full closed-loop NFC payment system for events, venues, and festivals of all sizes. This command family is an SDK to help POS makers integrate cashless closed loop technology into their products. We\'ve made an example demo here to evaluate or even use as a basic POS.  Tappy readers featuring WristCoin POS capabilities have to be special ordered from WristCoin directly.  If interested, contact WristCoin at:\n\nwww.mywristcoin.com\n1-800-293-6094\ninfo@mywristcoin.com
+    </string>
+    <string name="wristcoinPOS_set_event_id_title">Set Event ID</string>
+    <string name="wristcoinPOS_set_event_id_description">Set the active event on the external terminal\n\nWristCoin offers a full closed-loop NFC payment system for events, venues, and festivals of all sizes. This command family is an SDK to help POS makers integrate cashless closed loop technology into their products. We\'ve made an example demo here to evaluate or even use as a basic POS.  Tappy readers featuring WristCoin POS capabilities have to be special ordered from WristCoin directly.  If interested, contact WristCoin at:\n\nwww.mywristcoin.com\n1-800-293-6094\ninfo@mywristcoin.com
+    </string>
+    <string name="wristcoinPOS_closeout_wristband_title">Closeout Wristband</string>
+    <string name="wristcoinPOS_closeout_wristband_description">Closing out the wristband prevents it from making anymore transactions (THIS CANNOT BE UNDONE)\n\nWristCoin offers a full closed-loop NFC payment system for events, venues, and festivals of all sizes. This command family is an SDK to help POS makers integrate cashless closed loop technology into their products. We\'ve made an example demo here to evaluate or even use as a basic POS.  Tappy readers featuring WristCoin POS capabilities have to be special ordered from WristCoin directly.  If interested, contact WristCoin at:\n\nwww.mywristcoin.com\n1-800-293-6094\ninfo@mywristcoin.com
+    </string>
 </resources>

@@ -3,6 +3,7 @@ package com.taptrack.experiments.rancheria.ui.views.sendmessages
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
@@ -12,7 +13,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import androidx.annotation.LayoutRes
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.AppCompatSeekBar
 import androidx.appcompat.widget.SwitchCompat
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.DialogFragment
@@ -23,6 +26,7 @@ import com.taptrack.experiments.rancheria.business.CommandOption
 import com.taptrack.experiments.rancheria.business.TappyService
 import com.taptrack.experiments.rancheria.ui.hexStringToByteArray
 import com.taptrack.experiments.rancheria.ui.isTextValidHex
+import com.taptrack.experiments.rancheria.wristcoinpos.commands.*
 import com.taptrack.tcmptappy.tappy.constants.NdefUriCodes
 import com.taptrack.tcmptappy2.TCMPMessage
 import com.taptrack.tcmptappy2.commandfamilies.basicnfc.PollingModes
@@ -31,6 +35,9 @@ import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.KeySetting
 import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.commands.DetectMifareClassicCommand
 import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.commands.ReadMifareClassicCommand
 import com.taptrack.tcmptappy2.commandfamilies.ntag21x.commands.*
+import com.taptrack.tcmptappy2.commandfamilies.ntag21x.commands.ReadNdefWithPasswordCommand
+import com.taptrack.tcmptappy2.commandfamilies.standalonecheckin.commands.*
+import com.taptrack.tcmptappy2.commandfamilies.stmicroM24SR02.commands.*
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.ConfigureOnboardScanCooldownCommand
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.SetBootConfigCommand
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.SetConfigItemCommand
@@ -97,13 +104,14 @@ object DialogGenerator {
         if (valueDesc == null || sb == null) {
             return
         }
+        sb.max = 11
 
         val listener = object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (progress >= 10) {
+                if (progress >= 11) {
                     valueDesc.text = ctx.getString(R.string.parameter_value_infinite)
                 } else {
-                    val adjusted = progress + 1
+                    val adjusted = progress + 5
                     valueDesc.text = ctx.getString(R.string.parameter_value_seconds,adjusted)
                 }
             }
@@ -132,10 +140,10 @@ object DialogGenerator {
         val listener = object : ConfirmListener {
             override fun didConfirm(v: View): Boolean {
                 try {
-                    val timeout = 1 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 10)
+                    val timeout = 5 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 11)
                     val stream = cl.findOptional<SwitchCompat>(R.id.swc_continuous)?.isChecked ?: false
 
-                    val timeoutAdjusted = if (timeout < 0 ) 0 else if (timeout == 11) 0 else timeout
+                    val timeoutAdjusted = if (timeout < 0 ) 0 else if (timeout == 16) 0 else timeout
 
                     if (stream) {
                         val message = StreamNdefCommand(timeoutAdjusted.toByte(), PollingModes.MODE_GENERAL)
@@ -166,10 +174,10 @@ object DialogGenerator {
         val listener = object : ConfirmListener {
             override fun didConfirm(v: View): Boolean {
                 try {
-                    val timeout = 1 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 10)
+                    val timeout = 5 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 11)
                     val stream = cl.findOptional<SwitchCompat>(R.id.swc_continuous)?.isChecked ?: false
 
-                    val timeoutAdjusted = if (timeout < 0 ) 0 else if (timeout == 11) 0 else timeout
+                    val timeoutAdjusted = if (timeout < 0 ) 0 else if (timeout == 16) 0 else timeout
 
                     if (stream) {
                         val message = StreamTagsCommand(timeoutAdjusted.toByte(), PollingModes.MODE_GENERAL)
@@ -235,10 +243,10 @@ object DialogGenerator {
         val listener = object : ConfirmListener {
             override fun didConfirm(v: View): Boolean {
                 try {
-                    val timeout = 1 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 10)
+                    val timeout = 5 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 11)
                     val isTypeB = cl.findOptional<SwitchCompat>(R.id.swc_modulation)?.isChecked ?: false
 
-                    val timeoutAdjusted = if (timeout < 0 ) 0 else if (timeout == 11) 0 else timeout
+                    val timeoutAdjusted = if (timeout < 0 ) 0 else if (timeout == 16) 0 else timeout
 
                     if (isTypeB) {
                         val afi = cl.findOptional<EditText>(R.id.et_afi)?.text?.toString()?.trim() ?: ""
@@ -270,6 +278,7 @@ object DialogGenerator {
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun getConfigurationView(ctx: Context, option: CommandOption): Pair<View, ConfirmListener>? {
         // this is super inefficient
         val commands = option.clazzes
@@ -300,22 +309,76 @@ object DialogGenerator {
 
         when (command) {
             InitiateTappyTagHandshakeCommand::class.java -> {
-                val cl = wrapInConstraintLayout(ctx, R.layout.timeout_command_data_view)
+                val cl = wrapInConstraintLayout(ctx, R.layout.timeout_message_command_data_view)
 
                 cl.findOptional<TextView>(R.id.tv_command_title)?.textResource = option.titleRes
                 cl.findOptional<TextView>(R.id.tv_command_description)?.textResource = option.descriptionRes
+
+
+                val parameterTil = cl.find<TextInputLayout>(R.id.til_message_container)
+                val parameterEt = cl.find<EditText>(R.id.et_message)
+
+                parameterEt.filters = parameterEt.filters.plus(
+                    arrayOf(InputFilter.AllCaps()))
+                parameterEt.addTextChangedListener(object : TextWatcher {
+                    override fun afterTextChanged(s: Editable?) {
+                        if (s != null) {
+                            val str = s.toString()
+                            val modified = ("[^A-F0-9]").toRegex().replace(str.toUpperCase(Locale.ROOT),"")
+                            if(str != modified) {
+                                parameterEt.setText(modified)
+                            } else {
+                                if (!str.trim().isTextValidHex()) {
+                                    val errorText = ctx.getString(R.string.error_must_be_hex_byte)
+                                    parameterTil.error = errorText
+                                } else {
+                                    parameterTil.error = null
+                                }
+                            }
+                        }
+                    }
+
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                    }
+
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    }
+                })
 
                 applyTimeoutListener(ctx, cl)
 
                 val listener = object : ConfirmListener {
                     override fun didConfirm(v: View): Boolean {
+                        try {
+                            val rawParameter = cl.findOptional<EditText>(R.id.et_message)?.text?.toString()
+                            var timeout = 5 + (cl.findOptional<AppCompatSeekBar>(R.id.sb_timeout_selection)?.progress ?: 11)
+
+                            val timeoutAdjusted = if (timeout < 0 ) 0 else if (timeout >= 16) 0 else timeout
+
+
+                            if((rawParameter == null || rawParameter.isEmpty()) && timeoutAdjusted == 0){
+                                val cmd = InitiateTappyTagHandshakeCommand()
+                                TappyService.broadcastSendTcmp(cmd,ctx)
+                                return true
+                            }else if(rawParameter == null || rawParameter.isEmpty()){
+                                val cmd = InitiateTappyTagHandshakeCommand(duration = (timeoutAdjusted))
+                                TappyService.broadcastSendTcmp(cmd,ctx)
+                                return true
+                            }else if (!rawParameter.isTextValidHex()) {
+                                return false
+                            }
+
+                            val hexParameter = rawParameter.hexStringToByteArray()
+
+                            val cmd = InitiateTappyTagHandshakeCommand(responseData = hexParameter, duration = timeoutAdjusted)
+                            TappyService.broadcastSendTcmp(cmd,ctx)
+                        } catch (ignored: Exception) {
+                            // cant instantiate
+                        }
                         // TODO: Implement verification when more settings are added
-                        val cmd = InitiateTappyTagHandshakeCommand()
-                        TappyService.broadcastSendTcmp(cmd, ctx)
                         return true
                     }
                 }
-
                 return Pair(cl, listener)
             }
             SetBLEPinCommand::class.java -> {
@@ -565,7 +628,7 @@ object DialogGenerator {
 
                 return Pair(cl, listener)
             }
-            WriteNdefUriRecordCommand::class.java -> {
+            WriteNdefUriRecordCommand::class.java, EmulateUriRecordCommand::class.java -> {
                 val cl = wrapInConstraintLayout(ctx, R.layout.timeout_message_command_data_view)
 
                 cl.findOptional<TextView>(R.id.tv_message_label)?.textResource = R.string.parameter_label_url
@@ -580,18 +643,29 @@ object DialogGenerator {
                 val listener = object : ConfirmListener {
                     override fun didConfirm(v: View): Boolean {
                         try {
-                            val rawTimeout = 1 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 10)
+                            val rawTimeout = 5 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 11)
                             val uri = cl.findOptional<EditText>(R.id.et_message)?.text?.toString() ?: ""
 
-                            val timeoutAdjusted = if (rawTimeout < 0) 0 else if (rawTimeout == 11) 0 else rawTimeout
+                            val timeoutAdjusted = if (rawTimeout < 0) 0 else if (rawTimeout == 16) 0 else rawTimeout
+
+                            var uriMessage: TCMPMessage
 
                             val (uriCode, uriBytes) = parseUriCodeAndUriBytes(uri)
-                            val uriMessage = WriteNdefUriRecordCommand(
-                                timeoutAdjusted.toByte(),
-                                false,
-                                uriCode,
-                                uriBytes
-                            )
+                            if(command == WriteNdefUriRecordCommand::class.java){
+                                uriMessage = WriteNdefUriRecordCommand(
+                                    timeoutAdjusted.toByte(),
+                                    false,
+                                    uriCode,
+                                    uriBytes
+                                )
+                            } else {
+                                uriMessage = EmulateUriRecordCommand(
+                                    timeoutAdjusted.toByte(),
+                                    0x00,
+                                    uriCode,
+                                    uriBytes
+                                )
+                            }
                             TappyService.broadcastSendTcmp(uriMessage, ctx)
                         } catch (ignored: Exception) {
                             // cant instantiate
@@ -602,7 +676,7 @@ object DialogGenerator {
 
                 return Pair(cl, listener)
             }
-            WriteNdefTextRecordCommand::class.java -> {
+            WriteNdefTextRecordCommand::class.java, EmulateTextRecordCommand::class.java -> {
                 val cl = wrapInConstraintLayout(ctx, R.layout.timeout_message_command_data_view)
 
                 cl.findOptional<TextView>(R.id.tv_command_title)?.textResource = option.titleRes
@@ -613,12 +687,26 @@ object DialogGenerator {
                 val listener = object : ConfirmListener {
                     override fun didConfirm(v: View):Boolean {
                         try {
-                            val timeout = 1 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 10)
+                            val timeout = 5 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 11)
                             val msg = cl.findOptional<EditText>(R.id.et_message)?.text?.toString() ?: ""
 
-                            val timeoutAdjusted = if (timeout < 0 ) 0 else if (timeout == 11) 0 else timeout
+                            val timeoutAdjusted = if (timeout < 0 ) 0 else if (timeout == 16) 0 else timeout
 
-                            val message = WriteNdefTextRecordCommand(timeoutAdjusted.toByte(), false, msg.toByteArray())
+                            var message: TCMPMessage
+
+                            if(command == WriteNdefTextRecordCommand::class.java) {
+                                message = WriteNdefTextRecordCommand(
+                                    timeoutAdjusted.toByte(),
+                                    false,
+                                    msg.toByteArray()
+                                )
+                            } else {
+                                message = EmulateTextRecordCommand(
+                                    timeoutAdjusted.toByte(),
+                                    0x00,
+                                    msg.toByteArray()
+                                )
+                            }
                             TappyService.broadcastSendTcmp((message),ctx)
 
                         } catch (ignored: Exception) {
@@ -653,8 +741,8 @@ object DialogGenerator {
                         }
                     }
                 }
-                
-                endPicker?.setOnValueChangedListener { picker, oldVal, newVal -> 
+
+                endPicker?.setOnValueChangedListener { picker, oldVal, newVal ->
                     if (startPicker != null) {
                         val startValue = startPicker.value
 
@@ -671,9 +759,9 @@ object DialogGenerator {
                 val listener = object : ConfirmListener {
                     override fun didConfirm(v: View):Boolean {
                         try {
-                            val timeout = 1 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 10)
+                            val timeout = 5 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 11)
 
-                            val timeoutAdjusted = if (timeout < 0 ) 0 else if (timeout == 11) 0 else timeout
+                            val timeoutAdjusted = if (timeout < 0 ) 0 else if (timeout == 16) 0 else timeout
 
                             val startPage = cl.findOptional<BytePickerView>(R.id.bpv_start_page)?.value ?: 0
                             val endPage = cl.findOptional<BytePickerView>(R.id.bpv_end_page)?.value ?: 0
@@ -747,7 +835,8 @@ object DialogGenerator {
 
                 return Pair(cl, listener)
             }
-            LockTagCommand::class.java, DetectMifareClassicCommand::class.java, DetectActiveHCETargetCommand::class.java -> {
+            LockTagCommand::class.java, DetectMifareClassicCommand::class.java, DetectActiveHCETargetCommand::class.java,
+            GetI2CSettingCommand::class.java, ReadCheckinCardUidCommand::class.java, GetWristbandStatusCommand::class.java, CloseoutWristbandCommand::class.java -> {
                 val cl = wrapInConstraintLayout(ctx, R.layout.timeout_command_data_view)
 
                 cl.findOptional<TextView>(R.id.tv_command_title)?.textResource = option.titleRes
@@ -758,16 +847,23 @@ object DialogGenerator {
                 val listener = object : ConfirmListener {
                     override fun didConfirm(v: View): Boolean {
                         try {
-                            val timeout = 1 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress
-                                    ?: 10)
+                            val timeout = 5 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 11)
 
-                            val timeoutAdjusted = if (timeout < 0) 0 else if (timeout == 11) 0 else timeout
+                            val timeoutAdjusted = if (timeout < 0) 0 else if (timeout == 16) 0 else timeout
 
                             val tcmpMessage: TCMPMessage
                             if (command == LockTagCommand::class.java) {
                                 tcmpMessage = LockTagCommand(timeoutAdjusted.toByte(), ByteArray(0))
                             } else if (command == DetectActiveHCETargetCommand::class.java) {
                                 tcmpMessage = DetectActiveHCETargetCommand(timeoutAdjusted.toByte())
+                            } else if (command == GetI2CSettingCommand::class.java) {
+                                tcmpMessage = GetI2CSettingCommand(timeoutAdjusted.toByte())
+                            } else if (command == ReadCheckinCardUidCommand::class.java) {
+                                tcmpMessage = ReadCheckinCardUidCommand(timeoutAdjusted.toByte())
+                            } else if (command == GetWristbandStatusCommand::class.java) {
+                                tcmpMessage = GetWristbandStatusCommand(timeoutAdjusted.toByte())
+                            } else if (command == CloseoutWristbandCommand::class.java) {
+                                tcmpMessage = CloseoutWristbandCommand(timeoutAdjusted.toByte())
                             } else {
                                 tcmpMessage = DetectMifareClassicCommand(timeoutAdjusted.toByte())
                             }
@@ -846,10 +942,10 @@ object DialogGenerator {
                         val passwordBytes = pwdPackText.substring(0..7).hexStringToByteArray()
                         val ackBytes = pwdPackText.substring(8..pwdPackText.lastIndex).hexStringToByteArray()
 
-                        val timeout = 1 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 10)
+                        val timeout = 1 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 15)
 
                         val timeoutAdjusted = when {
-                            timeout < 0 || timeout == 11 -> 0
+                            timeout < 0 || timeout == 16 -> 0
                             else -> timeout
                         }
 
@@ -891,10 +987,10 @@ object DialogGenerator {
                             return false
                         }
 
-                        val timeout = 1 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 10)
+                        val timeout = 5 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 11)
 
                         val timeoutAdjusted = when {
-                            timeout < 0 || timeout == 11 -> 0
+                            timeout < 0 || timeout == 16 -> 0
                             else -> timeout
                         }
 
@@ -974,10 +1070,10 @@ object DialogGenerator {
 
                         val passwordBytes = pwdPackText.substring(0..7).hexStringToByteArray()
                         val ackBytes = pwdPackText.substring(8..pwdPackText.lastIndex).hexStringToByteArray()
-                        val timeout = 1 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 10)
+                        val timeout = 5 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 11)
 
                         val timeoutAdjusted = when {
-                            timeout < 0 || timeout == 11 -> 0
+                            timeout < 0 || timeout == 16 -> 0
                             else -> timeout
                         }
 
@@ -1025,10 +1121,10 @@ object DialogGenerator {
                             return false
                         }
 
-                        val timeout = 1 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 10)
+                        val timeout = 5 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 11)
 
                         val timeoutAdjusted = when {
-                            timeout < 0 || timeout == 11 -> 0
+                            timeout < 0 || timeout == 16 -> 0
                             else -> timeout
                         }
 
@@ -1121,10 +1217,10 @@ object DialogGenerator {
 
                         val passwordBytes = pwdPackText.substring(0..7).hexStringToByteArray()
                         val ackBytes = pwdPackText.substring(8..pwdPackText.lastIndex).hexStringToByteArray()
-                        val timeout = 1 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 10)
+                        val timeout = 5 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 11)
 
                         val timeoutAdjusted = when {
-                            timeout < 0 || timeout == 11 -> 0
+                            timeout < 0 || timeout == 16 -> 0
                             else -> timeout
                         }
 
@@ -1177,10 +1273,10 @@ object DialogGenerator {
                             return false
                         }
 
-                        val timeout = 1 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 10)
+                        val timeout = 5 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 11)
 
                         val timeoutAdjusted = when {
-                            timeout < 0 || timeout == 11 -> 0
+                            timeout < 0 || timeout == 16 -> 0
                             else -> timeout
                         }
 
@@ -1208,10 +1304,10 @@ object DialogGenerator {
                 return Pair(cl, listener)
             }
             SetBootConfigCommand::class.java -> {
-                val cl = wrapInConstraintLayout(ctx, R.layout.configure_boot_view)
+                val cl = wrapInConstraintLayout(ctx, R.layout.message_command_data_view)
 
-                cl.findOptional<TextView>(R.id.tv_message_label)?.textResource = R.string.parameter_label_boot_config_param_id
-                cl.findOptional<ImageView>(R.id.iv_message_icon)?.imageResource = R.drawable.ic_link_black_24dp
+                cl.findOptional<TextView>(R.id.tv_message_label)?.textResource = R.string.parameter_label_config_param_id
+                cl.findOptional<ImageView>(R.id.iv_message_icon)?.imageResource = R.drawable.ic_config_parameter_black_24dp
                 cl.findOptional<EditText>(R.id.et_message)?.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
                 val paramEt = cl.findOptional<EditText>(R.id.et_parameter)
                 paramEt?.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
@@ -1219,11 +1315,10 @@ object DialogGenerator {
 
 
                 cl.findOptional<TextView>(R.id.tv_command_title)?.textResource = option.titleRes
-                cl.findOptional<TextView>(R.id.tv_command_title)?.textResource = option.titleRes
                 cl.findOptional<TextView>(R.id.tv_command_description)?.textResource = option.descriptionRes
 
-                val parameterTil = cl.find<TextInputLayout>(R.id.til_parameter_container)
-                val parameterEt = cl.find<EditText>(R.id.et_parameter)
+                val parameterTil = cl.find<TextInputLayout>(R.id.til_message_container)
+                val parameterEt = cl.find<EditText>(R.id.et_message)
 
                 parameterEt.filters = parameterEt.filters.plus(
                     arrayOf(InputFilter.AllCaps()))
@@ -1255,27 +1350,980 @@ object DialogGenerator {
                 val listener = object : ConfirmListener {
                     override fun didConfirm(v: View): Boolean {
                         try {
-                            val rawParameter = cl.findOptional<EditText>(R.id.et_parameter)?.text?.toString()
+                            val rawParameter = cl.findOptional<EditText>(R.id.et_message)?.text?.toString()
                             if (rawParameter == null || rawParameter.isEmpty() || !rawParameter.isTextValidHex()) {
                                 return false
                             }
 
                             val hexParameter = rawParameter.hexStringToByteArray()
 
-                            val rawValue = cl.findOptional<EditText>(R.id.et_value)?.text?.toString() ?: ""
-
-                            if (rawValue.isNotEmpty() && !rawValue.isTextValidHex()) {
-                                return false
-                            }
-                            val hexValue = if (rawValue.isEmpty()) {
-                                byteArrayOf()
-                            } else {
-                                rawValue.hexStringToByteArray()
-                            }
                             val cmd = SetBootConfigCommand(hexParameter)
                             TappyService.broadcastSendTcmp(cmd,ctx)
 
                         } catch (ignored: Exception) {
+                            // cant instantiate
+                        }
+                        return true
+                    }
+                }
+
+                return Pair(cl, listener)
+            }
+            AutoPollCommand::class.java ->{
+                val cl = wrapInConstraintLayout(ctx, R.layout.toggle_command_data_view)
+
+                cl.findOptional<TextView>(R.id.tv_command_title)?.textResource = option.titleRes
+                cl.findOptional<TextView>(R.id.tv_command_description)?.textResource = option.descriptionRes
+                cl.findOptional<TextView>(R.id.tv_toggle_label)?.textResource = R.string.enable_heartbeat
+
+                val listener = object : ConfirmListener {
+                    override fun didConfirm(v: View): Boolean {
+                        val heartBeatEnabled = cl.findViewById<SwitchCompat>(R.id.swc_toggle).isChecked
+
+                        if(heartBeatEnabled){
+                            val cmd = AutoPollCommand(0x00,0x05, false)
+                            TappyService.broadcastSendTcmp(cmd,ctx)
+                        }else{
+                            val cmd = AutoPollCommand()
+                            TappyService.broadcastSendTcmp(cmd, ctx)
+                        }
+                        return true
+                    }
+                }
+
+                return Pair(cl, listener)
+            }
+            AutoPollNdefCommand::class.java ->{
+                val cl = wrapInConstraintLayout(ctx, R.layout.toggle_command_data_view)
+
+                cl.findOptional<TextView>(R.id.tv_command_title)?.textResource = option.titleRes
+                cl.findOptional<TextView>(R.id.tv_command_description)?.textResource = option.descriptionRes
+                cl.findOptional<TextView>(R.id.tv_toggle_label)?.textResource = R.string.enable_heartbeat
+
+                val listener = object : ConfirmListener {
+                    override fun didConfirm(v: View): Boolean {
+                        val heartBeatEnabled = cl.findViewById<SwitchCompat>(R.id.swc_toggle).isChecked
+
+                        if(heartBeatEnabled){
+                            val cmd = AutoPollNdefCommand(0x05)
+                            TappyService.broadcastSendTcmp(cmd,ctx)
+                        }else{
+                            val cmd = AutoPollNdefCommand()
+                            TappyService.broadcastSendTcmp(cmd, ctx)
+                        }
+                        return true
+                    }
+                }
+
+                return Pair(cl, listener)
+            }
+            DispatchTagsCommand::class.java ->{
+                val cl = wrapInConstraintLayout(ctx, R.layout.timeout_continuous_command_data_view)
+                cl.findOptional<TextView>(R.id.tv_command_title)?.textResource = option.titleRes
+                cl.findOptional<TextView>(R.id.tv_command_description)?.textResource = option.descriptionRes
+                applyTimeoutListener(ctx, cl)
+                val listener = object : ConfirmListener {
+                    override fun didConfirm(v: View): Boolean {
+                        val continuous = cl.findViewById<SwitchCompat>(R.id.swc_continuous).isChecked
+                        val timeout = 5 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 11)
+                        val timeoutAdjusted = if (timeout < 0 ) 0 else if (timeout == 16) 0 else timeout
+
+                        if(continuous){
+                            val cmd = DispatchTagsCommand(timeoutAdjusted.toByte())
+                            TappyService.broadcastSendTcmp(cmd, ctx)
+                        }else{
+                            val cmd = DispatchTagCommand(timeoutAdjusted.toByte())
+                            TappyService.broadcastSendTcmp(cmd, ctx)
+                        }
+                        return true
+                    }
+                }
+                return Pair(cl, listener)
+            }
+            ChangeReadNdefPasswordCommand::class.java, ChangeWriteNdefPasswordCommand::class.java -> {
+                val cl = wrapInConstraintLayout(ctx, R.layout.timeout_parameter_message_data_view)
+                applyTimeoutListener(ctx, cl)
+
+                cl.findOptional<TextView>(R.id.tv_command_title)?.textResource = option.titleRes
+                cl.findOptional<TextView>(R.id.tv_command_description)?.textResource = option.descriptionRes
+                cl.findOptional<TextView>(R.id.tv_parameter_label)?.textResource = R.string.parameter_label_current_password
+                cl.findOptional<TextView>(R.id.tv_value_label)?.textResource = R.string.parameter_label_new_password
+                cl.findOptional<ImageView>(R.id.iv_value_icon)?.imageResource = R.drawable.ic_password_black_24dp
+                cl.findOptional<ImageView>(R.id.iv_parameter_icon)?.imageResource = R.drawable.ic_password_black_24dp
+
+                val passwordTextInputLayout = cl.find<TextInputLayout>(R.id.til_parameter_container)
+                val messageTil = cl.find<TextInputLayout>(R.id.til_value_container)
+                val messageEditText = cl.find<EditText>(R.id.et_value)
+                val passwordEditText = cl.find<EditText>(R.id.et_parameter)
+
+                passwordEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
+                messageEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
+                passwordEditText.maxLines = 1
+                val passwordLength = 32
+
+                passwordEditText.filters = passwordEditText.filters.plus(
+                    arrayOf(
+                        InputFilter.AllCaps(),
+                        InputFilter.LengthFilter(passwordLength)
+                    )
+                )
+
+                passwordEditText.addTextChangedListener(object : TextWatcher {
+                    override fun afterTextChanged(s: Editable?) {
+                        if (s != null) {
+                            val str = s.toString()
+                            if (str.length > 32) {
+                                val truncated = str.substring(startIndex = 0, endIndex = passwordLength - 1)
+                                passwordEditText.setText(truncated)
+                            } else {
+                                val modified = "[^A-F0-9]".toRegex().replace(str.toUpperCase(Locale.ROOT), "")
+                                if (str != modified) {
+                                    passwordEditText.setText(modified)
+                                } else {
+                                    if (!str.trim().isTextValidHex()) {
+                                        val errorText = ctx.getString(R.string.error_must_be_hex_byte)
+                                        passwordTextInputLayout.error = errorText
+                                    } else if (str.length < 32){
+                                        val errorText = ctx.getString(R.string.error_password_must_be_32)
+                                        passwordTextInputLayout.error = errorText
+                                    } else {
+                                        passwordTextInputLayout.error = null
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                    }
+
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    }
+                })
+
+                messageEditText.filters = messageEditText.filters.plus(
+                    arrayOf(InputFilter.AllCaps()))
+                messageEditText.addTextChangedListener(object : TextWatcher {
+                    override fun afterTextChanged(s: Editable?) {
+                        if (s != null) {
+                            val str = s.toString()
+                            if (str.length > 32) {
+                                val truncated = str.substring(startIndex = 0, endIndex = passwordLength - 1)
+                                messageEditText.setText(truncated)
+                            } else {
+                                val modified = "[^A-F0-9]".toRegex().replace(str.toUpperCase(Locale.ROOT), "")
+                                if (str != modified) {
+                                    messageEditText.setText(modified)
+                                } else {
+                                    if (!str.trim().isTextValidHex()) {
+                                        val errorText = ctx.getString(R.string.error_must_be_hex_byte)
+                                        messageTil.error = errorText
+                                    } else if (str.length < 32){
+                                        val errorText = ctx.getString(R.string.error_password_must_be_32)
+                                        messageTil.error = errorText
+                                    } else {
+                                        messageTil.error = null
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                    }
+
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    }
+                })
+
+                val listener = object : ConfirmListener {
+                    override fun didConfirm(v: View): Boolean {
+                        val currentPassword = passwordEditText.text.toString().trim()
+
+                        if (!currentPassword.isTextValidHex() || currentPassword.length != 32) {
+                            return false
+                        }
+
+                        val newPassword = messageEditText.text.toString().trim()
+
+                        if (!newPassword.isTextValidHex() || newPassword.length != 32) {
+                            return false
+                        }
+
+                        val currentPasswordBytes = currentPassword.hexStringToByteArray()
+                        val newPasswordBytes = newPassword.hexStringToByteArray()
+
+                        val timeout = 5 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 11)
+
+                        val timeoutAdjusted = when {
+                            timeout < 0 || timeout == 16 -> 0
+                            else -> timeout
+                        }
+
+                        try {
+                            var message: TCMPMessage
+                            message = if(command == ChangeReadNdefPasswordCommand::class.java) {
+                                ChangeReadNdefPasswordCommand(
+                                    timeoutAdjusted.toByte(),
+                                    currentPasswordBytes,
+                                    newPasswordBytes
+                                )
+                            }else{
+                                ChangeWriteNdefPasswordCommand(
+                                    timeoutAdjusted.toByte(),
+                                    currentPasswordBytes,
+                                    newPasswordBytes
+                                )
+                            }
+                            TappyService.broadcastSendTcmp(message, ctx)
+                        } catch (ignored: Exception) {
+                            ignored.printStackTrace()
+                            // cant instantiate
+                        }
+                        return true
+                    }
+                }
+
+                return Pair(cl, listener)
+            }
+            LockNdefReadAccessCommand::class.java, LockNdefWriteAccessCommand::class.java, UnlockNdefReadAccessCommand::class.java,
+            UnlockNdefWriteAccessCommand::class.java, PermanentlyLockNdefWriteAccessCommand::class.java, ReadNdefMsgWithPasswordCommand::class.java -> {
+                val cl = wrapInConstraintLayout(ctx, R.layout.timeout_message_command_data_view)
+                applyTimeoutListener(ctx, cl)
+
+                cl.findOptional<TextView>(R.id.tv_command_title)?.textResource = option.titleRes
+                cl.findOptional<TextView>(R.id.tv_command_description)?.textResource = option.descriptionRes
+                if(command == LockNdefReadAccessCommand::class.java || command == UnlockNdefReadAccessCommand::class.java || command == ReadNdefMsgWithPasswordCommand::class.java){
+                    cl.findOptional<TextView>(R.id.tv_message_label)?.textResource = R.string.parameter_label_read_password
+                }else{
+                    cl.findOptional<TextView>(R.id.tv_message_label)?.textResource = R.string.parameter_label_write_password
+                }
+                cl.findOptional<ImageView>(R.id.iv_message_icon)?.imageResource = R.drawable.ic_password_black_24dp
+
+                val passwordTextInputLayout = cl.find<TextInputLayout>(R.id.til_message_container)
+                val passwordEditText = cl.find<EditText>(R.id.et_message)
+                passwordEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
+                passwordEditText.maxLines = 1
+
+                val passwordLength = 32
+
+                passwordEditText.filters = passwordEditText.filters.plus(
+                    arrayOf(
+                        InputFilter.AllCaps(),
+                        InputFilter.LengthFilter(passwordLength)
+                    )
+                )
+
+                passwordEditText.addTextChangedListener(object : TextWatcher {
+                    override fun afterTextChanged(s: Editable?) {
+                        if (s != null) {
+                            val str = s.toString()
+                            if (str.length > 32) {
+                                val truncated = str.substring(startIndex = 0, endIndex = passwordLength - 1)
+                                passwordEditText.setText(truncated)
+                            } else {
+                                val modified = "[^A-F0-9]".toRegex().replace(str.toUpperCase(Locale.ROOT), "")
+                                if (str != modified) {
+                                    passwordEditText.setText(modified)
+                                } else {
+                                    if (!str.trim().isTextValidHex()) {
+                                        val errorText = ctx.getString(R.string.error_must_be_hex_byte)
+                                        passwordTextInputLayout.error = errorText
+                                    } else if (str.length < 32){
+                                        val errorText = ctx.getString(R.string.error_password_must_be_32)
+                                        passwordTextInputLayout.error = errorText
+                                    } else {
+                                        passwordTextInputLayout.error = null
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                    }
+
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    }
+                })
+
+                val listener = object : ConfirmListener {
+                    override fun didConfirm(v: View): Boolean {
+                        val pwdPackText = passwordEditText.text.toString().trim()
+
+                        if (!pwdPackText.isTextValidHex() || pwdPackText.length != 32) {
+                            return false
+                        }
+
+                        val passwordBytes = pwdPackText.hexStringToByteArray()
+
+                        val timeout = 5 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 11)
+
+                        val timeoutAdjusted = when {
+                            timeout < 0 || timeout == 16 -> 0
+                            else -> timeout
+                        }
+
+                        try {
+                            var message: TCMPMessage
+                            message = when(command){
+                                LockNdefReadAccessCommand::class.java -> {
+                                    LockNdefReadAccessCommand(
+                                        timeoutAdjusted.toByte(),
+                                        passwordBytes,
+                                    )
+                                }
+                                LockNdefWriteAccessCommand::class.java -> {
+                                    LockNdefWriteAccessCommand(
+                                        timeoutAdjusted.toByte(),
+                                        passwordBytes,
+                                    )
+                                }
+                                UnlockNdefReadAccessCommand::class.java -> {
+                                    UnlockNdefReadAccessCommand(
+                                        timeoutAdjusted.toByte(),
+                                        passwordBytes,
+                                    )
+                                }
+                                UnlockNdefWriteAccessCommand::class.java -> {
+                                    UnlockNdefWriteAccessCommand(
+                                        timeoutAdjusted.toByte(),
+                                        passwordBytes,
+                                    )
+                                }
+                                PermanentlyLockNdefWriteAccessCommand::class.java -> {
+                                    PermanentlyLockNdefWriteAccessCommand(
+                                        timeoutAdjusted.toByte(),
+                                        passwordBytes,
+                                    )
+                                }
+                                else -> {
+                                    ReadNdefMsgWithPasswordCommand(
+                                        timeoutAdjusted.toByte(),
+                                        passwordBytes,
+                                    )
+                                }
+                            }
+                            TappyService.broadcastSendTcmp(message, ctx)
+                        } catch (ignored: Exception) {
+                            ignored.printStackTrace()
+                            // cant instantiate
+                        }
+                        return true
+                    }
+                }
+                return Pair(cl, listener)
+            }
+            WriteNdefWithPasswordCommand::class.java -> {
+                val cl = wrapInConstraintLayout(ctx, R.layout.timeout_parameter_message_data_view)
+                applyTimeoutListener(ctx, cl)
+
+                cl.findOptional<TextView>(R.id.tv_command_title)?.textResource = option.titleRes
+                cl.findOptional<TextView>(R.id.tv_command_description)?.textResource = option.descriptionRes
+                cl.findOptional<TextView>(R.id.tv_parameter_label)?.textResource = R.string.parameter_label_write_password
+                cl.findOptional<TextView>(R.id.tv_value_label)?.textResource = R.string.parameter_label_ndef_message
+                cl.findOptional<ImageView>(R.id.iv_parameter_icon)?.imageResource = R.drawable.ic_password_black_24dp
+
+                val passwordTextInputLayout = cl.find<TextInputLayout>(R.id.til_parameter_container)
+                val messageTil = cl.find<TextInputLayout>(R.id.til_value_container)
+                val messageEditText = cl.find<EditText>(R.id.et_value)
+                val passwordEditText = cl.find<EditText>(R.id.et_parameter)
+
+                passwordEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
+                messageEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
+                passwordEditText.maxLines = 1
+                val passwordLength = 32
+
+                passwordEditText.filters = passwordEditText.filters.plus(
+                    arrayOf(
+                        InputFilter.AllCaps(),
+                        InputFilter.LengthFilter(passwordLength)
+                    )
+                )
+
+                passwordEditText.addTextChangedListener(object : TextWatcher {
+                    override fun afterTextChanged(s: Editable?) {
+                        if (s != null) {
+                            val str = s.toString()
+                            if (str.length > 32) {
+                                val truncated = str.substring(startIndex = 0, endIndex = passwordLength - 1)
+                                passwordEditText.setText(truncated)
+                            } else {
+                                val modified = "[^A-F0-9]".toRegex().replace(str.toUpperCase(Locale.ROOT), "")
+                                if (str != modified) {
+                                    passwordEditText.setText(modified)
+                                } else {
+                                    if (!str.trim().isTextValidHex()) {
+                                        val errorText = ctx.getString(R.string.error_must_be_hex_byte)
+                                        passwordTextInputLayout.error = errorText
+                                    } else if (str.length < 32){
+                                        val errorText = ctx.getString(R.string.error_password_must_be_32)
+                                        passwordTextInputLayout.error = errorText
+                                    } else {
+                                        passwordTextInputLayout.error = null
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                    }
+
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    }
+                })
+
+                messageEditText.filters = messageEditText.filters.plus(
+                    arrayOf(InputFilter.AllCaps()))
+                messageEditText.addTextChangedListener(object : TextWatcher {
+                    override fun afterTextChanged(s: Editable?) {
+                        if (s != null) {
+                            val str = s.toString()
+                            val modified = ("[^A-F0-9]").toRegex().replace(str,"")
+                            if(str != modified) {
+                                messageEditText.setText(modified)
+                            } else {
+                                if (str.isNotEmpty() && !str.isTextValidHex()) {
+                                    messageTil.error = ctx.getString(R.string.error_must_be_hex)
+                                } else {
+                                    messageTil.error = null
+                                }
+                            }
+                        }
+                    }
+
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                    }
+
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    }
+                })
+
+                val listener = object : ConfirmListener {
+                    override fun didConfirm(v: View): Boolean {
+                        val password = passwordEditText.text.toString().trim()
+
+
+                        if (!password.isTextValidHex() || password.length != 32) {
+                            return false
+                        }
+
+                        val passwordBytes = password.hexStringToByteArray()
+
+                        val text = messageEditText.text.toString().trim()
+
+                        if (text.isNotEmpty() && !text.isTextValidHex()) {
+                            return false
+                        }
+                        val hexValue = if (text.isEmpty()) {
+                            byteArrayOf()
+                        } else {
+                            text.hexStringToByteArray()
+                        }
+
+                        val timeout = 5 + (cl.findOptional<SeekBar>(R.id.sb_timeout_selection)?.progress ?: 11)
+
+                        val timeoutAdjusted = when {
+                            timeout < 0 || timeout == 16 -> 0
+                            else -> timeout
+                        }
+
+                        try {
+                            val message = WriteNdefWithPasswordCommand(
+                                timeoutAdjusted.toByte(),
+                                passwordBytes,
+                                hexValue
+                            )
+                            TappyService.broadcastSendTcmp(message, ctx)
+                        } catch (ignored: Exception) {
+                            ignored.printStackTrace()
+                            // cant instantiate
+                        }
+                        return true
+                    }
+                }
+
+                return Pair(cl, listener)
+            }
+            GetCheckinsCommand::class.java -> {
+                val cl = wrapInConstraintLayout(ctx, R.layout.parameter_message_data_view)
+
+                cl.findOptional<TextView>(R.id.tv_command_title)?.textResource = option.titleRes
+                cl.findOptional<TextView>(R.id.tv_command_description)?.textResource = option.descriptionRes
+                cl.findOptional<TextView>(R.id.tv_parameter_label)?.textResource = R.string.parameter_label_first_checkin
+                cl.findOptional<TextView>(R.id.tv_value_label)?.textResource = R.string.parameter_label_second_checkin
+                cl.findOptional<ImageView>(R.id.iv_parameter_icon)?.imageResource = R.drawable.ic_config_item_value_black_24dp
+
+                val firstCheckinTil = cl.find<TextInputLayout>(R.id.til_parameter_container)
+                val secondCheckinTil = cl.find<TextInputLayout>(R.id.til_value_container)
+                val firstCheckinEditText = cl.find<EditText>(R.id.et_parameter)
+                val secondCheckinEditText = cl.find<EditText>(R.id.et_value)
+
+                firstCheckinEditText.inputType = InputType.TYPE_CLASS_NUMBER
+                secondCheckinEditText.inputType = InputType.TYPE_CLASS_NUMBER
+                firstCheckinEditText.maxLines = 1
+
+                val integerLength = 5
+
+                firstCheckinEditText.filters = firstCheckinEditText.filters.plus(
+                    arrayOf(
+                        InputFilter.LengthFilter(integerLength)
+                    )
+                )
+
+                secondCheckinEditText.filters = secondCheckinEditText.filters.plus(
+                    arrayOf(
+                        InputFilter.LengthFilter(integerLength)
+                    )
+                )
+
+                firstCheckinEditText.addTextChangedListener(object : TextWatcher {
+                    override fun afterTextChanged(s: Editable?) {
+                        if (s != null) {
+                            val str = s.toString()
+                            if (str.length > integerLength) {
+                                val truncated = str.substring(startIndex = 0, endIndex = integerLength - 1)
+                                firstCheckinEditText.setText(truncated)
+                            } else {
+                                val modified = "[^0-9]".toRegex().replace(str.toUpperCase(Locale.ROOT), "")
+                                if (str != modified) {
+                                    firstCheckinEditText.setText(modified)
+                                } else {
+                                    if (str.toInt() < 0 || str.toInt() > 65535) {
+                                        val errorText = ctx.getString(R.string.error_must_be_integer)
+                                        firstCheckinTil.error = errorText
+                                    } else {
+                                        firstCheckinTil.error = null
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                    }
+
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    }
+                })
+
+                secondCheckinEditText.addTextChangedListener(object : TextWatcher {
+                    override fun afterTextChanged(s: Editable?) {
+                        if (s != null) {
+                            val str = s.toString()
+                            if (str.length > integerLength) {
+                                val truncated = str.substring(startIndex = 0, endIndex = integerLength - 1)
+                                secondCheckinEditText.setText(truncated)
+                            } else {
+                                val modified = "[^0-9]".toRegex().replace(str.toUpperCase(Locale.ROOT), "")
+                                if (str != modified) {
+                                    secondCheckinEditText.setText(modified)
+                                } else {
+                                    if (str.toInt() < 0 || str.toInt() > 65535) {
+                                        val errorText = ctx.getString(R.string.error_must_be_integer)
+                                        secondCheckinTil.error = errorText
+                                    } else {
+                                        secondCheckinTil.error = null
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                    }
+
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    }
+                })
+
+                val listener = object : ConfirmListener {
+                    override fun didConfirm(v: View): Boolean {
+                        val first = firstCheckinEditText.text.toString()
+                        val second = secondCheckinEditText.text.toString()
+
+                        if(first.isEmpty()|| second.isEmpty()) {
+                            return false
+                        }
+
+                        if (first.toInt() < 0 || first.toInt() > 65535) {
+                            return false
+                        }
+
+
+                        if (second.toInt() < 0 || second.toInt() > 65535) {
+                            return false
+                        }
+
+                        try {
+                            val message = GetCheckinsCommand(
+                                first.toInt(),
+                                second.toInt()
+                            )
+                            TappyService.broadcastSendTcmp(message, ctx)
+                        } catch (ignored: Exception) {
+                            ignored.printStackTrace()
+                            // cant instantiate
+                        }
+                        return true
+                    }
+                }
+
+                return Pair(cl, listener)
+            }
+            SetStationIdCommand::class.java -> {
+                val cl = wrapInConstraintLayout(ctx, R.layout.message_command_data_view)
+
+                cl.findOptional<TextView>(R.id.tv_command_title)?.textResource = option.titleRes
+                cl.findOptional<TextView>(R.id.tv_command_description)?.textResource = option.descriptionRes
+                cl.findOptional<TextView>(R.id.tv_parameter_label)?.textResource = R.string.parameter_label_station_id
+                cl.findOptional<ImageView>(R.id.iv_parameter_icon)?.imageResource = R.drawable.ic_config_item_value_black_24dp
+                cl.findOptional<TextView>(R.id.tv_message_label)?.textResource = R.string.parameter_label_station_id
+
+                val stationIdTil = cl.find<TextInputLayout>(R.id.til_message_container)
+                val stationIdEditText = cl.find<EditText>(R.id.et_message)
+
+                stationIdEditText.inputType = InputType.TYPE_CLASS_NUMBER
+                stationIdEditText.maxLines = 1
+
+                val integerLength = 5
+
+               stationIdEditText.filters = stationIdEditText.filters.plus(
+                    arrayOf(
+                        InputFilter.LengthFilter(integerLength)
+                    )
+                )
+
+               stationIdEditText.addTextChangedListener(object : TextWatcher {
+                    override fun afterTextChanged(s: Editable?) {
+                        if (s != null) {
+                            val str = s.toString()
+                            if (str.length > integerLength) {
+                                val truncated = str.substring(startIndex = 0, endIndex = integerLength - 1)
+                                stationIdEditText.setText(truncated)
+                            } else {
+                                val modified = "[^0-9]".toRegex().replace(str.toUpperCase(Locale.ROOT), "")
+                                if (str != modified) {
+                                    stationIdEditText.setText(modified)
+                                } else {
+                                    if (str.toInt() < 0 || str.toInt() > 65535) {
+                                        val errorText = ctx.getString(R.string.error_must_be_integer)
+                                        stationIdTil.error = errorText
+                                    } else {
+                                        stationIdTil.error = null
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                    }
+
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    }
+                })
+
+                val listener = object : ConfirmListener {
+                    override fun didConfirm(v: View): Boolean {
+                        val id = stationIdEditText.text.toString()
+
+                        if (id.isEmpty()) {
+                            return false
+                        }
+
+                        if (id.toInt() < 0 || id.toInt() > 65535) {
+                            return false
+                        }
+
+                        try {
+                            val message = SetStationIdCommand(
+                                id.toInt(),
+                            )
+                            TappyService.broadcastSendTcmp(message, ctx)
+                        } catch (ignored: Exception) {
+                            ignored.printStackTrace()
+                            // cant instantiate
+                        }
+                        return true
+                    }
+                }
+
+                return Pair(cl, listener)
+            }
+            SetStationNameCommand::class.java -> {
+                val cl = wrapInConstraintLayout(ctx, R.layout.message_command_data_view)
+
+                cl.findOptional<TextView>(R.id.tv_command_title)?.textResource = option.titleRes
+                cl.findOptional<TextView>(R.id.tv_command_description)?.textResource = option.descriptionRes
+                cl.findOptional<TextView>(R.id.tv_message_label)?.textResource = R.string.parameter_label_station_name
+
+
+                val messageTil = cl.find<TextInputLayout>(R.id.til_message_container)
+                val messageEt = cl.find<EditText>(R.id.et_message)
+
+                val stationNameLength = 16
+
+                messageEt.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
+                messageEt.filters = messageEt.filters.plus(
+                    arrayOf(InputFilter.LengthFilter(stationNameLength)))
+
+                messageEt.addTextChangedListener(object : TextWatcher {
+                    override fun afterTextChanged(s: Editable?) {
+                        if (s != null) {
+                            val str = s.toString()
+                            if (str.isNotEmpty() && str.length > stationNameLength) {
+                                messageTil.error = ctx.getString(R.string.error_must_be_less_than_16)
+                            } else {
+                                messageTil.error = null
+                            }
+                        }
+                    }
+
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                    }
+
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    }
+                })
+
+//                applyTimeoutListener(ctx,cl)
+
+                val listener = object : ConfirmListener {
+                    override fun didConfirm(v: View): Boolean {
+                        try {
+
+
+                            val rawValue = cl.find<EditText>(R.id.et_message).text.toString()
+
+                            if (rawValue.length > stationNameLength || rawValue.isEmpty()) {
+                                return false
+                            }
+
+                            val cmd = SetStationNameCommand(rawValue)
+                            TappyService.broadcastSendTcmp(cmd,ctx)
+
+                        } catch (ignored: Exception) {
+                            // cant instantiate
+                        }
+                        return true
+                    }
+                }
+
+                return Pair(cl, listener)
+            }
+            SetTimeAndDateCommand::class.java -> {
+                val cl = wrapInConstraintLayout(ctx, R.layout.set_time_and_date_command_data_view)
+
+                cl.findOptional<TextView>(R.id.tv_command_title)?.textResource = option.titleRes
+                cl.findOptional<TextView>(R.id.tv_command_description)?.textResource = option.descriptionRes
+
+                val datePicker = cl.find<DatePicker>(R.id.date_picker)
+                val hourPicker = cl.find<NumberPicker>(R.id.numpicker_hours)
+                val minutesPicker = cl.find<NumberPicker>(R.id.numpicker_minutes)
+                val secondsPicker = cl.find<NumberPicker>(R.id.numpicker_seconds)
+                hourPicker.setMaxValue(24)
+                minutesPicker.setMaxValue(59)
+                secondsPicker.setMaxValue(59)
+                var displayedValues = arrayOf<String>()
+                for(i in 0..60){
+                    if(i < 10) {
+                        displayedValues += "0$i"
+                    } else{
+                        displayedValues += "$i"
+                    }
+                }
+                hourPicker.setDisplayedValues(displayedValues.sliceArray(0..24))
+                minutesPicker.setDisplayedValues(displayedValues)
+                secondsPicker.setDisplayedValues(displayedValues)
+
+                val listener = object : ConfirmListener {
+                    override fun didConfirm(v: View): Boolean {
+                        val timeAndDate = ByteArray(7)
+                        timeAndDate[0] = (datePicker.year-2000).toByte()
+                        timeAndDate[1] = (datePicker.month+1).toByte()
+                        timeAndDate[2] = datePicker.dayOfMonth.toByte()
+                        timeAndDate[3] = hourPicker.value.toByte()
+                        timeAndDate[4] = minutesPicker.value.toByte()
+                        timeAndDate[5] = secondsPicker.value.toByte()
+                        timeAndDate[6] = datePicker.firstDayOfWeek.toByte()
+                        try {
+                            val message = SetTimeAndDateCommand(timeAndDate)
+                            TappyService.broadcastSendTcmp(message, ctx)
+                        } catch (ignored: Exception) {
+                            ignored.printStackTrace()
+                            // cant instantiate
+                        }
+                        return true
+                    }
+                }
+
+                return Pair(cl, listener)
+            }
+            DebitWristbandFullRespCommand::class.java, DebitWristbandShortRespCommand::class.java,
+            TopupWristbandFullRespCommand::class.java, TopupWristbandShortRespCommand::class.java-> {
+                val cl = wrapInConstraintLayout(ctx, R.layout.timeout_message_command_data_view)
+
+                cl.findOptional<TextView>(R.id.tv_command_title)?.textResource = option.titleRes
+                cl.findOptional<TextView>(R.id.tv_command_description)?.textResource = option.descriptionRes
+                cl.findOptional<ImageView>(R.id.iv_message_icon)?.imageResource = R.drawable.ic_attach_money_black_24dp
+                cl.findOptional<TextView>(R.id.tv_message_label)?.textResource = R.string.parameter_label_dollar
+
+                val parameterTil = cl.find<TextInputLayout>(R.id.til_message_container)
+                val parameterEt = cl.find<EditText>(R.id.et_message)
+
+                parameterEt.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL or InputType.TYPE_CLASS_NUMBER
+                parameterEt.addTextChangedListener(object : TextWatcher {
+                    override fun afterTextChanged(s: Editable?) {
+                        if (s != null) {
+                            val str = s.toString()
+                            var modified = ("[^0-9.]").toRegex().replace(str.toUpperCase(Locale.ROOT),"")
+                            if (modified.indexOf('.') != -1 && modified.length-modified.indexOf('.') > 3) {
+                                modified = modified.substring(0..modified.indexOf('.')+2)
+                            }
+                            if(str != modified) {
+                                parameterEt.setText(modified)
+                            }
+                        }
+                    }
+
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                    }
+
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    }
+                })
+
+                applyTimeoutListener(ctx, cl)
+
+                val listener = object : ConfirmListener {
+                    override fun didConfirm(v: View): Boolean {
+                        try {
+                            val rawParameter = cl.findOptional<EditText>(R.id.et_message)?.text?.toString()
+                            var timeout = 5 + (cl.findOptional<AppCompatSeekBar>(R.id.sb_timeout_selection)?.progress ?: 11)
+
+                            val timeoutAdjusted = if (timeout < 0 ) 0 else if (timeout >= 16) 0 else timeout
+
+                            if(rawParameter == null || rawParameter.isEmpty()){
+                                return false
+                            }
+                            var amount: Int
+                            try{
+                               amount = ((rawParameter.toDouble()*100).toInt())
+                            } catch (e: NumberFormatException){
+                                return false
+                            }
+                            var cmd: TCMPMessage
+                            if(command == DebitWristbandShortRespCommand::class.java){
+                                cmd = DebitWristbandShortRespCommand(amount, timeoutAdjusted.toByte())
+                            } else if (command == DebitWristbandFullRespCommand::class.java) {
+                                cmd = DebitWristbandFullRespCommand(amount, timeoutAdjusted.toByte())
+                            } else if(command == TopupWristbandShortRespCommand::class.java){
+                                cmd = TopupWristbandShortRespCommand(amount, timeoutAdjusted.toByte())
+                            } else {
+                                cmd = TopupWristbandFullRespCommand(amount, timeoutAdjusted.toByte())
+                            }
+                            TappyService.broadcastSendTcmp(cmd,ctx)
+                        } catch (ignored: Exception) {
+                            // cant instantiate
+                        }
+                        // TODO: Implement verification when more settings are added
+                        return true
+                    }
+                }
+                return Pair(cl, listener)
+            }
+            SetEventIdCommand::class.java -> {
+                val cl = wrapInConstraintLayout(ctx, R.layout.message_command_data_view)
+
+                cl.findOptional<TextView>(R.id.tv_message_label)?.textResource = R.string.parameter_label_eventID
+                cl.findOptional<ImageView>(R.id.iv_message_icon)?.imageResource = R.drawable.ic_config_parameter_black_24dp
+                cl.findOptional<EditText>(R.id.et_message)?.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
+
+                cl.findOptional<TextView>(R.id.tv_command_title)?.textResource = option.titleRes
+                cl.findOptional<TextView>(R.id.tv_command_description)?.textResource = option.descriptionRes
+
+                val parameterTil = cl.find<TextInputLayout>(R.id.til_message_container)
+                val parameterEt = cl.find<EditText>(R.id.et_message)
+
+                val eventIdLength = 32
+
+                parameterEt.addTextChangedListener(object : TextWatcher {
+                    override fun afterTextChanged(s: Editable?) {
+                        if (s != null) {
+                            val str = s.toString()
+                            if (str.length > eventIdLength && !str.contains('-')) {
+                                val truncated = str.substring(startIndex = 0, endIndex = eventIdLength - 1)
+                                parameterEt.setText(truncated)
+                            } else if (str.length > 36 && str.contains('-')) {
+                                val truncated = str.substring(startIndex = 0, endIndex = 35)
+                                parameterEt.setText(truncated)
+                            } else {
+                                val modified = "[^A-F0-9-]".toRegex().replace(str.toUpperCase(Locale.ROOT), "")
+                                if (str != modified) {
+                                    parameterEt.setText(modified)
+                                } else {
+                                    if (!str.trim().isTextValidHex() && !str.contains('-')) {
+                                        val errorText = ctx.getString(R.string.error_must_be_hex_byte)
+                                        parameterTil.error = errorText
+                                    } else if (str.contains('-') && str.length < 36) {
+                                        val errorText = ctx.getString(R.string.error_must_be_valid_uuid)
+                                        parameterTil.error = errorText
+                                    } else if (str.length < eventIdLength){
+                                        val errorText = ctx.getString(R.string.error_must_be_16_bytes)
+                                        parameterTil.error = errorText
+                                    } else {
+                                        parameterTil.error = null
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                    }
+
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    }
+                })
+
+                val listener = object : ConfirmListener {
+                    override fun didConfirm(v: View): Boolean {
+                        val eventId = parameterEt.text.toString().trim()
+                        var uuid: UUID = UUID.randomUUID()
+                        var eventIdBytes: ByteArray = ByteArray(16)
+
+                        if (eventId == null) {
+                            return false
+                        }
+                        if ((!eventId.isTextValidHex() || eventId.length != 32) && !eventId.contains('-')) {
+                            return false
+                        } else if (eventId.contains('-')) {
+                            if (eventId.length != 36) {
+                                return false
+                            } else {
+                                try {
+                                    uuid = UUID.fromString(eventId)
+                                } catch (e: IllegalArgumentException) {
+                                    return false
+                                }
+                            }
+                        } else {
+                            eventIdBytes = eventId.hexStringToByteArray()
+                        }
+
+
+                        try {
+                            val message: TCMPMessage
+                            if (eventId.contains('-')) {
+                                message = SetEventIdCommand(uuid)
+                            } else {
+                                message = SetEventIdCommand(eventIdBytes)
+                            }
+                            TappyService.broadcastSendTcmp(message, ctx)
+                        } catch (ignored: Exception) {
+                            ignored.printStackTrace()
                             // cant instantiate
                         }
                         return true

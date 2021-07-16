@@ -69,7 +69,6 @@
         android:layout_height="wrap_content"
         android:layout_width="0dp"
         android:layout_marginTop="8dp"
-        android:max="10"
         app:layout_constraintTop_toBottomOf="@+id/tv_timeout_label"
         app:layout_constraintEnd_toStartOf="@+id/tv_timeout_value"
         app:layout_constraintStart_toEndOf="@+id/iv_timeout_icon"

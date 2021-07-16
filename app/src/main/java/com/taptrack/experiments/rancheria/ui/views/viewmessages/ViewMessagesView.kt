@@ -18,6 +18,11 @@ import com.taptrack.experiments.rancheria.model.RealmTcmpCommunique
 import com.taptrack.experiments.rancheria.ui.views.getHostActivity
 import com.taptrack.experiments.rancheria.ui.views.sendmessages.ConfigureCommandDialogFragment
 import com.taptrack.experiments.rancheria.ui.views.sendmessages.DialogGenerator
+import com.taptrack.experiments.rancheria.wristcoinpos.InvalidScratchStatusException
+import com.taptrack.experiments.rancheria.wristcoinpos.InvalidTopupConfigurationException
+import com.taptrack.experiments.rancheria.wristcoinpos.MissingWristbandStateFieldException
+import com.taptrack.experiments.rancheria.wristcoinpos.WristCoinPOSCommandResolver
+import com.taptrack.kotlin_tlv.TLV
 import com.taptrack.tcmptappy.tcmp.common.CommandCodeNotSupportedException
 import com.taptrack.tcmptappy.tcmp.common.FamilyCodeNotSupportedException
 import com.taptrack.tcmptappy.tcmp.common.ResponseCodeNotSupportedException
@@ -25,6 +30,8 @@ import com.taptrack.tcmptappy2.*
 import com.taptrack.tcmptappy2.commandfamilies.basicnfc.BasicNfcCommandResolver
 import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.MifareClassicCommandResolver
 import com.taptrack.tcmptappy2.commandfamilies.ntag21x.Ntag21xCommandResolver
+import com.taptrack.tcmptappy2.commandfamilies.standalonecheckin.StandaloneCheckinCommandResolver
+import com.taptrack.tcmptappy2.commandfamilies.stmicroM24SR02.STMicroCommandResolver
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.SystemCommandResolver
 import com.taptrack.tcmptappy2.commandfamilies.type4.Type4CommandResolver
 import io.realm.OrderedRealmCollection
@@ -197,7 +204,10 @@ private class MessageAdapter(private val hostView: RecyclerView, data: OrderedRe
                     Type4CommandResolver(),
                     MifareClassicCommandResolver(),
                     Ntag21xCommandResolver(),
-            )
+                    STMicroCommandResolver(),
+                    StandaloneCheckinCommandResolver(),
+                    WristCoinPOSCommandResolver(),
+                )
 
             val formatter: DateFormat
 
@@ -277,6 +287,9 @@ private class MessageAdapter(private val hostView: RecyclerView, data: OrderedRe
                 } catch (e : MalformedPayloadException) {
                     Timber.e(e)
                     messageView.setText(R.string.invalid_command)
+                } catch (e: TLV.MalformedTlvByteArrayException) {
+                    Timber.e(e)
+                    messageView.setText(R.string.invalid_command)
                 }
             }
 
@@ -312,20 +325,32 @@ private class MessageAdapter(private val hostView: RecyclerView, data: OrderedRe
                 if (resolvedMessage != null) {
                     messageView.text = TcmpMessageDescriptor.getResponseDescription(resolvedMessage,ctx)
                 } else {
-                    messageView.setText(R.string.invalid_command)
+                    messageView.setText(R.string.invalid_response)
                 }
             } catch (e : TCMPMessageParseException) {
                 Timber.e(e)
-                messageView.setText(R.string.invalid_command)
+                messageView.setText(R.string.invalid_response)
             } catch (e : FamilyCodeNotSupportedException){
                 Timber.e(e)
-                messageView.setText(R.string.invalid_command)
+                messageView.setText(R.string.invalid_response)
             } catch (e : ResponseCodeNotSupportedException) {
                 Timber.e(e)
-                messageView.setText(R.string.invalid_command)
+                messageView.setText(R.string.invalid_response)
             } catch (e : MalformedPayloadException) {
                 Timber.e(e)
-                messageView.setText(R.string.invalid_command)
+                messageView.setText(R.string.invalid_response)
+            } catch (e : TLV.MalformedTlvByteArrayException) {
+                Timber.e(e)
+                messageView.setText(R.string.invalid_response)
+            } catch (e : InvalidScratchStatusException) {
+                Timber.e(e)
+                messageView.setText(R.string.invalid_response)
+            } catch (e : InvalidTopupConfigurationException) {
+                Timber.e(e)
+                messageView.setText(R.string.invalid_response)
+            } catch (e : MissingWristbandStateFieldException) {
+                Timber.e(e)
+                messageView.setText("Missing Wristband State Field")
             }
 
             captionView.text = communique.deviceName

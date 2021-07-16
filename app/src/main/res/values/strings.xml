@@ -30,7 +30,7 @@
     <string name="disable_url_launching">Disable URL Launching</string>
     <string name="enable_daynight_mode">Enable night mode switching</string>
     <string name="disable_daynight_mode">Disable night mode switching</string>
-    <string name="enable_heartbeat">Enable heartbeat</string>
+    <string name="enable_heartbeat">Enable heartbeat, Tappy transmits pings to show that it is still online</string>
     <string name="disable_heartbeat">Disable heartbeat</string>
     <string name="daynight_mode_enabled_snackbar_msg">Night theme switching enabled, restarting</string>
     <string name="daynight_mode_disabled_snackbar_msg">Night theme switching disabled, restarting</string>
@@ -47,6 +47,7 @@
     <string name="parameter_value_infinite">Inf</string>
     <string name="parameter_label_continuous_reporting">Continuous Reporting</string>
     <string name="parameter_label_message">Message</string>
+    <string name="parameter_label_ndef_message">Raw NDEF Message</string>
     <string name="parameter_label_range">Sector Range</string>
     <string name="parameter_label_url">URL</string>
     <string name="parameter_label_config_param_id">Parameter Identifier (hex)</string>
@@ -60,7 +61,13 @@
     <string name="parameter_label_typeb">Use Type B Modulation</string>
     <string name="error_must_be_hex">Must be a valid hex string</string>
     <string name="error_pin_must_be_six_numeric">PIN must be 6 numeric characters</string>
+    <string name="error_must_be_less_than_16">Must be less than 16 bytes</string>
     <string name="error_must_be_hex_byte">Must be a valid hex byte</string>
+    <string name="error_password_must_be_32">Password must be 16 bytes</string>
+    <string name="error_must_be_integer">Must be a valid 16 bit integer</string>
+    <string name="error_must_be_16_bytes">Must be 16 bytes</string>
+    <string name="error_must_be_valid_date_and_time">Must be valid date and time</string>
+    <string name="error_must_be_valid_uuid">Must be valid UUID</string>
     <string name="error">Error</string>
 
     <string name="tappy_channel_name">Active Tappies</string>
@@ -69,4 +76,18 @@
     <string name="parameter_label_toggle">Write Protection/Read &amp; Write Protection</string>
     <string name="parameter_label_pwd_pack">PWD/PACK Bytes</string>
     <string name="parameter_label_password">Password</string>
+    <string name="parameter_label_write_password">Write Password (16 Bytes)</string>
+    <string name="parameter_label_read_password">Read Password (16 Bytes)</string>
+    <string name="parameter_label_current_password">Current Password</string>
+    <string name="parameter_label_new_password">New Password</string>
+    <string name="parameter_label_first_checkin">First checkin to request</string>
+    <string name="parameter_label_second_checkin">Last checkin to request</string>
+    <string name="parameter_label_date">Set Date</string>
+    <string name="parameter_label_time">Set Time</string>
+    <string name="parameter_label_station_id">Station ID</string>
+    <string name="parameter_label_station_name">Station Name</string>
+    <string name="parameter_label_dollar">Amount</string>
+    <string name="parameter_label_eventID">Event ID (UUID or Hex)</string>
+
+
 </resources>

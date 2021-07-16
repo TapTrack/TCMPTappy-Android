@@ -15,6 +15,12 @@ buildscript {
     }
 }
 
+plugins {
+    id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
+}
+
+apply plugin: 'io.github.gradle-nexus.publish-plugin'
+apply from: "${rootDir}/scripts/publish-root.gradle"
 
 allprojects {
     repositories {
@@ -44,8 +50,8 @@ ext.globalCfg = [
         minSdkVersion: 19,
         compileSdkVersion: 29,
         buildToolsVersion: '29.0.3',
-        publishedVersion: "2.3.0",
-        publishedGroupId : 'com.taptrack.tcmptappy2',
+        publishedVersion: "2.4.0",
+        publishedGroupId : 'com.taptrack',
 ]
 
 ext.bintrayCfg = [
@@ -134,7 +140,6 @@ ext.bintrayCfg = [
 
 ext.libraries = [
         androidSupportAnnotations: 'androidx.annotation:annotation:1.2.0',
-
         tcmpLegacy: "com.taptrack.tcmptappy:message-common:0.9.3",
         okio: "com.squareup.okio:okio:2.6.0",
 
@@ -153,4 +158,6 @@ ext.libraries = [
         mifareClassicCommandFamily: project(':commandfamily-mifareclassic'),
         ntag21xCommandFamily: project(':commandfamily-ntag21x'),
         type4CommandFamily: project(':commandfamily-type4'),
+        standalonecheckinCommandFamily: project(':commandfamily-standalonecheckin'),
+        stmicroM24SR02CommandFamily: project(':commandfamily-stmicroM24SR02'),
 ]

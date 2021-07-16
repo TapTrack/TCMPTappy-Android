@@ -1,5 +1,8 @@
 package com.taptrack.experiments.rancheria.ui.views.viewmessages
 
+// In the Tappy Demo App the wristcoinpos command family is vendored in the project to avoid build conflicts
+// For developers who want to use the wristcoinpos command family please make sure to include the dependency in your
+// projects build.gradle file and DO NOT copy paste the "wristcoinpos" package into your own project
 import android.content.Context
 import android.nfc.NdefMessage
 import android.nfc.NdefRecord
@@ -7,8 +10,12 @@ import androidx.annotation.StringRes
 import com.taptrack.experiments.rancheria.R
 import com.taptrack.experiments.rancheria.ui.toHex
 import com.taptrack.experiments.rancheria.ui.toUnsigned
-import com.taptrack.experiments.rancheria.ui.views.sendmessages.DialogGenerator
 import com.taptrack.experiments.rancheria.ui.views.sendmessages.SetBLEPinCommand
+import com.taptrack.experiments.rancheria.wristcoinpos.AbstractWristCoinPOSMessage
+import com.taptrack.experiments.rancheria.wristcoinpos.AppScratchState
+import com.taptrack.experiments.rancheria.wristcoinpos.commands.*
+import com.taptrack.experiments.rancheria.wristcoinpos.responses.*
+import com.taptrack.kotlin_tlv.ByteUtils.arrayToInt
 import com.taptrack.tcmptappy.tappy.constants.TagTypes
 import com.taptrack.tcmptappy2.StandardErrorResponse
 import com.taptrack.tcmptappy2.StandardLibraryVersionResponse
@@ -25,13 +32,24 @@ import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.commands.ReadMifare
 import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.responses.*
 import com.taptrack.tcmptappy2.commandfamilies.ntag21x.AbstractNtag21xMessage
 import com.taptrack.tcmptappy2.commandfamilies.ntag21x.commands.*
-import com.taptrack.tcmptappy2.commandfamilies.ntag21x.responses.*
+import com.taptrack.tcmptappy2.commandfamilies.ntag21x.responses.Ntag21xApplicationErrorResponse
+import com.taptrack.tcmptappy2.commandfamilies.ntag21x.responses.Ntag21xPollingTimeoutResponse
+import com.taptrack.tcmptappy2.commandfamilies.ntag21x.responses.Ntag21xReadSuccessResponse
+import com.taptrack.tcmptappy2.commandfamilies.ntag21x.responses.Ntag21xWriteSuccessResponse
+import com.taptrack.tcmptappy2.commandfamilies.standalonecheckin.AbstractStandaloneCheckinMessage
+import com.taptrack.tcmptappy2.commandfamilies.standalonecheckin.commands.*
+import com.taptrack.tcmptappy2.commandfamilies.standalonecheckin.responses.*
+import com.taptrack.tcmptappy2.commandfamilies.standalonecheckin.utils.MicrochipRtcFormatter
+import com.taptrack.tcmptappy2.commandfamilies.stmicroM24SR02.AbstractStMicroMessage
+import com.taptrack.tcmptappy2.commandfamilies.stmicroM24SR02.commands.*
+import com.taptrack.tcmptappy2.commandfamilies.stmicroM24SR02.responses.*
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.AbstractSystemMessage
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.*
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.responses.*
 import com.taptrack.tcmptappy2.commandfamilies.type4.AbstractType4Message
 import com.taptrack.tcmptappy2.commandfamilies.type4.commands.*
 import com.taptrack.tcmptappy2.commandfamilies.type4.responses.*
+import com.taptrack.tcmptappy2.commandfamilies.type4.responses.Type4ErrorResponse
 import timber.log.Timber
 import java.nio.charset.Charset
 import java.util.*
@@ -56,6 +74,15 @@ object TcmpMessageDescriptor {
             }
             is AbstractNtag21xMessage -> {
                 getCommandDescriptionNtag21x(command, ctx)
+            }
+            is AbstractStMicroMessage -> {
+                getCommandDescriptionSTMicro(command, ctx)
+            }
+            is AbstractStandaloneCheckinMessage -> {
+                getCommandDescriptionStandaloneCheckin(command, ctx)
+            }
+            is AbstractWristCoinPOSMessage -> {
+                getCommandDescriptionWristcoinPOS(command, ctx)
             }
             else -> {
                 ctx.getString(R.string.unknown_command)
@@ -120,9 +147,51 @@ object TcmpMessageDescriptor {
                     String.format(form, uri)
                 }
             }
+            is EmulateTextRecordCommand -> {
+                if (command.timeout.toInt() != 0) {
+                    val form = ctx.getString(R.string.emulate_ndef_txt_seconds)
+                    String.format(form, command.timeout.toUnsigned(), command.text)
+                } else {
+                    val form = ctx.getString(R.string.emulate_ndef_txt_indefinite)
+                    String.format(form, command.text)
+                }
+            }
+            is EmulateUriRecordCommand -> {
+                val uri = NdefUriCodeUtils.decodeNdefUri(command.uriPrefixCode, command.uriBytes)
+                if (command.timeout.toInt() != 0) {
+                    val form = ctx.getString(R.string.write_ndef_uri_seconds)
+                    String.format(form, command.timeout.toUnsigned(), uri)
+                } else {
+                    val form = ctx.getString(R.string.write_ndef_uri_indefinite)
+                    String.format(form, uri)
+                }
+            }
             is AutoPollCommand -> {
                 String.format(
                     ctx.getString(R.string.autopoll_for_tags),
+                    when (command.scanModeIndicator) {
+                        AutoPollingConstants.ScanModes.TYPE_1 -> ctx.getString(R.string.autopoll_tag_t1)
+                        AutoPollingConstants.ScanModes.TYPE_2 -> ctx.getString(R.string.autopoll_tag_t2)
+                        AutoPollingConstants.ScanModes.FELICIA -> ctx.getString(R.string.autopoll_tag_t3)
+                        AutoPollingConstants.ScanModes.TYPE_4A -> ctx.getString(R.string.autopoll_tag_t4a)
+                        AutoPollingConstants.ScanModes.TYPE_4B -> ctx.getString(R.string.autopoll_tag_t4b)
+                        AutoPollingConstants.ScanModes.ALL -> ctx.getString(R.string.autopoll_tag_all)
+                        else -> ""
+                    },
+                    when (command.heartBeatPeriod) {
+                        0x00.toByte() -> ctx.getString(R.string.autopoll_for_tags_hb_disabled)
+                        else -> String.format("%ds", command.heartBeatPeriod.toUnsigned())
+                    },
+                    if (command.isBuzzerDisabled) {
+                        ctx.getString(R.string.autopoll_for_tags_buzzer_disabled)
+                    } else {
+                        ctx.getString(R.string.autopoll_for_tags_buzzer_enabled)
+                    }
+                )
+            }
+            is AutoPollNdefCommand -> {
+                String.format(
+                    ctx.getString(R.string.autopollndef_for_tags),
                     when (command.scanModeIndicator) {
                         AutoPollingConstants.ScanModes.TYPE_1 -> ctx.getString(R.string.autopoll_tag_t1)
                         AutoPollingConstants.ScanModes.TYPE_2 -> ctx.getString(R.string.autopoll_tag_t2)
@@ -155,7 +224,27 @@ object TcmpMessageDescriptor {
                 }
             }
             is InitiateTappyTagHandshakeCommand -> {
-                ctx.getString(R.string.initiate_tappytag_handshake)
+                if(command.duration.toInt() == 0){
+                    ctx.getString(R.string.initiate_tappytag_handshake, "Indefinite", command.responseData.decodeToString(), command.responseData.toHex())
+                }else{
+                    ctx.getString(R.string.initiate_tappytag_handshake, command.duration.toString(), command.responseData.decodeToString(), command.responseData.toHex())
+                }
+            }
+            is DispatchTagCommand -> {
+                if (command.timeout.toInt() != 0) {
+                    val form = ctx.getString(R.string.dispatch_tag_second)
+                    String.format(form, command.timeout.toUnsigned())
+                } else {
+                    ctx.getString(R.string.dispatch_tag_indefinite)
+                }
+            }
+            is DispatchTagsCommand -> {
+                if (command.timeout.toInt() != 0) {
+                    val form = ctx.getString(R.string.dispatch_tags_seconds)
+                    String.format(form, command.timeout.toUnsigned())
+                } else {
+                    ctx.getString(R.string.dispatch_tags_indefinite)
+                }
             }
             else -> {
                 ctx.getString(R.string.unknown_command)
@@ -216,6 +305,9 @@ object TcmpMessageDescriptor {
                 SetConfigItemCommand.ParameterBytes.DISABLE_BLUETOOTH_PIN_PAIRING -> {
                     ctx.getString(R.string.disable_ble_pin_pairing)
                 }
+                SetConfigItemCommand.ParameterBytes.CLEAR_BLUETOOTH_BONDING_CACHE -> {
+                    ctx.getString(R.string.clear_ble_bonding_cache)
+                }
                 else -> if (command.multibyteValue.isEmpty()) {
                     ctx.getString(
                             R.string.set_config_item_no_value,
@@ -242,8 +334,7 @@ object TcmpMessageDescriptor {
         }
     }
 
-    fun getCommandDescriptionClassic(command: TCMPMessage,
-                                     ctx: Context): String {
+    fun getCommandDescriptionClassic(command: TCMPMessage, ctx: Context): String {
         if (command is DetectMifareClassicCommand) {
             val cmd = command
             if (cmd.timeout.toInt() == 0x00) {
@@ -357,6 +448,126 @@ object TcmpMessageDescriptor {
         }
     }
 
+    fun getCommandDescriptionSTMicro (command: TCMPMessage, ctx: Context): String {
+        return when(command){
+            is ChangeReadNdefPasswordCommand -> {
+                ctx.getString(R.string.change_read_ndef_password, command.timeout.toString(), command.currentPassword.toHex(), command.newPassword.toHex())
+            }
+            is ChangeWriteNdefPasswordCommand -> {
+                ctx.getString(R.string.change_write_ndef_password, command.timeout.toString(), command.currentPassword.toHex(), command.newPassword.toHex())
+            }
+            is GetCommandFamilyVersionCommand -> {
+                ctx.getString(R.string.get_command_family_version)
+            }
+            is GetI2CSettingCommand -> {
+                ctx.getString(R.string.get_I2C_setting, command.timeout.toString())
+            }
+            is LockNdefReadAccessCommand -> {
+                ctx.getString(R.string.lock_ndef_read_access, command.timeout.toString(), command.password.toHex())
+            }
+            is LockNdefWriteAccessCommand -> {
+                ctx.getString(R.string.lock_ndef_write_access, command.timeout.toString(), command.password.toHex())
+            }
+            is UnlockNdefReadAccessCommand -> {
+                ctx.getString(R.string.unlock_ndef_read_access, command.timeout.toString(), command.password.toHex())
+            }
+            is UnlockNdefWriteAccessCommand -> {
+                ctx.getString(R.string.unlock_ndef_write_access, command.timeout.toString(), command.password.toHex())
+            }
+            is PermanentlyLockNdefWriteAccessCommand -> {
+                ctx.getString(R.string.perma_lock_ndef_write_access, command.timeout.toString(), command.password.toHex())
+            }
+            is ReadNdefMsgWithPasswordCommand -> {
+                ctx.getString(R.string.read_ndef_msg_with_password, command.timeout.toString(), command.password.toHex())
+            }
+            is WriteNdefWithPasswordCommand -> {
+                ctx.getString(R.string.write_ndef_msg_with_password, command.timeout.toString(), command.password.toHex(), command.content.toHex())
+            }
+            else -> {
+                ctx.getString(R.string.unknown_command)
+            }
+        }
+    }
+
+    fun getCommandDescriptionStandaloneCheckin (command: TCMPMessage, ctx: Context): String {
+        return when(command){
+            is GetCheckinCountCommand -> {
+                ctx.getString(R.string.get_checkin_count)
+            }
+            is GetCheckinsCommand -> {
+                ctx.getString(R.string.get_checkins, command.firstCheckin.toString(), command.secondCheckin.toString())
+            }
+            is GetStandaloneCheckinFamilyVersionCommand -> {
+                ctx.getString(R.string.get_standalone_checkin_fam_version)
+            }
+            is GetStationInfoCommand -> {
+                ctx.getString(R.string.get_station_info)
+            }
+            is GetTimeAndDateCommand -> {
+                ctx.getString(R.string.get_time_and_date)
+            }
+            is ReadCheckinCardUidCommand -> {
+                if(command.timeout == 0x00.toByte()){
+                    ctx.getString(R.string.read_checkin_card_uid_indefinitely)
+                } else {
+                    ctx.getString(R.string.read_checkin_card_uid_seconds, command.timeout.toString())
+                }
+            }
+            is ResetCheckinsCommand -> {
+                ctx.getString(R.string.reset_checkins)
+            }
+            is SetStationIdCommand -> {
+                ctx.getString(R.string.set_station_id, command.stationId.toString())
+            }
+            is SetStationNameCommand -> {
+                ctx.getString(R.string.set_station_name, command.name)
+            }
+            is SetTimeAndDateCommand -> {
+                val bytes: ByteArray = command.payload
+                ctx.getString(
+                    R.string.set_time_and_date, formatTimeAndDate(bytes[0].toString()), formatTimeAndDate(bytes[1].toString()), formatTimeAndDate(bytes[2].toString()),
+                    formatTimeAndDate(bytes[3].toString()), formatTimeAndDate(bytes[4].toString()),
+                    formatTimeAndDate(bytes[5].toString()), formatTimeAndDate(bytes[6].toString())
+                )
+            }
+            else -> {
+                ctx.getString(R.string.unknown_command)
+            }
+        }
+    }
+
+    fun getCommandDescriptionWristcoinPOS (command: TCMPMessage, ctx: Context): String {
+        return when(command){
+            is DebitWristbandFullRespCommand -> {
+                ctx.getString(R.string.debit_wristband_full, formatCentavosAmount(command.debitAmountCentavos))
+            }
+            is DebitWristbandShortRespCommand -> {
+                ctx.getString(R.string.debit_wristband_short, formatCentavosAmount(command.debitAmountCentavos))
+            }
+            is GetWristCoinPOSCommandFamilyVersionCommand -> {
+                ctx.getString(R.string.get_wristcoinPOS_command_family_version)
+            }
+            is GetWristbandStatusCommand -> {
+                ctx.getString(R.string.get_wristband_status)
+            }
+            is SetEventIdCommand -> {
+                ctx.getString(R.string.set_event_ID, command.eventId.toHex())
+            }
+            is TopupWristbandFullRespCommand -> {
+                ctx.getString(R.string.topup_wristband_full, formatCentavosAmount(command.topupAmountCentavos))
+            }
+            is TopupWristbandShortRespCommand -> {
+                ctx.getString(R.string.topup_wristband_short, formatCentavosAmount(command.topupAmountCentavos))
+            }
+            is CloseoutWristbandCommand -> {
+                ctx.getString(R.string.closeout_wristband)
+            }
+            else -> {
+                ctx.getString(R.string.unknown_command)
+            }
+        }
+    }
+
     fun getResponseDescription(response: TCMPMessage,
                                ctx: Context): String {
         when (response) {
@@ -376,6 +587,9 @@ object TcmpMessageDescriptor {
                     }
                     is Type4LibraryVersionResponse -> {
                         parseStandardLibraryVersionResponse(ctx, R.string.family_type4, response)
+                    }
+                    is StandaloneCheckinLibraryVersionResponse -> {
+                        parseStandardLibraryVersionResponse(ctx, R.string.family_standalone, response)
                     }
 //                    is GetNtag21xCommandFamilyVersionResponse -> {
 //                        // TODO: Implement this
@@ -399,6 +613,15 @@ object TcmpMessageDescriptor {
             }
             is AbstractNtag21xMessage -> {
                 return getNtag21xResponseDescription(response, ctx)
+            }
+            is AbstractStMicroMessage -> {
+                return getSTMicroM24SR02ResponseDescription(response, ctx)
+            }
+            is AbstractStandaloneCheckinMessage -> {
+                return getStandaloneCheckinResponseDescription(response, ctx)
+            }
+            is AbstractWristCoinPOSMessage -> {
+                return getWristCoinPOSResponseDescription(response, ctx)
             }
             is StandardErrorResponse -> {
                 return parseStandardErrorResponse(
@@ -573,7 +796,24 @@ object TcmpMessageDescriptor {
                     response as StandardErrorResponse)
             }
             is TappyTagDataReceivedResponse -> {
-                return ctx.getString(R.string.tappytag_response, response.payload.decodeToString())
+                if(response.dataReceived.isNotEmpty() && response.timeout.isNotEmpty()){
+                    return ctx.getString(R.string.tappytag_response, response.dataReceived.toHex(), response.dataReceived.decodeToString(), arrayToInt(response.timeout).toString())
+                } else if(response.dataReceived.isNotEmpty()){
+                    return ctx.getString(R.string.tappytag_response2, response.dataReceived.toHex(), response.dataReceived.decodeToString())
+                } else if(response.timeout.isNotEmpty()){
+                    return ctx.getString(R.string.tappytag_response3, arrayToInt(response.timeout).toString())
+                } else{
+                    return ctx.getString(R.string.tappytag_response4)
+                }
+            }
+            is ResponseDataTransmitted -> {
+                return ctx.getString(R.string.tappytag_response_transmitted, response.dataOffset.toString(), response.dataLength.toString())
+            }
+            is EmulationSuccessResponse -> {
+                return ctx.getString(R.string.emulation_success_response)
+            }
+            is EmulationStoppedResponse -> {
+                return ctx.getString(R.string.emulation_stopped_response)
             }
             else -> {
                 return ctx.getString(R.string.unknown_response)
@@ -721,6 +961,255 @@ object TcmpMessageDescriptor {
             }
             is Ntag21xApplicationErrorResponse -> {
                 ctx.getString(R.string.ntag_21x_application_error_generic, response.appErrorCode, response.errorDescription)
+            }
+            else -> {
+                ctx.getString(R.string.unknown_response)
+            }
+        }
+    }
+
+    private fun getSTMicroM24SR02ResponseDescription(response: TCMPMessage, ctx: Context): String {
+        return when(response){
+            is PollingTimeoutResponse -> {
+                ctx.getString(R.string.polling_timeout_response)
+            }
+            is com.taptrack.tcmptappy2.commandfamilies.stmicroM24SR02.responses.Type4ErrorResponse -> {
+                ctx.getString(R.string.type4_error_response, byteArrayOf(response.sw2).toHex(), byteArrayOf(response.sw1).toHex())
+            }
+            is ChangeReadNdefPasswordResponse -> {
+                ctx.getString(R.string.change_read_ndef_password_response, response.uid.size.toString(), response.uid.toHex())
+            }
+            is ChangeWriteNdefPasswordResponse -> {
+                ctx.getString(R.string.change_write_ndef_password_response, response.uid.size.toString(), response.uid.toHex())
+            }
+            is GetCommandFamilyVersionResponse -> {
+                ctx.getString(R.string.get_command_family_version_response, response.majorVersion.toString(),response.minorVersion.toString())
+            }
+            is GetI2CProtectionSettingResponse -> {
+                ctx.getString(R.string.get_I2C_setting_response, response.protecSetting.toString(), response.uid.size.toString(), response.uid.toHex())
+            }
+            is PasswordLockNdefReadResponse -> {
+                ctx.getString(R.string.lock_ndef_read_access_response, response.uid.size.toString(), response.uid.toHex())
+            }
+            is PasswordLockNdefWriteResponse -> {
+                ctx.getString(R.string.lock_ndef_write_access_response, response.uid.size.toString(), response.uid.toHex())
+            }
+            is PasswordUnlockNdefReadResponse -> {
+                ctx.getString(R.string.unlock_ndef_read_access_response, response.uid.size.toString(), response.uid.toHex())
+            }
+            is PasswordUnlockNdefWriteResponse -> {
+                ctx.getString(R.string.unlock_ndef_write_access_response, response.uid.size.toString(), response.uid.toHex())
+            }
+            is PermanentNdefWriteLockResponse -> {
+                ctx.getString(R.string.perma_lock_ndef_write_access_response, response.uid.size.toString(), response.uid.toHex())
+            }
+            is FoundNdefMessageResponse -> {
+                ctx.getString(R.string.found_ndef_message_response, response.uid.size.toString(), response.uid.toHex(), response.content.size.toString(), response.content.decodeToString())
+            }
+            is NdefMessageWrittenResponse -> {
+                ctx.getString(R.string.ndef_message_written_response, response.uid.size.toString(), response.uid.toHex())
+            }
+            else -> {
+                ctx.getString(R.string.unknown_response)
+            }
+        }
+    }
+    private fun getStandaloneCheckinResponseDescription(response: TCMPMessage, ctx: Context): String  {
+        return when (response){
+            is CheckinDataResponse -> {
+                try {
+                    var responseStr: String = ""
+                    for(i in 0 until (response.size)/12) {
+                        val uid = response.uids[i]
+                        val timestamp = response.timestamp[i]
+                        val formatter = MicrochipRtcFormatter(timestamp)
+                        val timeBytes = formatter.getMicrochipRtcFormatted(false,false)
+                        responseStr += "Checkin $i\n" + ctx.getString(R.string.checkin_data_response,
+                            uid.toHex(), formatTimeAndDate(timeBytes[0].toString()), formatTimeAndDate(timeBytes[1].toString()),
+                            formatTimeAndDate(timeBytes[2].toString()), formatTimeAndDate(timeBytes[3].toString()), formatTimeAndDate(timeBytes[4].toString())
+                        )
+                        if(i != response.size/12-1){
+                            responseStr += "\n"
+                        }
+                    }
+                    responseStr
+                } catch (e: Exception){
+                    "Error forming response message"
+                }
+            }
+            is CheckinsResetResponse -> {
+                ctx.getString(R.string.checkins_reset_reponse)
+            }
+            is CheckinTagUidResponse -> {
+                ctx.getString(R.string.checkin_tag_uid_response, response.uid.toHex())
+            }
+            is NoCheckinsPresentResponse -> {
+                ctx.getString(R.string.no_checkins_present_response)
+            }
+            is NumberOfCheckinsResponse -> {
+                ctx.getString(R.string.number_of_checkins_response, response.numberOfCheckins.toString())
+            }
+            is StandaloneCheckinErrorResponse -> {
+                ctx.getString(R.string.standalone_checkin_error_response)
+            }
+            is StandaloneCheckinLibraryVersionResponse -> {
+                ctx.getString(R.string.standalone_checkin_library_version_response, response.majorVersion.toString(), response.minorVersion.toString())
+            }
+            is StationIdSetSuccessResponse -> {
+                ctx.getString(R.string.station_id_set_success_response)
+            }
+            is StationInfoResponse -> {
+                ctx.getString(R.string.station_info_response, response.id.toString(), response.name)
+            }
+            is StationNameSetSuccessResponse -> {
+                ctx.getString(R.string.station_name_set_success_response)
+            }
+            is TagDetectionTimedOut -> {
+                ctx.getString(R.string.tag_detection_timeout_response)
+            }
+            is TimeAndDateResponse -> {
+                val bytes: ByteArray = response.payload
+                ctx.getString(
+                    R.string.time_and_date_response, formatTimeAndDate(bytes[0].toString()), formatTimeAndDate(bytes[1].toString()), formatTimeAndDate(bytes[2].toString()),
+                    formatTimeAndDate(bytes[3].toString()), formatTimeAndDate(bytes[4].toString()),
+                    formatTimeAndDate(bytes[5].toString()), formatTimeAndDate(bytes[6].toString())
+                )
+            }
+            is TimeAndDateSetResponse -> {
+                ctx.getString(R.string.time_and_date_set_response)
+            }
+            else -> {
+                ctx.getString(R.string.unknown_response)
+            }
+        }
+    }
+
+    private fun getWristCoinPOSResponseDescription(response: TCMPMessage, ctx: Context): String  {
+        return when (response){
+            is WristCoinPOSApplicationErrorMessage -> {
+                ctx.getString(R.string.wristcoinPOS_application_error_message, response.appErrorCode.toString(), response.internalErrorCode.toString(), response.readerStatusCode.toString(), response.errorDescription)
+            }
+            is DebitWristbandFullRespResponse -> {
+                val resultingWristbandState = response.getResultingWristbandState()
+                ctx.getString(R.string.wristcoinPOS_resulting_wristband_state_response,
+                    formatCentavosAmount(resultingWristbandState.balance),
+                    resultingWristbandState.rewardBalance,
+                    resultingWristbandState.uid.toHex(),
+                    resultingWristbandState.aeonCount,
+                    if(resultingWristbandState.isClosedOut) "Closed" else "Not closed",
+                    when(resultingWristbandState.scratchState){
+                        AppScratchState.OnlineScratched -> "Online"
+                        AppScratchState.OfflineScratched -> "Offline"
+                        AppScratchState.Unscratched -> "Unscratched"
+                        else -> if(resultingWristbandState.isConfiguredForOnlineOperation){
+                            "Online"
+                        } else{
+                            "Offline"
+                        }},
+                    formatCentavosAmount((resultingWristbandState.offlineCreditTotal ?: 0) + (resultingWristbandState.onlineCreditTotal ?: 0)),
+                    formatCentavosAmount(resultingWristbandState.debitTotal),
+                    formatCentavosAmount(resultingWristbandState.reversalTotal),
+                    formatCentavosAmount(resultingWristbandState.preloadedCreditTotal),
+                    resultingWristbandState.rewardPointCreditTotal,
+                    resultingWristbandState.rewardPointDebitTotal,
+                    resultingWristbandState.preloadedPointsTotal,
+                    resultingWristbandState.majorVersion.toString() + "." + resultingWristbandState.minorVersion.toString()
+                )
+
+            }
+            is DebitWristbandShortRespResponse -> {
+                ctx.getString(R.string.wristcoinPOS_debit_wristband_short_response, formatCentavosAmount(response.remainingBalanceCentavos ?: 0))
+            }
+            is GetWristbandStatusResponse -> {
+                val wristbandState = response.getWristbandState()
+                ctx.getString(R.string.wristcoinPOS_get_wristband_status_response,
+                    formatCentavosAmount(wristbandState.balance),
+                    wristbandState.rewardBalance,
+                    wristbandState.uid.toHex(),
+                    wristbandState.aeonCount,
+                    if(wristbandState.isClosedOut) "Closed" else "Not closed",
+                    when(wristbandState.scratchState){
+                        AppScratchState.OnlineScratched -> "Online"
+                        AppScratchState.OfflineScratched -> "Offline"
+                        AppScratchState.Unscratched -> "Unscratched"
+                        else -> if(wristbandState.isConfiguredForOnlineOperation){
+                            "Online"
+                        } else{
+                            "Offline"
+                        }},
+                    formatCentavosAmount((wristbandState.offlineCreditTotal ?: 0) + (wristbandState.onlineCreditTotal ?: 0)),
+                    formatCentavosAmount(wristbandState.debitTotal),
+                    formatCentavosAmount(wristbandState.reversalTotal),
+                    formatCentavosAmount(wristbandState.preloadedCreditTotal),
+                    wristbandState.rewardPointCreditTotal,
+                    wristbandState.rewardPointDebitTotal,
+                    wristbandState.preloadedPointsTotal,
+                    wristbandState.majorVersion.toString() + "." + wristbandState.minorVersion.toString()
+                )
+            }
+            is GetWristCoinPOSCommandFamilyVersionResponse -> {
+                ctx.getString(R.string.wristcoinPOS_library_version_response, response.majorVersion.toString(), response.minorVersion.toString())
+            }
+            is SetEventIdResponse -> {
+                ctx.getString(R.string.wristcoinPOS_set_event_ID_response)
+            }
+            is TopupWristbandFullRespResponse -> {
+                val resultingWristbandState = response.getResultingWristbandState()
+                ctx.getString(R.string.wristcoinPOS_resulting_wristband_state_response,
+                    formatCentavosAmount(resultingWristbandState.balance),
+                    resultingWristbandState.rewardBalance,
+                    resultingWristbandState.uid.toHex(),
+                    resultingWristbandState.aeonCount,
+                    if(resultingWristbandState.isClosedOut) "Closed" else "Not closed",
+                    when(resultingWristbandState.scratchState){
+                        AppScratchState.OnlineScratched -> "Online"
+                        AppScratchState.OfflineScratched -> "Offline"
+                        AppScratchState.Unscratched -> "Unscratched"
+                        else -> if(resultingWristbandState.isConfiguredForOnlineOperation){
+                            "Online"
+                        } else{
+                            "Offline"
+                        }},
+                    formatCentavosAmount((resultingWristbandState.offlineCreditTotal ?: 0) + (resultingWristbandState.onlineCreditTotal ?: 0)),
+                    formatCentavosAmount(resultingWristbandState.debitTotal),
+                    formatCentavosAmount(resultingWristbandState.reversalTotal),
+                    formatCentavosAmount(resultingWristbandState.preloadedCreditTotal),
+                    resultingWristbandState.rewardPointCreditTotal,
+                    resultingWristbandState.rewardPointDebitTotal,
+                    resultingWristbandState.preloadedPointsTotal,
+                    resultingWristbandState.majorVersion.toString() + "." + resultingWristbandState.minorVersion.toString()
+                )
+
+            }
+            is TopupWristbandShortRespResponse -> {
+                ctx.getString(R.string.wristcoinPOS_topup_wristband_short_response, formatCentavosAmount(response.remainingBalanceCentavos ?: 0))
+            }
+            is CloseoutWristbandResponse -> {
+                val wristbandState = response.getWristbandState()
+                ctx.getString(R.string.wristcoinPOS_closeout_wristband_response,
+                    formatCentavosAmount(wristbandState.balance),
+                    wristbandState.rewardBalance,
+                    wristbandState.uid.toHex(),
+                    wristbandState.aeonCount,
+                    if(wristbandState.isClosedOut) "Closed" else "Not closed",
+                    when(wristbandState.scratchState){
+                        AppScratchState.OnlineScratched -> "Online"
+                        AppScratchState.OfflineScratched -> "Offline"
+                        AppScratchState.Unscratched -> "Unscratched"
+                        else -> if(wristbandState.isConfiguredForOnlineOperation){
+                            "Online"
+                        } else{
+                            "Offline"
+                        }},
+                    formatCentavosAmount((wristbandState.offlineCreditTotal ?: 0) + (wristbandState.onlineCreditTotal ?: 0)),
+                    formatCentavosAmount(wristbandState.debitTotal),
+                    formatCentavosAmount(wristbandState.reversalTotal),
+                    formatCentavosAmount(wristbandState.preloadedCreditTotal),
+                    wristbandState.rewardPointCreditTotal,
+                    wristbandState.rewardPointDebitTotal,
+                    wristbandState.preloadedPointsTotal,
+                    wristbandState.majorVersion.toString() + "." + wristbandState.minorVersion.toString()
+                )
             }
             else -> {
                 ctx.getString(R.string.unknown_response)
@@ -952,4 +1441,12 @@ private fun parseDurationFromTimeout(timeout: Byte, ctx: Context): String {
 
 private fun parseProtectionTypeFromBoolean(boolean: Boolean, ctx: Context): String {
     return if (boolean) ctx.getString(R.string.read_and_write_protection) else ctx.getString(R.string.write_protection)
+}
+
+private fun formatTimeAndDate(string: String) : String {
+    return if(string.length == 1) "0$string" else string
+}
+private fun formatCentavosAmount(amount: Int) : String {
+    val amountStr = (amount.toDouble()/100).toString()
+    return "$" + amountStr + if(amountStr[amountStr.length-2] == '.') "0" else ""
 }

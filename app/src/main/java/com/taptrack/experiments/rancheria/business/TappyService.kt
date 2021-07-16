@@ -26,6 +26,7 @@ import com.taptrack.tcmptappy2.ble.TappyBleDeviceDefinition
 import com.taptrack.tcmptappy2.commandfamilies.basicnfc.BasicNfcCommandResolver
 import com.taptrack.tcmptappy2.commandfamilies.basicnfc.responses.NdefFoundResponse
 import com.taptrack.tcmptappy2.commandfamilies.ntag21x.Ntag21xCommandResolver
+import com.taptrack.tcmptappy2.commandfamilies.stmicroM24SR02.STMicroCommandResolver
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.PingCommand
 import com.taptrack.tcmptappy2.commandfamilies.type4.Type4CommandResolver
 import com.taptrack.tcmptappy2.commandfamilies.type4.commands.TransceiveApduCommand
@@ -506,6 +507,7 @@ class TappyService: Service() {
                 BasicNfcCommandResolver(),
                 Type4CommandResolver(),
                 Ntag21xCommandResolver(),
+                STMicroCommandResolver(),
         )
 
         fun broadcastSendTcmp(message: TCMPMessage, ctx: Context) {

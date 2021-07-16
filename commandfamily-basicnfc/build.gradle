@@ -42,32 +42,41 @@ dependencies {
     api libraries.tcmpTappyConstants
     testImplementation libraries.junit
     testImplementation libraries.robolectric
+    implementation 'com.taptrack:kotlin-tlv:2.0.0'
 }
 
-archivesBaseName = bintrayCfg.publishedArtifacts.basicNfcCommandFamily.artifact
-group = globalCfg.publishedGroupId
-version = globalCfg.publishedVersion
-
+//archivesBaseName = bintrayCfg.publishedArtifacts.basicNfcCommandFamily.artifact
+//group = globalCfg.publishedGroupId
+//version = globalCfg.publishedVersion
+//
+//ext {
+//    bintrayRepo = bintrayCfg.bintrayRepo
+//    publishedGroupId = group
+//    siteUrl = bintrayCfg.siteUrl
+//    gitUrl = bintrayCfg.gitUrl
+//
+//    developerId = bintrayCfg.developerId
+//    developerName = bintrayCfg.developerName
+//    developerEmail = bintrayCfg.developerEmail
+//
+//    licenseName = bintrayCfg.licenseName
+//    licenseUrl = bintrayCfg.licenseUrl
+//    allLicenses = bintrayCfg.allLicenses
+//
+//    bintrayName = bintrayCfg.publishedArtifacts.basicNfcCommandFamily.bintrayName
+//    libraryName = bintrayCfg.publishedArtifacts.basicNfcCommandFamily.libraryName
+//    artifact = bintrayCfg.publishedArtifacts.basicNfcCommandFamily.artifact
+//    libraryDescription = bintrayCfg.publishedArtifacts.basicNfcCommandFamily.libraryDescription
+//    libraryVersion = version
+//}
+//
+//apply from: bintrayCfg.mavenInstallScript
+//apply from: bintrayCfg.bintrayScript
 ext {
-    bintrayRepo = bintrayCfg.bintrayRepo
-    publishedGroupId = group
-    siteUrl = bintrayCfg.siteUrl
-    gitUrl = bintrayCfg.gitUrl
-
-    developerId = bintrayCfg.developerId
-    developerName = bintrayCfg.developerName
-    developerEmail = bintrayCfg.developerEmail
-
-    licenseName = bintrayCfg.licenseName
-    licenseUrl = bintrayCfg.licenseUrl
-    allLicenses = bintrayCfg.allLicenses
-
-    bintrayName = bintrayCfg.publishedArtifacts.basicNfcCommandFamily.bintrayName
-    libraryName = bintrayCfg.publishedArtifacts.basicNfcCommandFamily.libraryName
-    artifact = bintrayCfg.publishedArtifacts.basicNfcCommandFamily.artifact
-    libraryDescription = bintrayCfg.publishedArtifacts.basicNfcCommandFamily.libraryDescription
-    libraryVersion = version
+    // Provide your own coordinates here
+    PUBLISH_GROUP_ID = globalCfg.publishedGroupId
+    PUBLISH_VERSION = globalCfg.publishedVersion
+    PUBLISH_ARTIFACT_ID = 'commandfamily-basicnfc'
 }
 
-apply from: bintrayCfg.mavenInstallScript
-apply from: bintrayCfg.bintrayScript
+apply from: "${rootProject.projectDir}/scripts/publish-module.gradle"

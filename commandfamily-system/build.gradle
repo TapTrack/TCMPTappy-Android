@@ -37,30 +37,38 @@ repositories {
     mavenCentral()
 }
 
-archivesBaseName = bintrayCfg.publishedArtifacts.systemCommandFamily.artifact
-group = globalCfg.publishedGroupId
-version = globalCfg.publishedVersion
-
+//archivesBaseName = bintrayCfg.publishedArtifacts.systemCommandFamily.artifact
+//group = globalCfg.publishedGroupId
+//version = globalCfg.publishedVersion
+//
+//ext {
+//    bintrayRepo = bintrayCfg.bintrayRepo
+//    publishedGroupId = group
+//    siteUrl = bintrayCfg.siteUrl
+//    gitUrl = bintrayCfg.gitUrl
+//
+//    developerId = bintrayCfg.developerId
+//    developerName = bintrayCfg.developerName
+//    developerEmail = bintrayCfg.developerEmail
+//
+//    licenseName = bintrayCfg.licenseName
+//    licenseUrl = bintrayCfg.licenseUrl
+//    allLicenses = bintrayCfg.allLicenses
+//
+//    bintrayName = bintrayCfg.publishedArtifacts.systemCommandFamily.bintrayName
+//    libraryName = bintrayCfg.publishedArtifacts.systemCommandFamily.libraryName
+//    artifact = bintrayCfg.publishedArtifacts.systemCommandFamily.artifact
+//    libraryDescription = bintrayCfg.publishedArtifacts.systemCommandFamily.libraryDescription
+//    libraryVersion = version
+//}
+//
+//apply from: bintrayCfg.mavenInstallScript
+//apply from: bintrayCfg.bintrayScript
 ext {
-    bintrayRepo = bintrayCfg.bintrayRepo
-    publishedGroupId = group
-    siteUrl = bintrayCfg.siteUrl
-    gitUrl = bintrayCfg.gitUrl
-
-    developerId = bintrayCfg.developerId
-    developerName = bintrayCfg.developerName
-    developerEmail = bintrayCfg.developerEmail
-
-    licenseName = bintrayCfg.licenseName
-    licenseUrl = bintrayCfg.licenseUrl
-    allLicenses = bintrayCfg.allLicenses
-
-    bintrayName = bintrayCfg.publishedArtifacts.systemCommandFamily.bintrayName
-    libraryName = bintrayCfg.publishedArtifacts.systemCommandFamily.libraryName
-    artifact = bintrayCfg.publishedArtifacts.systemCommandFamily.artifact
-    libraryDescription = bintrayCfg.publishedArtifacts.systemCommandFamily.libraryDescription
-    libraryVersion = version
+    // Provide your own coordinates here
+    PUBLISH_GROUP_ID = globalCfg.publishedGroupId
+    PUBLISH_VERSION = globalCfg.publishedVersion
+    PUBLISH_ARTIFACT_ID = 'commandfamily-system'
 }
 
-apply from: bintrayCfg.mavenInstallScript
-apply from: bintrayCfg.bintrayScript
+apply from: "${rootProject.projectDir}/scripts/publish-module.gradle"

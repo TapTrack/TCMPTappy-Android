@@ -1,0 +1,41 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+}
+
+android {
+    compileSdkVersion globalCfg.compileSdkVersion
+    buildToolsVersion globalCfg.buildToolsVersion
+
+    defaultConfig {
+        minSdkVersion globalCfg.minSdkVersion
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+    api libraries.tcmp
+    api libraries.androidSupportAnnotations
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    testImplementation libraries.junit
+}
+ext {
+    // Provide your own coordinates here
+    PUBLISH_GROUP_ID = globalCfg.publishedGroupId
+    PUBLISH_VERSION = globalCfg.publishedVersion
+    PUBLISH_ARTIFACT_ID = 'commandfamily-standalonecheckin'
+}
+
+apply from: "${rootProject.projectDir}/scripts/publish-module.gradle"

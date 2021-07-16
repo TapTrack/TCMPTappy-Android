@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout"
+    tools:layout_width="match_parent"
+    tools:layout_height="wrap_content">
+    <TextView
+        style="@style/TextAppearance.AppCompat.Title"
+        android:id="@+id/tv_command_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorAccent"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="Read Classic"
+        />
+    <TextView
+        style="@style/TextAppearance.AppCompat.Body1"
+        android:id="@+id/tv_command_description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_command_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="Read data from a MIFARE Classic. For this example, the Tappy will always attempt to authenticate with key A using the default key"
+        />
+    <ImageView
+        android:id="@+id/iv_toggle_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:alpha="0.54"
+        app:layout_constraintEnd_toStartOf="@id/tv_toggle_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_command_description"
+        app:srcCompat="@drawable/ic_heartbeat_border_black_24dp" />
+    <TextView
+        android:id="@+id/tv_toggle_label"
+        style="@style/TextAppearance.AppCompat.Caption"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/iv_toggle_icon"
+        app:layout_constraintTop_toBottomOf="@id/tv_command_description"
+        android:text="@string/parameter_label_toggle" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/swc_toggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintStart_toEndOf="@id/iv_toggle_icon"
+        app:layout_constraintTop_toBottomOf="@id/tv_toggle_label" />
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_toggle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="iv_toggle_icon,tv_toggle_label,swc_toggle" />
+</merge>

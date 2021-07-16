@@ -15,6 +15,7 @@
     <string name="set_config_item_no_value">Set config parameter %1$s</string>
     <string name="disable_ble_pin_pairing">Disable BLE PIN Pairing</string>
     <string name="enable_ble_pin_pairing">Enable BLE PIN Pairing with PIN %1$s</string>
+    <string name="clear_ble_bonding_cache">Cleared BLE bonding cache</string>
     <string name="enable_ble_pin_pairing_invalid_pin">Enable BLE PIN Pairing command with invalid PIN</string>
     <string name="set_config_item_with_value">Set config parameter %1$s to %2$s</string>
     <string name="activate_blue_led">Activate Blue LED</string>
@@ -41,13 +42,22 @@
     <string name="write_ndef_txt_indefinite">Indefinitely attempt to write the following text to a tag: \n%1$s</string>
     <string name="write_ndef_uri_seconds">For %1$d seconds, attempt to write the following URL to a tag: \n%2$s</string>
     <string name="write_ndef_uri_indefinite">Indefinitely attempt to write the following URL to a tag: \n%1$s</string>
+    <string name="emulate_ndef_txt_seconds">For %1$d seconds, emulate a tag with the following text: \n%2$s</string>
+    <string name="emulate_ndef_txt_indefinite">Indefinitely, emulate a tag with the following text: \n%1$s</string>
+    <string name="emulate_ndef_uri_seconds">For %1$d seconds, emulate a tag with the following URL: \n%2$s</string>
+    <string name="emulate_ndef_uri_indefinite">Indefinitely emulate a tag with the following URL: \n%1$s</string>
     <string name="lock_tags_seconds">For %1$d seconds, attempt to lock the next tag encountered</string>
     <string name="lock_tags_indefinite">Indefinitely attempt to lock the next tag encountered</string>
     <string name="autopoll_for_tags">Autopoll for tags\nMode: %1$s\nHeartbeat: %2$s\nBuzzer: %3$s</string>
+    <string name="autopollndef_for_tags">Autopoll with NDEF discovery\nMode: %1$s\nHeartbeat: %2$s\nBuzzer: %3$s</string>
     <string name="autopoll_for_tags_hb_disabled">Disabled</string>
     <string name="autopoll_for_tags_buzzer_disabled">Disabled</string>
-    <string name="autopoll_for_tags_buzzer_enabled">Enabled</string>
-    <string name="initiate_tappytag_handshake">Initiate TappyTag handshake</string>
+    <string name="autopoll_for_tags_buzzer_enabled">Enabled (Hardware Dependent)</string>
+    <string name="dispatch_tags_seconds">Streaming tag dispatch for %1$d seconds</string>
+    <string name="dispatch_tags_indefinite">Streaming tag dispatch indefinitely</string>
+    <string name="dispatch_tag_second">Single tag dispatch for %1$d seconds</string>
+    <string name="dispatch_tag_indefinite">Single tag dispatch indefinitely</string>
+    <string name="initiate_tappytag_handshake">Initiate TappyTag handshake \nDuration: %1$s\n%2$s\nRaw: %3$s</string>
     <!-- Classic Commands -->
     <string name="detect_classic_seconds">Scan for MIFARE Classic for %1$d seconds</string>
     <string name="detect_classic_indefinite">Scan for MIFARE Classic indefinitely</string>
@@ -72,6 +82,43 @@
     <string name="write_ndef_txt_password_string">%1$s attempt to write the following password protected text with %2$s to an NTAG 21X: \n%3$s</string>
     <string name="write_ndef_uri_password_bytes">%1$s attempt to write the following password bytes protected URL with %2$s to an NTAG 21X: \n%3$s</string>
     <string name="write_ndef_uri_password_string">%1$s attempt to write the following password protected URL with %2$s to an NTAG 21X: \n%3$s</string>
+
+    <!-- ST Micro M24SR02 Commands -->
+    <string name="change_read_ndef_password">Changed read NDEF password\nDuration: %1$s\nCurrent Password: %2$s\nNew Password: %3$s</string>
+    <string name="change_write_ndef_password">Changed write NDEF password\nDuration: %1$s\nCurrent Password: %2$s\nNew Password: %3$s</string>
+    <string name="get_command_family_version">Report STMicro M24SR02 command family version</string>
+    <string name="get_I2C_setting">Report I2C protection setting for %1$s seconds</string>
+    <string name="lock_ndef_read_access">Lock NDEF read access\nDuration: %1$s \nPassword: %2$s</string>
+    <string name="lock_ndef_write_access">Lock NDEF write access\nDuration: %1$s \nPassword: %2$s</string>
+    <string name="unlock_ndef_read_access">Unlock NDEF read access\nDuration: %1$s \nPassword: %2$s</string>
+    <string name="unlock_ndef_write_access">Unlock NDEF write access\nDuration: %1$s \nPassword: %2$s</string>
+    <string name="perma_lock_ndef_write_access">Permanently locked NDEF write access\nDuration: %1$s \nPassword: %2$s</string>
+    <string name="read_ndef_msg_with_password">Read NDEF message with password\nDuration: %1$s \nPassword: %2$s</string>
+    <string name="write_ndef_msg_with_password">Wrote NDEF message with password\nDuration: %1$s \nPassword: %2$s\nNDEF Message: %3$s</string>
+
+    <!-- Standalone Checkin Commands -->
+    <string name="get_checkin_count">Report checkin count</string>
+    <string name="get_checkins">Report checkins\nFirst checkin: %1$s\nLast checkin: %2$s</string>
+    <string name="get_standalone_checkin_fam_version">Report command family version</string>
+    <string name="get_station_info">Report station info</string>
+    <string name="get_time_and_date">Report time and date</string>
+    <string name="read_checkin_card_uid_seconds">Read checkin card UID for %1$s seconds</string>
+    <string name="read_checkin_card_uid_indefinitely">Read checkin card UID indefinitely</string>
+    <string name="reset_checkins">Reset checkins</string>
+    <string name="set_station_id">Set station ID to: %1$s</string>
+    <string name="set_station_name">Set station name to: %1$s</string>
+    <string name="set_time_and_date">Set time and date\nDate: %1$s/%2$s/%3$s\nTime: %4$s:%5$s:%6$s %7$s</string>
+
+    <!-- WristCoin POS Commands -->
+    <string name="debit_wristband_full">Debit wristband full\nAmount: %1$s</string>
+    <string name="debit_wristband_short">Debit wristband short\nAmount: %1$s</string>
+    <string name="topup_wristband_full">Topup wristband full\nAmount: %1$s</string>
+    <string name="topup_wristband_short">Topup wristband short\nAmount: %1$s</string>
+    <string name="get_wristcoinPOS_command_family_version">Get Wristcoin POS command family version</string>
+    <string name="get_wristband_status">Request wristband status</string>
+    <string name="closeout_wristband">Closeout Wristband</string>
+    <string name="set_event_ID">Set event ID to: %1$s</string>
+
 
     <!-- Responses -->
     <string name="unknown_response">Unsupported Response</string>
@@ -116,15 +163,24 @@
     <string name="ndef_no_record">No records</string>
     <string name="tag_entered_response">Tag entered:\nType: %1$s\nMetadata: %2$s</string>
     <string name="tag_exited_response">Tag exited:\nType: %1$s\nMetadata: %2$s</string>
-    <string name="autopoll_tag_t1">Type 1</string>
-    <string name="autopoll_tag_t2">Type 2</string>
+    <string name="autopoll_tag_t1">Type 1/Jewel/Topaz</string>
+    <string name="autopoll_tag_t2">Mifare/NTAG/Type 2</string>
     <string name="autopoll_tag_t3">Felicia</string>
-    <string name="autopoll_tag_t4a">Type 4A</string>
-    <string name="autopoll_tag_t4b">Type 4B</string>
+    <string name="autopoll_tag_t4a">Type ISO 14443-4A</string>
+    <string name="autopoll_tag_t4b">Type ISO 14443-4B</string>
     <string name="autopoll_tag_unrecognized">Unrecognized</string>
-    <string name="autopoll_tag_all">All</string>
+    <string name="autopoll_tag_all">Scan for all</string>
+    <string name="emulation_success_response">Emulation succeeded</string>
+    <string name="emulation_stopped_response">Emulation stopped</string>
+
     <!-- TODO: This is a placeholder -->
-    <string name="tappytag_response">Received TappyTag response: %1$s</string>
+    <string name="tappytag_response">Received TappyTag Response: \n%1$s\nRaw: %2$s\nDuration: %3$s</string>
+    <string name="tappytag_response2">Received TappyTag Response: \n%1$s\nRaw: %2$s</string>
+    <string name="tappytag_response3">Received TappyTag Response. \n Duration: %1$s</string>
+    <string name="tappytag_response4">Received TappyTag Response</string>
+
+    <string name="tappytag_response_transmitted">TappyTag reponse data transmitted: \nOffset: %1$s \nLength: %2$s</string>
+
 
     <!-- Classic Responses -->
     <string name="mifareclassic_1k_detected">Detected MIFARE Classic 1K\nUID: %1$s</string>
@@ -149,6 +205,57 @@
     <string name="ntag_21x_password_tag_written_response">Password-protected data written to tag with UID %1$s</string>
     <string name="ntag_21x_polling_timeout">NTAG 21x polling timed out</string>
 
+    <!-- ST Micro M24SR02 Responses -->
+    <string name="change_read_ndef_password_response">Change read NDEF password\nUID Length: %1$s\nUID: %2$s</string>
+    <string name="change_write_ndef_password_response">Change write NDEF password\nUID Length: %1$s\nUID: %2$s</string>
+    <string name="get_command_family_version_response">STMicro M24SR02 command Family v%1$s.%2$s</string>
+    <string name="get_I2C_setting_response">Report I2C protection setting\nI2C Protec setting: %1$s\nUID Length: %2$s\nUID: %3$s</string>
+    <string name="lock_ndef_read_access_response">Locked NDEF read access\nUID Length: %1$s\nUID: %2$s</string>
+    <string name="lock_ndef_write_access_response">Locked NDEF write access\nUID Length: %1$s\nUID: %2$s</string>
+    <string name="unlock_ndef_read_access_response">Unlocked NDEF read access\nUID Length: %1$s\nUID: %2$s</string>
+    <string name="unlock_ndef_write_access_response">Unlocked NDEF write access\nUID Length: %1$s\nUID: %2$s</string>
+    <string name="perma_lock_ndef_write_access_response">Permanently locked NDEF write access\nUID Length: %1$s\nUID: %2$s</string>
+    <string name="ndef_message_written_response">Wrote NDEF message with password\nUID Length: %1$s\nUID: %2$s</string>
+    <string name="found_ndef_message_response">Read NDEF message with password \nUID Length: %1$s\nUID: %2$s\nNDEF length: %3$s\nNDEF message: %4$s</string>
+    <string name="polling_timeout_response">Polling Timeout Reached</string>
+    <string name="type4_error_response">Type4 Error Reponse\nError Code: %1$s %2$s</string>
+
+    <!-- Standalone Checkin Responses -->
+    <string name="checkin_data_response">UID: %1$s\nDate: %2$s/%3$s/%4$s\nTime: %5$s:%6$s</string>
+    <string name="checkins_reset_reponse">Checkins reset</string>
+    <string name="checkin_tag_uid_response">Checkin tag UID: %1$s</string>
+    <string name="no_checkins_present_response">No checkins present</string>
+    <string name="number_of_checkins_response">Number of checkins: %1$s</string>
+    <string name="standalone_checkin_error_response">Standalone checkin error</string>
+    <string name="standalone_checkin_library_version_response">Standalone checkin library v%1$s.%2$s</string>
+    <string name="station_id_set_success_response">Station ID set</string>
+    <string name="station_info_response">ID: %1$s\nName: %2$s</string>
+    <string name="station_name_set_success_response">Station name set</string>
+    <string name="tag_detection_timeout_response">Timeout reached</string>
+    <string name="time_and_date_response">Date: %1$s/%2$s/%3$s\nTime: %4$s:%5$s:%6$s %7$s</string>
+    <string name="time_and_date_set_response">Time and date set</string>
+
+    <!-- Wristcoin POS Responses -->
+    <string name="wristcoinPOS_application_error_message">App error code: %1$s\nInternal error code: %2$s\nReader status code: %3$s\nError description: %4$s</string>
+    <string name="wristcoinPOS_resulting_wristband_state_response">
+        Resulting wristband State:\nBalance: %1$s\nPoints Balance: %2$d\nSerial: %3$s-%4$d\nStatus: %5$s\nTopup Mode: %6$s\nTopup Total: %7$s\nPurchase Total: %8$s
+        \nReversal Total: %9$s\nPreloaded Credit Total: %10$s\nPoints Credit Total: %11$d\nPoints Debit Total: %12$d\nPreloaded Points Total: %13$d
+        \nCard Version: %14$s
+    </string>
+    <string name="wristcoinPOS_debit_wristband_short_response">Remaining Balance: %1$s</string>
+    <string name="wristcoinPOS_get_wristband_status_response">
+        Wristband State:\nBalance: %1$s\nPoints Balance: %2$d\nSerial: %3$s-%4$d\nStatus: %5$s\nTopup Mode: %6$s\nTopup Total: %7$s\nPurchase Total: %8$s
+        \nReversal Total: %9$s\nPreloaded Credit Total: %10$s\nPoints Credit Total: %11$d\nPoints Debit Total: %12$d\nPreloaded Points Total: %13$d
+        \nCard Version: %14$s
+    </string>
+    <string name="wristcoinPOS_topup_wristband_short_response">Remaining Balance: %1$s</string>
+    <string name="wristcoinPOS_library_version_response">Wristcoin POS library v%1$s.%2$s</string>
+    <string name="wristcoinPOS_closeout_wristband_response">
+        Successfully closed out wristband\nWristband State:\nBalance: %1$s\nPoints Balance: %2$d\nSerial: %3$s-%4$d\nStatus: %5$s\nTopup Mode: %6$s\nTopup Total: %7$s\nPurchase Total: %8$s
+        \nReversal Total: %9$s\nPreloaded Credit Total: %10$s\nPoints Credit Total: %11$d\nPoints Debit Total: %12$d\nPreloaded Points Total: %13$d
+        \nCard Version: %14$s
+    </string>
+    <string name="wristcoinPOS_set_event_ID_response">Event ID set</string>
     <!-- Error Descriptions -->
     <string name="err_invalid_parameter">invalid parameter</string>
     <string name="err_too_few_parameters">too few parameters</string>
@@ -176,6 +283,8 @@
     <string name="family_type4">Type 4</string>
     <string name="family_ntag21x">NTAG 21x</string>
     <string name="family_unknown">Unknown family</string>
+    <string name="family_stmicro">STMicro M24SR02</string>
+    <string name="family_standalone">Standalone Checkin</string>
     <string name="resp_hardware">Hardware</string>
     <string name="resp_firmware">Firmware</string>
 

@@ -1,7 +1,14 @@
 package com.taptrack.experiments.rancheria.business
 
+
+// In the Tappy Demo App the wristcoinpos command family is vendored in the project to avoid build conflicts
+// For developers who want to use the wristcoinpos command family please make sure to include the dependency in your
+// projects build.gradle file and DO NOT copy paste the "wristcoinpos" package into your own project
 import android.content.Context
 import com.taptrack.experiments.rancheria.R
+import com.taptrack.experiments.rancheria.wristcoinpos.WristCoinPOSCommandResolver
+import com.taptrack.experiments.rancheria.wristcoinpos.commands.*
+import com.taptrack.experiments.rancheria.ui.views.sendmessages.ClearBondingCacheCommand
 import com.taptrack.experiments.rancheria.ui.views.sendmessages.DisableBlePinCommand
 import com.taptrack.experiments.rancheria.ui.views.sendmessages.SetBLEPinCommand
 import com.taptrack.tcmptappy2.TCMPMessage
@@ -12,6 +19,10 @@ import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.commands.DetectMifa
 import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.commands.GetMifareClassicLibraryVersionCommand
 import com.taptrack.tcmptappy2.commandfamilies.mifareclassic.commands.ReadMifareClassicCommand
 import com.taptrack.tcmptappy2.commandfamilies.ntag21x.commands.*
+import com.taptrack.tcmptappy2.commandfamilies.standalonecheckin.StandaloneCheckinCommandResolver
+import com.taptrack.tcmptappy2.commandfamilies.standalonecheckin.commands.*
+import com.taptrack.tcmptappy2.commandfamilies.stmicroM24SR02.STMicroCommandResolver
+import com.taptrack.tcmptappy2.commandfamilies.stmicroM24SR02.commands.*
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.SystemCommandResolver
 import com.taptrack.tcmptappy2.commandfamilies.systemfamily.commands.*
 import com.taptrack.tcmptappy2.commandfamilies.type4.Type4CommandResolver
@@ -67,6 +78,17 @@ class CommandDataSource(val context: Context) {
         NTAG_21X_COMMANDS // Ignoring sort by title since string commands take priority
     }
 
+    private val sortedStMicroCommands by lazy {
+        ST_MICRO_M24SR02_COMMANDS.sortedBy { context.getString(it.titleRes) }
+    }
+
+    private val sortedStandaloneCheckinCommands by lazy {
+        STANDALONE_CHECKIN_COMMANDS.sortedBy {context.getString(it.titleRes)}
+    }
+
+    private val sortedWristCoinPOSCommands by lazy {
+        WRISTCON_POS_COMMANDS.sortedBy { context.getString(it.titleRes) }
+    }
 
     // TODO: improve this procedure
     fun retrieveCommandOptionForMessage(msg: TCMPMessage): CommandOption? {
@@ -83,6 +105,15 @@ class CommandDataSource(val context: Context) {
             msg.commandFamily contentEquals Type4CommandResolver.FAMILY_ID -> {
                 sortedType4Commands
             }
+            msg.commandFamily contentEquals STMicroCommandResolver.FAMILY_ID -> {
+                sortedStMicroCommands
+            }
+            msg.commandFamily contentEquals StandaloneCheckinCommandResolver.FAMILY_ID -> {
+                sortedStandaloneCheckinCommands
+            }
+            msg.commandFamily contentEquals WristCoinPOSCommandResolver.FAMILY_ID -> {
+                sortedWristCoinPOSCommands
+            }
             else -> {
                 sortedAllCommands
             }
@@ -98,7 +129,7 @@ class CommandDataSource(val context: Context) {
                         return option
                     }
                 } catch (ignored: Exception) {
-                    // cant instantiate
+
                 }
             }
         }
@@ -121,6 +152,10 @@ class CommandDataSource(val context: Context) {
             FAM_OPTION_ID_CLASSIC -> sortedClassicCommands
             FAM_OPTION_ID_T4 -> sortedType4Commands
             FAM_OPTION_ID_NTAG21X -> sortedNtag21xCommands
+            FAM_OPTION_ID_STMICRO -> sortedStMicroCommands
+            FAM_OPTION_ID_STANDALONE -> sortedStandaloneCheckinCommands
+            FAM_OPTION_ID_WRISTCOINPOS -> sortedWristCoinPOSCommands
+
             else -> emptyList()
         }
     }
@@ -132,6 +167,9 @@ class CommandDataSource(val context: Context) {
         const val FAM_OPTION_ID_CLASSIC = 3
         const val FAM_OPTION_ID_T4 = 4
         const val FAM_OPTION_ID_NTAG21X = 5
+        const val FAM_OPTION_ID_STMICRO = 6
+        const val FAM_OPTION_ID_STANDALONE = 7
+        const val FAM_OPTION_ID_WRISTCOINPOS = 8
 
         private val ALL_FAMILY_OPTIONS: List<CommandFamilyOption> = listOf(
             CommandFamilyOption(FAM_OPTION_ID_ALL, R.drawable.ic_all_inclusive_black_48dp, R.string.desc_all_families),
@@ -139,7 +177,10 @@ class CommandDataSource(val context: Context) {
             CommandFamilyOption(FAM_OPTION_ID_BASIC, R.drawable.ic_nfc_black_48dp, R.string.desc_basic_nfc_family),
             CommandFamilyOption(FAM_OPTION_ID_CLASSIC, R.drawable.ic_classic_black_48dp, R.string.desc_classic_family),
             CommandFamilyOption(FAM_OPTION_ID_T4, R.drawable.ic_type4_black_48dp, R.string.desc_type_4_family),
-            CommandFamilyOption(FAM_OPTION_ID_NTAG21X, R.drawable.ic_lock_black_48dp, R.string.desc_ntag_21x_family)
+            CommandFamilyOption(FAM_OPTION_ID_NTAG21X, R.drawable.ic_lock_black_48dp, R.string.desc_ntag_21x_family),
+            CommandFamilyOption(FAM_OPTION_ID_STMICRO, R.drawable.ic_developer_board_black_24dp, R.string.desc_st_micro_family),
+            CommandFamilyOption(FAM_OPTION_ID_STANDALONE, R.drawable.ic_how_to_vote_black_24dp, R.string.desc_standalone_family),
+            CommandFamilyOption(FAM_OPTION_ID_WRISTCOINPOS, R.drawable.ic_wclogo_appicon, R.string.desc_wristcoinpos_family),
         )
 
         private const val COM_OPT_GET_BATT = 0
@@ -181,6 +222,41 @@ class CommandDataSource(val context: Context) {
         private const val COM_OPT_INITIATE_TAPPYTAG_HANDSHAKE = 36
         private const val COM_OPT_SET_BOOT_CONFIG = 37
         private const val COM_OPT_GET_BOOT_CONFIG = 38
+        private const val COM_OPT_CLEAR_BONDING_CACHE = 39
+        private const val COM_OPT_AUTO_POLL = 40
+        private const val COM_OPT_AUTO_POLL_NDEF = 41
+        private const val COM_OPT_DISPATCH_TAGS = 42
+        private const val COM_OPT_CHANGE_READ_NDEF_PASS = 43
+        private const val COM_OPT_CHANGE_WRITE_NDEF_PASS = 44
+        private const val COM_OPT_GET_COMFAM_V  = 45
+        private const val COM_OPT_GET_I2C_SET = 46
+        private const val COM_OPT_LOCK_NDEF_READ = 47
+        private const val COM_OPT_LOCK_NDEF_WRITE = 48
+        private const val COM_OPT_PERM_LOCK_NDEF_WRITE = 49
+        private const val COM_OPT_READ_NDEF_PASS = 50
+        private const val COM_OPT_WRITE_NDEF_PASS = 51
+        private const val COM_OPT_UNLOCK_NDEF_READ = 52
+        private const val COM_OPT_UNLOCK_NDEF_WRITE = 53
+        private const val COM_OPT_GET_CHECKINS_COUNT = 54
+        private const val COM_OPT_GET_CHECKINS = 55
+        private const val COM_OPT_GET_STANDALONE_FAMV = 56
+        private const val COM_OPT_GET_STATION_INFO = 57
+        private const val COM_OPT_GET_TIME_DATE = 58
+        private const val COM_OPT_READ_CHECKIN_UID = 59
+        private const val COM_OPT_RESET_CHECKINS = 60
+        private const val COM_OPT_SET_STATION_ID = 61
+        private const val COM_OPT_SET_STATION_NAME = 62
+        private const val COM_OPT_SET_TIME_DATE = 63
+        private const val COM_OPT_EMULATE_TEXT = 64
+        private const val COM_OPT_EMULATE_URI = 65
+        private const val COM_OPT_DEBIT_WB_FULL = 66
+        private const val COM_OPT_DEBIT_WB_SHORT = 67
+        private const val COM_OPT_GET_WB_STATUS = 68
+        private const val COM_OPT_GET_WRISTCOINPOS_COMFAMV = 69
+        private const val COM_OPT_SET_EVENTID = 70
+        private const val COM_OPT_TOPUP_WB_FULL = 71
+        private const val COM_OPT_TOPUP_WB_SHORT = 72
+        private const val COM_OPT_CLOSEOUT_WB = 73
 
         private val ALL_COMMAND_OPTIONS_MAP: Map<Int, CommandOption> = mapOf(
             Pair(
@@ -390,7 +466,7 @@ class CommandDataSource(val context: Context) {
                 CommandOption(
                     COM_OPT_SCAN_NDEF,
                     FAM_OPTION_ID_BASIC,
-                    R.drawable.ic_scan_ndef_48dp,
+                    R.drawable.ic_n_mark_solid_black,
                     R.string.nfccommand_scan_ndef_title,
                     R.string.nfccommand_scan_ndef_description,
                     listOf(ScanNdefCommand::class.java, StreamNdefCommand::class.java)
@@ -542,7 +618,7 @@ class CommandDataSource(val context: Context) {
                 CommandOption(
                     COM_OPT_NTAG21X_READ_PASSWORD_STRING,
                     FAM_OPTION_ID_NTAG21X,
-                    R.drawable.ic_scan_ndef_48dp,
+                    R.drawable.ic_nfc_unlocked,
                     R.string.ntag21xcommand_read_ndef_with_password_string_title,
                     R.string.ntag21xcommand_read_ndef_with_password_string_description,
                     ReadNdefWithPasswordCommand::class.java
@@ -554,7 +630,7 @@ class CommandDataSource(val context: Context) {
                 CommandOption(
                     COM_OPT_NTAG21X_WRITE_TEXT_PASSWORD_STRING,
                     FAM_OPTION_ID_NTAG21X,
-                    R.drawable.ic_description_black_48dp,
+                    R.drawable.ic_description_locked,
                     R.string.ntag21xcommand_write_text_with_password_string_title,
                     R.string.ntag21xcommand_write_text_with_password_string_description,
                     WriteTextNdefWithPasswordCommand::class.java
@@ -566,7 +642,7 @@ class CommandDataSource(val context: Context) {
                 CommandOption(
                     COM_OPT_NTAG21X_WRITE_URI_PASSWORD_STRING,
                     FAM_OPTION_ID_NTAG21X,
-                    R.drawable.ic_link_black_48dp,
+                    R.drawable.ic_link_locked,
                     R.string.ntag21xcommand_write_uri_with_password_string_title,
                     R.string.ntag21xcommand_write_uri_with_password_string_description,
                     WriteUriNdefWithPasswordCommand::class.java
@@ -578,7 +654,7 @@ class CommandDataSource(val context: Context) {
                 CommandOption(
                     COM_OPT_NTAG21X_READ_PASSWORD_BYTES,
                     FAM_OPTION_ID_NTAG21X,
-                    R.drawable.ic_scan_ndef_48dp,
+                    R.drawable.ic_nfc_unlocked,
                     R.string.ntag21xcommand_read_ndef_with_password_bytes_title,
                     R.string.ntag21xcommand_read_ndef_with_password_bytes_description,
                     ReadNdefWithPasswordBytesCommand::class.java
@@ -590,7 +666,7 @@ class CommandDataSource(val context: Context) {
                 CommandOption(
                     COM_OPT_NTAG21X_WRITE_TEXT_PASSWORD_BYTES,
                     FAM_OPTION_ID_NTAG21X,
-                    R.drawable.ic_description_black_48dp,
+                    R.drawable.ic_description_locked,
                     R.string.ntag21xcommand_write_text_with_password_bytes_title,
                     R.string.ntag21xcommand_write_text_with_password_bytes_description,
                     WriteTextNdefWithPasswordBytesCommand::class.java
@@ -602,7 +678,7 @@ class CommandDataSource(val context: Context) {
                 CommandOption(
                     COM_OPT_NTAG21X_WRITE_URI_PASSWORD_BYTES,
                     FAM_OPTION_ID_NTAG21X,
-                    R.drawable.ic_link_black_48dp,
+                    R.drawable.ic_link_locked,
                     R.string.ntag21xcommand_write_uri_with_password_bytes_title,
                     R.string.ntag21xcommand_write_uri_with_password_bytes_description,
                     WriteUriNdefWithPasswordBytesCommand::class.java
@@ -643,7 +719,399 @@ class CommandDataSource(val context: Context) {
                     R.string.syscommand_get_boot_configuration_description,
                     GetBootConfigCommand::class.java
                 )
-            )
+            ),
+
+            Pair(
+                COM_OPT_CLEAR_BONDING_CACHE,
+                CommandOption(
+                    COM_OPT_CLEAR_BONDING_CACHE,
+                    FAM_OPTION_ID_SYS,
+                    R.drawable.ic_settings_bluetooth,
+                    R.string.syscommand_clear_bonding_cache_title,
+                    R.string.syscommand_clear_bonding_cache_description,
+                    ClearBondingCacheCommand::class.java
+                )
+            ),
+
+            Pair(
+                COM_OPT_AUTO_POLL,
+                CommandOption(
+                    COM_OPT_AUTO_POLL,
+                    FAM_OPTION_ID_BASIC,
+                    R.drawable.ic_contactless_24dp,
+                    R.string.nfccommand_auto_poll_title,
+                    R.string.nfccommand_auto_poll_description,
+                    AutoPollCommand::class.java
+                )
+            ),
+
+            Pair(
+                COM_OPT_AUTO_POLL_NDEF,
+                CommandOption(
+                    COM_OPT_AUTO_POLL_NDEF,
+                    FAM_OPTION_ID_BASIC,
+                    R.drawable.ic_auto_poll_ndef_icon,
+                    R.string.nfccommand_auto_poll_ndef_title,
+                    R.string.nfccommand_auto_poll_ndef_description,
+                    AutoPollNdefCommand::class.java
+                )
+            ),
+
+            Pair(
+                COM_OPT_DISPATCH_TAGS,
+                CommandOption(
+                    COM_OPT_DISPATCH_TAGS,
+                    FAM_OPTION_ID_BASIC,
+                    R.drawable.ic_scan_nfc,
+                    R.string.nfccommand_dispatch_tags_title,
+                    R.string.nfccommand_dispatch_tags_description,
+                    listOf(DispatchTagsCommand::class.java, DispatchTagCommand::class.java)
+                )
+            ),
+
+            Pair(
+                COM_OPT_CHANGE_READ_NDEF_PASS,
+                CommandOption(
+                    COM_OPT_CHANGE_READ_NDEF_PASS,
+                    FAM_OPTION_ID_STMICRO,
+                    R.drawable.ic_password_visible,
+                    R.string.STMicroM24SR02_change_read_ndef_password_title,
+                    R.string.STMicroM24SR02_change_read_ndef_password_description,
+                    ChangeReadNdefPasswordCommand::class.java
+                )
+            ),
+
+            Pair(
+                COM_OPT_CHANGE_WRITE_NDEF_PASS,
+                CommandOption(
+                    COM_OPT_CHANGE_WRITE_NDEF_PASS,
+                    FAM_OPTION_ID_STMICRO,
+                    R.drawable.ic_password_edit,
+                    R.string.STMicroM24SR02_change_write_ndef_password_title,
+                    R.string.STMicroM24SR02_change_write_ndef_password_description,
+                    ChangeWriteNdefPasswordCommand::class.java
+                )
+            ),
+
+            Pair(
+                COM_OPT_GET_COMFAM_V,
+                CommandOption(
+                    COM_OPT_GET_COMFAM_V,
+                    FAM_OPTION_ID_STMICRO,
+                    R.drawable.ic_library_version_48dp,
+                    R.string.STMicroM24SR02_get_command_family_title,
+                    R.string.STMicroM24SR02_get_command_family_description,
+                    GetCommandFamilyVersionCommand::class.java
+                )
+            ),
+            Pair(
+                COM_OPT_GET_I2C_SET,
+                CommandOption(
+                    COM_OPT_GET_I2C_SET,
+                    FAM_OPTION_ID_STMICRO,
+                    R.drawable.ic_memory_vpn_key,
+                    R.string.STMicroM24SR02_get_I2C_setting_title,
+                    R.string.STMicroM24SR02_get_I2C_setting_description,
+                    GetI2CSettingCommand::class.java
+                )
+            ),
+            Pair(
+                COM_OPT_LOCK_NDEF_READ,
+                CommandOption(
+                    COM_OPT_LOCK_NDEF_READ,
+                    FAM_OPTION_ID_STMICRO,
+                    R.drawable.ic_lock_visible,
+                    R.string.STMicroM24SR02_password_lock_read_access_title,
+                    R.string.STMicroM24SR02_password_lock_read_access_description,
+                    LockNdefReadAccessCommand::class.java
+                )
+            ),
+            Pair(
+                COM_OPT_LOCK_NDEF_WRITE,
+                CommandOption(
+                    COM_OPT_LOCK_NDEF_WRITE,
+                    FAM_OPTION_ID_STMICRO,
+                    R.drawable.ic_lock_edit,
+                    R.string.STMicroM24SR02_password_lock_write_access_title,
+                    R.string.STMicroM24SR02_password_lock_write_access_description,
+                    LockNdefWriteAccessCommand::class.java
+                )
+            ),
+            Pair(
+                COM_OPT_PERM_LOCK_NDEF_WRITE,
+                CommandOption(
+                    COM_OPT_PERM_LOCK_NDEF_WRITE,
+                    FAM_OPTION_ID_STMICRO,
+                    R.drawable.ic_enhanced_encryption_edit,
+                    R.string.STMicroM24SR02_perma_lock_ndef_write_access_title,
+                    R.string.STMicroM24SR02_perma_lock_ndef_write_access_description,
+                    PermanentlyLockNdefWriteAccessCommand::class.java
+                )
+            ),
+            Pair(
+                COM_OPT_READ_NDEF_PASS,
+                CommandOption(
+                    COM_OPT_READ_NDEF_PASS,
+                    FAM_OPTION_ID_STMICRO,
+                    R.drawable.ic_lock_open_visible,
+                    R.string.STMicroM24SR02_read_ndef_with_password_title,
+                    R.string.STMicroM24SR02_read_ndef_with_password_description,
+                    ReadNdefMsgWithPasswordCommand::class.java
+                )
+            ),
+            Pair(
+                COM_OPT_WRITE_NDEF_PASS,
+                CommandOption(
+                    COM_OPT_WRITE_NDEF_PASS,
+                    FAM_OPTION_ID_STMICRO,
+                    R.drawable.ic_lock_open_edit,
+                    R.string.STMicroM24SR02_write_ndef_with_password_title,
+                    R.string.STMicroM24SR02_write_ndef_with_password_description,
+                    WriteNdefWithPasswordCommand::class.java
+                )
+            ),
+            Pair(
+                COM_OPT_UNLOCK_NDEF_READ,
+                CommandOption(
+                    COM_OPT_UNLOCK_NDEF_READ,
+                    FAM_OPTION_ID_STMICRO,
+                    R.drawable.ic_no_encryption_visible,
+                    R.string.STMicroM24SR02_password_unlock_read_access_title,
+                    R.string.STMicroM24SR02_password_unlock_read_access_description,
+                    UnlockNdefReadAccessCommand::class.java
+                )
+            ),
+            Pair(
+                COM_OPT_UNLOCK_NDEF_WRITE,
+                CommandOption(
+                    COM_OPT_UNLOCK_NDEF_WRITE,
+                    FAM_OPTION_ID_STMICRO,
+                    R.drawable.ic_no_encryption_edit,
+                    R.string.STMicroM24SR02_password_unlock_write_access_title,
+                    R.string.STMicroM24SR02_password_unlock_write_access_description,
+                    UnlockNdefWriteAccessCommand::class.java
+                )
+            ),
+            Pair(
+                COM_OPT_GET_CHECKINS_COUNT,
+                CommandOption(
+                    COM_OPT_GET_CHECKINS_COUNT,
+                    FAM_OPTION_ID_STANDALONE,
+                    R.drawable.ic_query_stats_black_24dp,
+                    R.string.StandaloneCheckin_get_checkin_count_title,
+                    R.string.StandaloneCheckin_get_checkin_count_description,
+                    GetCheckinCountCommand::class.java
+                )
+            ),
+            Pair(
+                COM_OPT_GET_CHECKINS,
+                CommandOption(
+                    COM_OPT_GET_CHECKINS,
+                    FAM_OPTION_ID_STANDALONE,
+                    R.drawable.ic_download_black_24dp,
+                    R.string.StandaloneCheckin_get_checkins_title,
+                    R.string.StandaloneCheckin_get_checkins_description,
+                    GetCheckinsCommand::class.java
+                )
+            ),
+            Pair(
+                COM_OPT_GET_STANDALONE_FAMV,
+                CommandOption(
+                    COM_OPT_GET_STANDALONE_FAMV,
+                    FAM_OPTION_ID_STANDALONE,
+                    R.drawable.ic_library_version_48dp,
+                    R.string.StandaloneCheckin_get_family_version_title,
+                    R.string.StandaloneCheckin_get_family_version_description,
+                    GetStandaloneCheckinFamilyVersionCommand::class.java
+                )
+            ),
+            Pair(
+                COM_OPT_GET_STATION_INFO,
+                CommandOption(
+                    COM_OPT_GET_STATION_INFO,
+                    FAM_OPTION_ID_STANDALONE,
+                    R.drawable.ic_station_info,
+                    R.string.StandaloneCheckin_get_station_info_title,
+                    R.string.StandaloneCheckin_get_station_info_description,
+                    GetStationInfoCommand::class.java
+                )
+            ),
+            Pair(
+                COM_OPT_GET_TIME_DATE,
+                CommandOption(
+                    COM_OPT_GET_TIME_DATE,
+                    FAM_OPTION_ID_STANDALONE,
+                    R.drawable.ic_today_black_24dp,
+                    R.string.StandaloneCheckin_get_time_and_date_title,
+                    R.string.StandaloneCheckin_get_time_and_date_description,
+                    GetTimeAndDateCommand::class.java
+                )
+            ),
+            Pair(
+                COM_OPT_READ_CHECKIN_UID,
+                CommandOption(
+                    COM_OPT_READ_CHECKIN_UID,
+                    FAM_OPTION_ID_STANDALONE,
+                    R.drawable.ic_badge_black_24dp,
+                    R.string.StandaloneCheckin_read_checkin_card_uid_title,
+                    R.string.StandaloneCheckin_read_checkin_card_uid_description,
+                    ReadCheckinCardUidCommand::class.java
+                )
+            ),
+            Pair(
+                COM_OPT_RESET_CHECKINS,
+                CommandOption(
+                    COM_OPT_RESET_CHECKINS,
+                    FAM_OPTION_ID_STANDALONE,
+                    R.drawable.ic_restart_alt_black_24dp,
+                    R.string.StandaloneCheckin_reset_checkins_title,
+                    R.string.StandaloneCheckin_reset_checkins_description,
+                    ResetCheckinsCommand::class.java
+                )
+            ),
+            Pair(
+                COM_OPT_SET_STATION_ID,
+                CommandOption(
+                    COM_OPT_SET_STATION_ID,
+                    FAM_OPTION_ID_STANDALONE,
+                    R.drawable.ic_pin_black_24dp,
+                    R.string.StandaloneCheckin_set_station_id_title,
+                    R.string.StandaloneCheckin_set_station_id_description,
+                    SetStationIdCommand::class.java
+                )
+            ),
+            Pair(
+                COM_OPT_SET_STATION_NAME,
+                CommandOption(
+                    COM_OPT_SET_STATION_NAME,
+                    FAM_OPTION_ID_STANDALONE,
+                    R.drawable.ic_business_black_24dp,
+                    R.string.StandaloneCheckin_set_station_name_title,
+                    R.string.StandaloneCheckin_set_station_name_description,
+                    SetStationNameCommand::class.java
+                )
+            ),
+            Pair(
+                COM_OPT_SET_TIME_DATE,
+                CommandOption(
+                    COM_OPT_SET_TIME_DATE,
+                    FAM_OPTION_ID_STANDALONE,
+                    R.drawable.ic_edit_calendar_black_24dp,
+                    R.string.StandaloneCheckin_set_time_and_date_title,
+                    R.string.StandaloneCheckin_set_time_and_date_description,
+                    SetTimeAndDateCommand::class.java
+                )
+            ),
+            Pair(
+                COM_OPT_EMULATE_TEXT,
+                CommandOption(
+                    COM_OPT_EMULATE_TEXT,
+                    FAM_OPTION_ID_BASIC,
+                    R.drawable.ic_description_black_48dp,
+                    R.string.nfccommand_emulate_text_title,
+                    R.string.nfccommand_emulate_text_description,
+                    EmulateTextRecordCommand::class.java
+                )
+            ),
+            Pair(
+                COM_OPT_EMULATE_URI,
+                CommandOption(
+                    COM_OPT_EMULATE_URI,
+                    FAM_OPTION_ID_BASIC,
+                    R.drawable.ic_link_black_48dp,
+                    R.string.nfccommand_emulate_uri_title,
+                    R.string.nfccommand_emulate_uri_description,
+                    EmulateUriRecordCommand::class.java
+                )
+            ),
+            Pair(
+                COM_OPT_DEBIT_WB_FULL,
+                CommandOption(
+                    COM_OPT_DEBIT_WB_FULL,
+                    FAM_OPTION_ID_WRISTCOINPOS,
+                    R.drawable.ic_debit_wristband_full_resp,
+                    R.string.wristcoinPOS_debit_wristband_full_title,
+                    R.string.wristcoinPOS_debit_wristband_full_description,
+                    DebitWristbandFullRespCommand::class.java
+                )
+            ),
+            Pair(
+                COM_OPT_DEBIT_WB_SHORT,
+                CommandOption(
+                    COM_OPT_DEBIT_WB_SHORT,
+                    FAM_OPTION_ID_WRISTCOINPOS,
+                    R.drawable.ic_shopping_cart_black_24dp,
+                    R.string.wristcoinPOS_debit_wristband_short_title,
+                    R.string.wristcoinPOS_debit_wristband_short_description,
+                    DebitWristbandShortRespCommand::class.java
+                )
+            ),
+            Pair(
+                COM_OPT_GET_WB_STATUS,
+                CommandOption(
+                    COM_OPT_GET_WB_STATUS,
+                    FAM_OPTION_ID_WRISTCOINPOS,
+                    R.drawable.ic_info_black_24dp,
+                    R.string.wristcoinPOS_get_wristband_status_title,
+                    R.string.wristcoinPOS_get_wristband_status_description,
+                    GetWristbandStatusCommand::class.java
+                )
+            ),
+            Pair(
+                COM_OPT_GET_WRISTCOINPOS_COMFAMV,
+                CommandOption(
+                    COM_OPT_GET_WRISTCOINPOS_COMFAMV,
+                    FAM_OPTION_ID_WRISTCOINPOS,
+                    R.drawable.ic_library_version_48dp,
+                    R.string.wristcoinPOS_get_command_family_version_title,
+                    R.string.wristcoinPOS_get_command_family_version_description,
+                    GetWristCoinPOSCommandFamilyVersionCommand::class.java
+                )
+            ),
+            Pair(
+                COM_OPT_SET_EVENTID,
+                CommandOption(
+                    COM_OPT_SET_EVENTID,
+                    FAM_OPTION_ID_WRISTCOINPOS,
+                    R.drawable.ic_event_black_24dp,
+                    R.string.wristcoinPOS_set_event_id_title,
+                    R.string.wristcoinPOS_set_event_id_description,
+                    SetEventIdCommand::class.java
+                )
+            ),
+            Pair(
+                COM_OPT_TOPUP_WB_FULL,
+                CommandOption(
+                    COM_OPT_TOPUP_WB_FULL,
+                    FAM_OPTION_ID_WRISTCOINPOS,
+                    R.drawable.ic_topup_wb_full_resp,
+                    R.string.wristcoinPOS_topup_wristband_full_title,
+                    R.string.wristcoinPOS_topup_wristband_full_description,
+                    TopupWristbandFullRespCommand::class.java
+                )
+            ),
+            Pair(
+                COM_OPT_TOPUP_WB_SHORT,
+                CommandOption(
+                    COM_OPT_TOPUP_WB_SHORT,
+                    FAM_OPTION_ID_WRISTCOINPOS,
+                    R.drawable.ic_local_atm_black_24dp,
+                    R.string.wristcoinPOS_topup_wristband_short_title,
+                    R.string.wristcoinPOS_topup_wristband_short_description,
+                    TopupWristbandShortRespCommand::class.java
+                )
+            ),
+            Pair(
+                COM_OPT_CLOSEOUT_WB,
+                CommandOption(
+                    COM_OPT_CLOSEOUT_WB,
+                    FAM_OPTION_ID_WRISTCOINPOS,
+                    R.drawable.ic_cancel_black_24dp,
+                    R.string.wristcoinPOS_closeout_wristband_title,
+                    R.string.wristcoinPOS_closeout_wristband_description,
+                    CloseoutWristbandCommand::class.java
+                )
+            ),
         )
 
         private val ALL_COMMAND_OPTIONS: List<CommandOption> by lazy {
@@ -679,6 +1147,24 @@ class CommandDataSource(val context: Context) {
         private val NTAG_21X_COMMANDS by lazy {
             ALL_COMMAND_OPTIONS.filter {
                 it.commandFamilyId == FAM_OPTION_ID_NTAG21X
+            }
+        }
+
+        private val ST_MICRO_M24SR02_COMMANDS by lazy {
+            ALL_COMMAND_OPTIONS.filter {
+                it.commandFamilyId == FAM_OPTION_ID_STMICRO
+            }
+        }
+
+        private val STANDALONE_CHECKIN_COMMANDS by lazy {
+            ALL_COMMAND_OPTIONS.filter {
+                it.commandFamilyId == FAM_OPTION_ID_STANDALONE
+            }
+        }
+
+        private val WRISTCON_POS_COMMANDS by lazy {
+            ALL_COMMAND_OPTIONS.filter {
+                it.commandFamilyId == FAM_OPTION_ID_WRISTCOINPOS
             }
         }
 

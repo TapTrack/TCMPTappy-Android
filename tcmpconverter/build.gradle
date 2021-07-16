@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion globalCfg.compileSdkVersion
@@ -20,30 +21,38 @@ dependencies {
 }
 
 
-archivesBaseName = bintrayCfg.publishedArtifacts.tcmpconverter.artifact
-group = globalCfg.publishedGroupId
-version = globalCfg.publishedVersion
-
+//archivesBaseName = bintrayCfg.publishedArtifacts.tcmpconverter.artifact
+//group = globalCfg.publishedGroupId
+//version = globalCfg.publishedVersion
+//
+//ext {
+//    bintrayRepo = bintrayCfg.bintrayRepo
+//    publishedGroupId = group
+//    siteUrl = bintrayCfg.siteUrl
+//    gitUrl = bintrayCfg.gitUrl
+//
+//    developerId = bintrayCfg.developerId
+//    developerName = bintrayCfg.developerName
+//    developerEmail = bintrayCfg.developerEmail
+//
+//    licenseName = bintrayCfg.licenseName
+//    licenseUrl = bintrayCfg.licenseUrl
+//    allLicenses = bintrayCfg.allLicenses
+//
+//    bintrayName = bintrayCfg.publishedArtifacts.tcmpconverter.bintrayName
+//    libraryName = bintrayCfg.publishedArtifacts.tcmpconverter.libraryName
+//    artifact = bintrayCfg.publishedArtifacts.tcmpconverter.artifact
+//    libraryDescription = bintrayCfg.publishedArtifacts.tcmpconverter.libraryDescription
+//    libraryVersion = version
+//}
+//
+//apply from: bintrayCfg.mavenInstallScript
+//apply from: bintrayCfg.bintrayScript
 ext {
-    bintrayRepo = bintrayCfg.bintrayRepo
-    publishedGroupId = group
-    siteUrl = bintrayCfg.siteUrl
-    gitUrl = bintrayCfg.gitUrl
-
-    developerId = bintrayCfg.developerId
-    developerName = bintrayCfg.developerName
-    developerEmail = bintrayCfg.developerEmail
-
-    licenseName = bintrayCfg.licenseName
-    licenseUrl = bintrayCfg.licenseUrl
-    allLicenses = bintrayCfg.allLicenses
-
-    bintrayName = bintrayCfg.publishedArtifacts.tcmpconverter.bintrayName
-    libraryName = bintrayCfg.publishedArtifacts.tcmpconverter.libraryName
-    artifact = bintrayCfg.publishedArtifacts.tcmpconverter.artifact
-    libraryDescription = bintrayCfg.publishedArtifacts.tcmpconverter.libraryDescription
-    libraryVersion = version
+    // Provide your own coordinates here
+    PUBLISH_GROUP_ID = globalCfg.publishedGroupId
+    PUBLISH_VERSION = globalCfg.publishedVersion
+    PUBLISH_ARTIFACT_ID = 'tcmpconverter'
 }
 
-apply from: bintrayCfg.mavenInstallScript
-apply from: bintrayCfg.bintrayScript
+//apply from: "${rootProject.projectDir}/scripts/publish-module.gradle"

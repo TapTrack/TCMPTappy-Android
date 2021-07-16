@@ -6,4 +6,7 @@
     <string name="desc_classic_family">Classic</string>
     <string name="desc_type_4_family">Type 4</string>
     <string name="desc_ntag_21x_family">NTAG 21X Password Protection</string>
+    <string name="desc_st_micro_family">STMicro M24SR02</string>
+    <string name="desc_standalone_family">Standalone Checkin</string>
+    <string name="desc_wristcoinpos_family">WristCoin Cashless POS</string>
 </resources>

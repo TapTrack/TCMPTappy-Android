@@ -79,7 +79,6 @@
         app:hintEnabled="false">
         <EditText
             android:digits="0123456789ABCDEF"
-            android:maxLength="2"
             android:id="@+id/et_parameter"
             android:layout_height="match_parent"
             android:layout_width="match_parent"/>

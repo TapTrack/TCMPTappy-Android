@@ -9,37 +9,28 @@ This version replaces the previous TappyBLE SDK and provides a simplified API
 as well as the ability to use TappyUSB readers with Android devices that
 can act as a USB Host.
 
-## Common Gradle Dependencies
-```groovy
-// Universal Dependencies
-implementation 'com.taptrack.tcmptappy2:tcmp:2.1.0'
-implementation 'com.taptrack.tcmptappy2:tappy:2.1.0'
-
-// TappyBLE readers
-implementation 'com.taptrack.tcmptappy2:tappyble:2.1.0'
-implementation 'com.taptrack.tcmptappy:blescannercompat:0.9.3'
-
-// TappyUSB readers
-implementation 'com.taptrack.tcmptappy2:tappyusb:2.1.0'
-implementation 'com.github.felHR85:UsbSerial:4.5'
-
-// For working with raw TCMP messages
-// For converting between TCMP messages based on the previous SDK
-implementation 'com.taptrack.tcmptappy2:tcmpconverter:2.1.0'
+## Installation
+The TCMPTappy-Android SDK v2.4.0 is available on Maven Central. 
+To include it in your project, simply add the following line to your dependencies:
+```Groovy
+dependencies{
+    ...,
+    implementation 'com.taptrack.tcmptappy2:tcmptappy-android:2.4.0'
+    ...,
+}
 ```
+Versions on previous package managers are not recommended for new projects 
 
-Note: You will also need to add the Jitpack Maven repository to your 
+Note: Ensure that the Maven Central repository is in your
 project's Gradle file:
 
 ```groovy
-allprojects {
-    repositories {
-        jcenter()
-        maven { url "https://jitpack.io" }
-    }
+repositories {
+    ...
+    mavenCentral()
+    ...
 }
-``` 
-
+```  
 
 # Usage
 The Tappy operates on an asynchronous communication model. In order to tell
@@ -278,3 +269,9 @@ try {
     Log.e("TAPPY_EXAMPLE", "Payload format was incorrect for response",e);
 }
 ```
+### Wristcoin POS command family
+For the purpose of demonstrating the Wristcoin POS SDK in this project we have included the
+```wristcoinpos``` package in the app directory. However, for developers who want
+to include this SDK in their own projects please visit [WristCoinPOS](https://github.com/WristCoin/POS-Integration-SDK-Android)
+
+

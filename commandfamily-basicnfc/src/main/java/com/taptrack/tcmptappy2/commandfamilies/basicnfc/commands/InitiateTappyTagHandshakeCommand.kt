@@ -22,6 +22,10 @@ class InitiateTappyTagHandshakeCommand : AbstractBasicNfcMessage {
 
     constructor() : super()
 
+    constructor(payload: ByteArray){
+        parsePayload(payload)
+    }
+
     constructor(responseData: ByteArray = byteArrayOf(),
                 duration: Int = 0,
                 customAid: ByteArray = byteArrayOf(),
@@ -57,19 +61,27 @@ class InitiateTappyTagHandshakeCommand : AbstractBasicNfcMessage {
     }
     @Throws (TLV.MalformedTlvByteArrayException::class)
     override fun parsePayload(payload: ByteArray) {
-        var tlvs : List<TLV> = parseTlvData(payload)
-        _rawTlvs = payload
 
-        var timeoutValue : ByteArray = fetchTlvValue(tlvs, pollingTimeout)
-        if(timeoutValue.size == 1){
-            duration = timeoutValue[0]
+        if(payload.isEmpty()){
+            return
         }
+        try {
+            var tlvs: List<TLV> = parseTlvData(payload)
+            _rawTlvs = payload
 
-        responseData = fetchTlvValue(tlvs, tappyTagResponseData)
-        customAid = fetchTlvValue(tlvs, tappyTagCustomAid)
+            var timeoutValue: ByteArray = fetchTlvValue(tlvs, pollingTimeout)
+            if (timeoutValue.size == 1) {
+                duration = timeoutValue[0]
+            }
 
-        if(null != lookUpTlvInListIfPresent(tlvs, tappyTagShouldSwitchToKeyboardMode)){
-            shouldSwitchToKeyboardMode = true
+            responseData = fetchTlvValue(tlvs, tappyTagResponseData)
+            customAid = fetchTlvValue(tlvs, tappyTagCustomAid)
+
+            if (null != lookUpTlvInListIfPresent(tlvs, tappyTagShouldSwitchToKeyboardMode)) {
+                shouldSwitchToKeyboardMode = true
+            }
+        } catch(e: Exception){
+            throw TLV.MalformedTlvByteArrayException()
         }
     }
 

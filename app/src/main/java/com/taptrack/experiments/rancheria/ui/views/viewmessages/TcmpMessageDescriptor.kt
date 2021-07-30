@@ -797,9 +797,9 @@ object TcmpMessageDescriptor {
             }
             is TappyTagDataReceivedResponse -> {
                 if(response.dataReceived.isNotEmpty() && response.timeout.isNotEmpty()){
-                    return ctx.getString(R.string.tappytag_response, response.dataReceived.toHex(), response.dataReceived.decodeToString(), arrayToInt(response.timeout).toString())
+                    return ctx.getString(R.string.tappytag_response,  response.dataReceived.decodeToString(), response.dataReceived.toHex(), arrayToInt(response.timeout).toString())
                 } else if(response.dataReceived.isNotEmpty()){
-                    return ctx.getString(R.string.tappytag_response2, response.dataReceived.toHex(), response.dataReceived.decodeToString())
+                    return ctx.getString(R.string.tappytag_response2,  response.dataReceived.decodeToString(), response.dataReceived.toHex())
                 } else if(response.timeout.isNotEmpty()){
                     return ctx.getString(R.string.tappytag_response3, arrayToInt(response.timeout).toString())
                 } else{

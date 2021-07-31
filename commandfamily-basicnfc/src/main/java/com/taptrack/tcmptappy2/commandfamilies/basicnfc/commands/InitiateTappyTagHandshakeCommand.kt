@@ -22,7 +22,7 @@ class InitiateTappyTagHandshakeCommand : AbstractBasicNfcMessage {
 
     constructor() : super()
 
-    constructor(payload: ByteArray){
+    constructor(payload: ByteArray) : super() {
         parsePayload(payload)
     }
 

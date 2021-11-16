@@ -10,12 +10,26 @@ as well as the ability to use TappyUSB readers with Android devices that
 can act as a USB Host.
 
 ## Installation
-The TCMPTappy-Android SDK v2.4.0 is available on Maven Central. 
-To include it in your project, simply add the following line to your dependencies:
+The TCMPTappy-Android SDK modules are available on Maven Central.
+To include it in your project, simply add the following lines to your dependencies.
+The SDK is split into various artifacts so developers can choose which dependencies
+are needed in a piecemeal fashion:
 ```Groovy
 dependencies{
     ...,
-    implementation 'com.taptrack.tcmptappy2:tcmptappy-android:2.4.0'
+    implementation 'com.taptrack:commandfamily-system:2.4.0'
+    implementation 'com.taptrack:commandfamily-type4:2.4.0'
+    implementation 'com.taptrack:commandfamily-stmicroM24SR02:2.4.0'
+    implementation 'com.taptrack:commandfamily-ntag21x:2.4.0'
+    implementation 'com.taptrack:commandfamily-standalonecheckin:2.4.0'
+    implementation 'com.taptrack:commandfamily-mifareclassic:2.4.0'
+    implementation 'com.taptrack:commandfamily-basicnfc:2.4.0'
+    implementation 'com.taptrack:tappyble:2.4.0'
+    implementation 'com.taptrack:tappyusb:2.4.0'
+    implementation 'com.taptrack:tappy:2.4.0'
+    implementation 'com.taptrack:tcmpconverter:2.4.0'
+    implementation 'com.taptrack:tcmp:2.4.0'
+    implementation 'com.taptrack:kotlin-tlv:2.0.1' //needed for some Tappy v1.0+ response parsing and command composing
     ...,
 }
 ```

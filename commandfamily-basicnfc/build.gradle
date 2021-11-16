@@ -42,7 +42,8 @@ dependencies {
     api libraries.tcmpTappyConstants
     testImplementation libraries.junit
     testImplementation libraries.robolectric
-    implementation 'com.taptrack:kotlin-tlv:2.0.0'
+    implementation 'com.taptrack:kotlin-tlv:2.0.1'
+
 }
 
 //archivesBaseName = bintrayCfg.publishedArtifacts.basicNfcCommandFamily.artifact

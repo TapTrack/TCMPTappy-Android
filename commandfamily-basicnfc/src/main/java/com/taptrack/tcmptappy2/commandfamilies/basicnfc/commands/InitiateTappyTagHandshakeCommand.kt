@@ -22,10 +22,12 @@ class InitiateTappyTagHandshakeCommand : AbstractBasicNfcMessage {
 
     constructor() : super()
 
+    @Throws(IllegalArgumentException::class)
     constructor(payload: ByteArray) : super() {
         parsePayload(payload)
     }
 
+    @Throws(IllegalArgumentException::class)
     constructor(responseData: ByteArray = byteArrayOf(),
                 duration: Int = 0,
                 customAid: ByteArray = byteArrayOf(),
@@ -59,6 +61,7 @@ class InitiateTappyTagHandshakeCommand : AbstractBasicNfcMessage {
 
         _rawTlvs = tlvs.writeOutTLVBinary()
     }
+
     @Throws (TLV.MalformedTlvByteArrayException::class)
     override fun parsePayload(payload: ByteArray) {
 

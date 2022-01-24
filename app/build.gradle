@@ -10,7 +10,7 @@ android {
     defaultConfig {
         applicationId "com.taptrack.bletappyexample"
         minSdkVersion globalCfg.minSdkVersion
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 32
         versionName "4.6.2"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'

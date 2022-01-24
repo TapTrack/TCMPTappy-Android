@@ -40,12 +40,16 @@ afterEvaluate {
                     from components.java
                 }
 
+                repositories {
+                    mavenLocal()
+                }
+
                 artifact androidSourcesJar
 
                 // Mostly self-explanatory metadata
                 pom {
                     name = PUBLISH_ARTIFACT_ID
-                    description = 'Command families for communication and operations'
+                    description = 'Reader communication and Command families for communication and operations'
                     url = 'https://github.com/TapTrack/TCMPTappy-Android'
                     licenses {
                         license {

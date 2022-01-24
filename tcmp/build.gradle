@@ -54,7 +54,4 @@ ext {
 
 }
 
-//apply from: "${rootProject.projectDir}/scripts/publish-module.gradle"
-repositories {
-    mavenCentral()
-}
+apply from: "${rootProject.projectDir}/scripts/publish-module.gradle"

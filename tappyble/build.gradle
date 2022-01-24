@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion globalCfg.compileSdkVersion
-    buildToolsVersion '28.0.3'
+    buildToolsVersion '30.0.2'
 
     defaultConfig {
         minSdkVersion globalCfg.minSdkVersion
@@ -54,4 +54,4 @@ ext {
     PUBLISH_ARTIFACT_ID = 'tappyble'
 }
 
-//apply from: "${rootProject.projectDir}/scripts/publish-module.gradle"
+apply from: "${rootProject.projectDir}/scripts/publish-module.gradle"

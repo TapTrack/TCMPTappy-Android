@@ -17,19 +17,18 @@ are needed in a piecemeal fashion:
 ```Groovy
 dependencies{
     ...,
-    implementation 'com.taptrack:commandfamily-system:2.4.0'
-    implementation 'com.taptrack:commandfamily-type4:2.4.0'
-    implementation 'com.taptrack:commandfamily-stmicroM24SR02:2.4.0'
-    implementation 'com.taptrack:commandfamily-ntag21x:2.4.0'
-    implementation 'com.taptrack:commandfamily-standalonecheckin:2.4.0'
-    implementation 'com.taptrack:commandfamily-mifareclassic:2.4.0'
-    implementation 'com.taptrack:commandfamily-basicnfc:2.4.0'
-    implementation 'com.taptrack:tappyble:2.4.0'
-    implementation 'com.taptrack:tappyusb:2.4.0'
-    implementation 'com.taptrack:tappy:2.4.0'
-    implementation 'com.taptrack:tcmpconverter:2.4.0'
-    implementation 'com.taptrack:tcmp:2.4.0'
-    implementation 'com.taptrack:kotlin-tlv:2.0.1' //needed for some Tappy v1.0+ response parsing and command composing
+    implementation 'com.taptrack:commandfamily-system:2.4.1'
+    implementation 'com.taptrack:commandfamily-type4:2.4.1'
+    implementation 'com.taptrack:commandfamily-stmicroM24SR02:2.4.1'
+    implementation 'com.taptrack:commandfamily-ntag21x:2.4.1'
+    implementation 'com.taptrack:commandfamily-standalonecheckin:2.4.1'
+    implementation 'com.taptrack:commandfamily-mifareclassic:2.4.1'
+    implementation 'com.taptrack:commandfamily-basicnfc:2.4.1'
+    implementation 'com.taptrack:tappyble:2.4.1'
+    implementation 'com.taptrack:tappyusb:2.4.1'
+    implementation 'com.taptrack:tappy:2.4.1'
+    implementation 'com.taptrack:tcmpconverter:2.4.1'
+    implementation 'com.taptrack:tcmp:2.4.1'
     ...,
 }
 ```
@@ -42,9 +41,17 @@ project's Gradle file:
 repositories {
     ...
     mavenCentral()
+    maven { url "https://jitpack.io" } //Needed for com.taptrack:tappy to resolve the USB driver dependency
     ...
 }
-```  
+```
+
+### Note about namespacing: `com.taptrack.tcmptappy2` vs `com.taptrack.tcmptappy`:
+
+Due to a legacy dependency both of these namespaces may appear in your available libraries. The
+implementations and updates of this repository are all in the `com.taptrack.tcmptappy2` namespace.  Direct usage
+of the legacy `com.taptrack.tcmptappy` is deprecated.
+
 
 # Usage
 The Tappy operates on an asynchronous communication model. In order to tell

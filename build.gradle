@@ -58,7 +58,6 @@ ext.globalCfg = [
 
 ext.bintrayCfg = [
         mavenInstallScript: rootProject.file('mavenInstaller.gradle'),
-        bintrayScript: rootProject.file('bintrayUpload.gradle'),
 
         bintrayRepo : 'maven',
 
